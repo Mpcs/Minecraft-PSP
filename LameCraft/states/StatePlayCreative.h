@@ -25,16 +25,16 @@
 #include <Aurora/Graphics/Effects/TNT.h>
 #include <Aurora/Graphics/Effects/Particle.h>
 
-#include "LameMob.h"
+#include "mobs/LameMob.h"
 #include "CraftWorld2.h"
 #include "InputHelper.h"
 #include "SoundManager.h"
-#include "Chest2.h"
-#include "Furnace2.h"
-#include "NoteBlockEntity.h"
-#include "JukeboxEntity.h"
-#include "MonsterSpawnerEntity.h"
-#include "ItemFrameEntity.h"
+#include "blocks/Chest2.h"
+#include "blocks/Furnace2.h"
+#include "blocks/NoteBlockEntity.h"
+#include "blocks/JukeboxEntity.h"
+#include "blocks/MonsterSpawnerEntity.h"
+#include "blocks/ItemFrameEntity.h"
 
 #include "LameFunctions.h"
 
@@ -118,8 +118,8 @@ private:
 
 	bool startDt;
     float dT;
-    float dET;          // Конец таймера
-    char dStd;          // Стадия анимации разрушения блока
+    float dET;          // пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+    char dStd;          // пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
 
     bool hurt;
     float hurt_time;

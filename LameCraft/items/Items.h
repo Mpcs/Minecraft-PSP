@@ -1,7 +1,7 @@
 #ifndef ITEMS_H
 #define ITEMS_H
 
-#include "BaseItem.h"
+#include "items/BaseItem.h"
 
 class WoodenPickaxe : public BaseItem
 {

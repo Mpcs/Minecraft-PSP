@@ -1,7 +1,7 @@
 #ifndef MOBS_H_
 #define MOBS_H_
 
-#include "LameMob.h"
+#include "mobs/LameMob.h"
 
 class Zombie : public LameMob
 {

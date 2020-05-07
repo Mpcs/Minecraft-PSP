@@ -1,5 +1,5 @@
-#ifndef ZOMBIE_H_
-#define ZOMBIE_H_
+#ifndef SHEEP_H_
+#define SHEEP_H_
 
 #include <Aurora/Graphics/Vertex.h>
 #include <Aurora/Graphics/RenderManager.h>
@@ -9,16 +9,18 @@
 
 #include <Aurora/Math/BoundingBox.h>
 #include <Aurora/Math/Frustum.h>
-#include "LameMob.h"
+#include "mobs/LameMob.h"
+#include "blocks/Blocks.h"
+#include "CraftWorld2.h"
 
 class CraftWorld;
 
-class Zombie : public LameMob
+class Sheep : public LameMob
 {
 public:
 
-    Zombie(Vector3 position1, int number1);
-    ~Zombie();
+    Sheep(Vector3 position1, int number1);
+    ~Sheep();
 
     void BoxCollision();
     void Update(CraftWorld *myWorld, Vector3 playerPos, float dt);
@@ -26,25 +28,39 @@ public:
     void TakeDamage(float damage, float power, float dt);
     void TakeDamageFromPointExplosion(float damage, float power, float dt, Vector3 point);
 
-    int helmetId, chestplateId, leggingsId, bootsId;
+    void SetFurColor(int newColor);
+    int GetFurColor();
+
+    void FetchFurColor();
+
+    bool rotate1;
+    int handItemId;
+
+    bool sheared;
 
 private:
 
-    float rHandAngle;
-    float lHandAngle;
+    float furTime;
+
+    int furTexture;
+    int color;
+    Vector3 furColor;
+
+    int lastCommand;
+
     float rLegAngle;
     float lLegAngle;
 
-    float headAngleZ;
     float headAngleY;
-
-    float animHandAngle;
-    float animHandAngleT;
 
     float animLegAngle;
     float animLegAngleT;
 
-    float sunTimer;
+    Vector3 hauntingPos;
+
+    bool senselessJumps;
+    float senselessJumpsTimer;
+    float senselessJumpsTimerMax;
 };
 
 #endif

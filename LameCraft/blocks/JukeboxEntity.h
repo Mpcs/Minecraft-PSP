@@ -1,7 +1,7 @@
 #ifndef JUKEBOXENTITY_H
 #define JUKEBOXENTITY_H
 
-#include "BlockEntity.h"
+#include "blocks/BlockEntity.h"
 
 class JukeboxEntity : public BlockEntity
 {

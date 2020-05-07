@@ -10,7 +10,7 @@
 #include <Aurora/Math/BoundingBox.h>
 #include <Aurora/Math/Frustum.h>
 #include "LameMob.h"
-#include "Blocks.h"
+#include "blocks/Blocks.h"
 #include "CraftWorld2.h"
 
 class CraftWorld;

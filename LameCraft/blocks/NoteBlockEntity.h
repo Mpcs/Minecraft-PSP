@@ -1,7 +1,7 @@
 #ifndef NOTEBLOCKENTITY_H
 #define NOTEBLOCKENTITY_H
 
-#include "BlockEntity.h"
+#include "blocks/BlockEntity.h"
 
 class NoteBlockEntity : public BlockEntity
 {

@@ -1,7 +1,7 @@
 #ifndef ITEMFRAMEENTITY_H
 #define ITEMFRAMEENTITY_H
 
-#include "BlockEntity.h"
+#include "blocks/BlockEntity.h"
 
 #include <string>
 #include <pspmath.h>

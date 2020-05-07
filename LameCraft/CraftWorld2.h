@@ -13,21 +13,21 @@
 #include <Aurora/Graphics/Effects/TNT.h>
 #include <Aurora/Graphics/Effects/WeatherSystem.h>
 
-#include "Blocks.h"
-#include "Items.h"
+#include "blocks/Blocks.h"
+#include "items/Items.h"
 #include "SimpleMeshChunk2.h"
-#include "Zombie2.h"
-#include "Cow2.h"
-#include "Creeper2.h"
-#include "Sheep2.h"
-#include "LameMob.h"
-#include "Furnace2.h"
-#include "Chest2.h"
-#include "DirectionBlock.h"
-#include "NoteBlockEntity.h"
-#include "JukeboxEntity.h"
-#include "MonsterSpawnerEntity.h"
-#include "ItemFrameEntity.h"
+#include "mobs/Zombie2.h"
+#include "mobs/Cow2.h"
+#include "mobs/Creeper2.h"
+#include "mobs/Sheep2.h"
+#include "mobs/LameMob.h"
+#include "blocks/Furnace2.h"
+#include "blocks/Chest2.h"
+#include "blocks/DirectionBlock.h"
+#include "blocks/NoteBlockEntity.h"
+#include "blocks/JukeboxEntity.h"
+#include "blocks/MonsterSpawnerEntity.h"
+#include "blocks/ItemFrameEntity.h"
 
 #include "LameFunctions.h"
 #include <sys/time.h>
@@ -407,44 +407,44 @@ public:
     short armorId[4];
     short armorAm[4];
     bool armorSt[4];
-    short invId[36];  // id вещей в ячейках в инвентаре
-    short invAm[36];  // количество вещей в ячейках в инвентаре
-    bool invSt[36]; // стакается ли предмет в ячейке?
-    short mId;        // id вещи в курсоре
-    short mAm;        // количество вещи в курсоре
-    bool mSt;       // стакается?
+    short invId[36];  // id пїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+    short invAm[36];  // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+    bool invSt[36]; // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅ?
+    short mId;        // id пїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+    short mAm;        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+    bool mSt;       // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ?
     float playerGrowth;
     float playerCollisionSize;
 
     std::vector<BaseBlock> blockTypes;
 	std::vector<BaseItem> itemTypes;
 
-    float brightFactor;         // освещение неба
-    float starsFactor;         // освещение неба
-    float dawnSunsetFactor;     // закат и рассвет
-    Vector3	fogColor;           // цвет тумана
-	Vector3 startSkyColor;      // начальный цвет неба (градиент)
-	Vector3 endSkyColor;        // конечный цвет неба (градиент)
-	Vector3 dawnSunsetSkyColor; // цвет заката и рассвета
+    float brightFactor;         // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ
+    float starsFactor;         // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ
+    float dawnSunsetFactor;     // пїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+    Vector3	fogColor;           // пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
+	Vector3 startSkyColor;      // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ (пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ)
+	Vector3 endSkyColor;        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ (пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ)
+	Vector3 dawnSunsetSkyColor; // пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 
-	Vector3 startClearSkyColor;      // начальный цвет ясного неба (градиент)
-	Vector3 endClearSkyColor;        // конечный цвет ясного неба (градиент)
-	Vector3 dawnSunsetClearSkyColor; // цвет заката и рассвета ясного неба
+	Vector3 startClearSkyColor;      // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ (пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ)
+	Vector3 endClearSkyColor;        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ (пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ)
+	Vector3 dawnSunsetClearSkyColor; // пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ
 
-	Vector3 startRainySkyColor;      // начальный цвет ясного неба (градиент)
-	Vector3 endRainySkyColor;        // конечный цвет ясного неба (градиент)
-	Vector3 dawnSunsetRainySkyColor; // цвет заката и рассвета ясного неба
+	Vector3 startRainySkyColor;      // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ (пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ)
+	Vector3 endRainySkyColor;        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ (пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ)
+	Vector3 dawnSunsetRainySkyColor; // пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ
 
 	float rainyColorAlpha;
 
 	float blockZConstLight;
 	float blockXConstLight;
 
-    unsigned int worldSeed;  // сид мира
-    float HP;       // здоровье
-    float HG;       // сытость
-    float AP;       // броня
-    char OS;        // количесвто кислорода
+    unsigned int worldSeed;  // пїЅпїЅпїЅ пїЅпїЅпїЅпїЅ
+    float HP;       // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+    float HG;       // пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+    float AP;       // пїЅпїЅпїЅпїЅпїЅ
+    char OS;        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 
     bool kickedStart;
     int kickedBy;

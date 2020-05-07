@@ -8,8 +8,8 @@
 #include <Aurora/Graphics/Camera.h>
 #include <Aurora/Utils/StateManager.h>
 
-#include "LameCraft/StateMenu.h"
-#include "LameCraft/SplashScreen.h"
+#include "states/StateMenu.h"
+#include "screens/SplashScreen.h"
 #include "LameCraft/SoundManager.h"
 #include "LameCraft/TextureHelper.h"
 

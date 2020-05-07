@@ -21,8 +21,8 @@
 #include <errno.h>
 
 #include "SimplexNoise.h"
-#include "Chest2.h"
-#include "MonsterSpawnerEntity.h"
+#include "blocks/Chest2.h"
+#include "blocks/MonsterSpawnerEntity.h"
 
 
 

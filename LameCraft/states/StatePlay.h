@@ -27,21 +27,21 @@
 
 #include "ChunkDataProvider.h"
 
-#include "Zombie2.h"
-#include "Cow2.h"
-#include "Creeper2.h"
-#include "Sheep2.h"
-#include "LameMob.h"
+#include "mobs/Zombie2.h"
+#include "mobs/Cow2.h"
+#include "mobs/Creeper2.h"
+#include "mobs/Sheep2.h"
+#include "mobs/LameMob.h"
 
 #include "CraftWorld2.h"
 #include "InputHelper.h"
 #include "SoundManager.h"
-#include "Chest2.h"
-#include "Furnace2.h"
-#include "NoteBlockEntity.h"
-#include "JukeboxEntity.h"
-#include "MonsterSpawnerEntity.h"
-#include "ItemFrameEntity.h"
+#include "blocks/Chest2.h"
+#include "blocks/Furnace2.h"
+#include "blocks/NoteBlockEntity.h"
+#include "blocks/JukeboxEntity.h"
+#include "blocks/MonsterSpawnerEntity.h"
+#include "blocks/ItemFrameEntity.h"
 
 #include "LameFunctions.h"
 
@@ -136,8 +136,8 @@ private:
 	bool startDt;
 	bool tryToDt;
     float dT;
-    float dET;          // Конец таймера
-    char dStd;          // Стадия анимации разрушения блока
+    float dET;          // пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+    char dStd;          // пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
     float last_HP;
 
     float sleepMessageTime;

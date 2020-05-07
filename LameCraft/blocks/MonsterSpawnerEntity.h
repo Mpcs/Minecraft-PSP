@@ -1,7 +1,7 @@
 #ifndef MONSTERSPAWNERENTITY_H
 #define MONSTERSPAWNERENTITY_H
 
-#include "BlockEntity.h"
+#include "blocks/BlockEntity.h"
 
 #include <string>
 #include <pspmath.h>

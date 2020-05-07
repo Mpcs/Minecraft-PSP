@@ -1,8 +1,8 @@
-#include "StatePlay.h"
+#include "StatePlayCreative.h"
 #include "TextureHelper.h"
 
 #include "WorldGenerator.h"
-#include "LoadingScreen.h"
+#include "screens/LoadingScreen.h"
 
 #define PI 3.14159265f
 #define DEG_TO_RAD (PI / 180.0f)
@@ -19,29 +19,32 @@
 #define ENGLISH 1
 #define RUSSIAN 2
 
-StatePlay::StatePlay()
+StatePlayCreative::StatePlayCreative()
 {
-    time12 = 0.0f;
     mRender = NULL;
     mSystemMgr = NULL;
     fppCam = NULL;
     UseChest = NULL;
     UseFurnace = NULL;
 
-    temp_total_time_ms = 0;
+    saveFileName = "";
 
+    sleepMessageTime = 0.0f;
+    sleepTime = 0.0f;
+    sleepMessageType = 0;
+
+    check = false;
     statisticsPage = 0;
 
-    freeMemory = 30;
+    creativePage = 0;
+    creativePageMax = 0;
+    //utils
+    freeMemory = 0;
     freeMemoryTimer = 0.0f;
-
-    ram1 = 0;
-    ram2 = 0;
-    dt = 0.0f;
-
     showCube = true;
 
-    GRAVITY = -6.8f;
+    //zmienne do poruszania
+    GRAVITY = -6.8f;//-6.8
     JUMPVELOCITY = 4.6f;
     CLIMBVELOCITY = 2.5f;
 
@@ -53,22 +56,21 @@ StatePlay::StatePlay()
     footInWater = false;
     headInLava = false;
     footInLava = false;
-    touchingCactus = false;
 
     invEn = false;
     craft3xEn = false;
     upEn = false;
     chestEn = false;
     furnaceEn = false;
-    armorEn = false;
 
     cycle = 0;
     dtt = 0.0f;
-
-    shift_x = 0.0f;
-    shift_y = 0.0f;
+    furnaceTimes = 0.0f;
 
     musicTimeGo = 0;
+
+    timeTexture = 0;
+    currentTexture = 0;
 
     chunkId = 0;
     chunks = 0;
@@ -79,15 +81,38 @@ StatePlay::StatePlay()
     dET = 0;
     dT = 0;
     dStd = -1;
-    tryToDt = false;
 
-    testPos1.x = -1;
-    testPos1.y = -1;
-    testPos1.z = -1;
+    testPos1 = Vector3(-1,-1,-1);
+    cubePos = Vector3(0,0,0);
+
+    playerVelocity = Vector3(0,0,0);
+    playerPosition = Vector3(0,0,0);
+    newPlayerPos = Vector3(0,0,0);
+    oldPlayerPos = Vector3(0,0,0);
 
     barPosition = 0;
     invXPosition = 0;
     invYPosition = 0;
+
+    tempXFurnace = 0;
+    tempYFurnace = 0;
+    tempUpFurnace = false;
+
+    tempXInv = 0;
+    tempYInv = 0;
+    tempUpInv = false;
+
+    tempXCT = 0;
+    tempYCT = 0;
+    tempUpCT = false;
+
+    tempXChest = 0;
+    tempYChest = 0;
+    tempUpChest = false;
+
+    shift_x = 0.0f;
+    shift_y = 0.0f;
+    changeY = 0.0f;
 
     craftItemId = -1;
     craftItemAm = -1;
@@ -100,8 +125,12 @@ StatePlay::StatePlay()
     chestId = -1;
     furnaceId = -1;
 
+    ram1 = 0;
+    ram2 = 0;
+    dt = 0.0f;
+
     cameraSpeed = 2.0f / 60.0f;
-    cameraMoveSpeed = 0.0f;
+    cameraMoveSpeed = 4.0f/ 60.0f;
 
     menuState = 0;
     selectPos = 0;
@@ -112,18 +141,14 @@ StatePlay::StatePlay()
     makeScreen = false;
 
 	canHeadBob = true;
-	invSteveAngle = 0.0f;
 	bobCycle = 0.0f;
-	changeY = 0.0f;
-	changeScale = 0.0f;
+    bobType = false;
 
-    slotForChangeScale = -1;
+    cubeLight = 0.0f;
 
 	anim[0] = 0;
 	anim[1] = 0;
 	anim[2] = 0;
-
-	hpAnim = 0.0f;
 
 	canFly = false;
 
@@ -134,6 +159,8 @@ StatePlay::StatePlay()
         craftSlotSt[i] = 0;
     }
 
+    creativeSlotId[26] = -1;
+
     for(int i = 0; i <= 8; i += 1)
     {
         craftSlotId3[i] = -1;
@@ -141,16 +168,13 @@ StatePlay::StatePlay()
         craftSlotSt3[i] = 0;
     }
 
-    tickHunger = 0.8f;
+    tickHunger = 0.0f;
     tickHealth = 0.0f;
     tickCave = 0.0f;
     tickChunk = 0.0f;
-    tickOS = 0.4f;
+    tickShowFlymodeMessage = 0.0f;
     tickShowSlotName = 0.0f;
-    tickCactusDamage = 0.0f;
-    tickLavaDamage = 0.6f;
-    furnaceTimes = 0.0f;
-    tutorialTimer = -1.0f;
+    tickOS = 0;
 
     rainSoundFrequency = 1.7f;
 
@@ -162,42 +186,43 @@ StatePlay::StatePlay()
     musicTime = 1;
 
     dieFactor = true;
+    starsAngle = 0.0f;
 
     animDest = 0.0f;
-    animSpeed = 1.0f;
+    animSpeed = 17.0f;
     animGo = false;
 
-    cubeLight = 0.0f;
+    showSlotName = false;
+    slotId = -1;
+    showSlotTimer = 0.0f;
+    showSlotTimerMax = 1.0f; // 1 sec
 
-    sleepMessageTime = 0.0f;
-    sleepMessageType = 0;
-    sleepTime = 0.0f;
-    loadReady = false;
+    usingSlider = false;
+    onDestroySlot = false;
 
     pre_fps = 0.0f;
     average_fps = 0;
     tick_fps = 0.0f;
     ticks = 0;
-
-    last_HP = 0;
 }
 
-StatePlay::~StatePlay()
+StatePlayCreative::~StatePlayCreative()
 {
 
 }
 
-void StatePlay::InitCamera()
+void StatePlayCreative::InitCamera()
 {
     fppCam = new Camera();
     fppCam->PositionCamera(playerPosition.x,playerPosition.y,playerPosition.z, playerPosition.x,playerPosition.y,playerPosition.z-5.0f, 0.0f,1.0f,0.0f);
     mRender->SetActiveCamera(fppCam);
 
+
     mWorld->UpdatePlayerZoneBB(fppCam->m_vPosition);
     mWorld->RebuildVisibleChunks();
 }
 
-void StatePlay::Init()
+void StatePlayCreative::Init()
 {
     //set render manager instance
     mRender = RenderManager::InstancePtr();
@@ -214,9 +239,12 @@ void StatePlay::Init()
     //mWorld->initRandompMap(128,16);
     mWorld->setTextureSize(256,16,64,16,256,16);
     mWorld->initWorldBlocksLight();
-    mWorld->SetWolrdTime(10);
+    mWorld->SetWolrdTime(6);
     mWorld->UpdatePlayerZoneBB(playerPosition);
     mWorld->buildMap();
+    mWorld->buildblocksVerts();
+    mWorld->buildcloudsVerts();
+    mWorld->buildmobVerts();
 
     playerPosition = newPlayerPos = oldPlayerPos = Vector3(64.0f,mWorld->groundHeight(64,64)+1.65,64.0f);
 
@@ -224,12 +252,10 @@ void StatePlay::Init()
 
     dt = mTimer.GetDeltaTime();
 
-    bobCycle = 3.14/2;
-    cubeLight = 0.0f;
+    bobCycle = PI/2;
 
     LoadTextures();
     mWorld->GetTexturesIds();
-    mWorld->buildblocksVerts();
 
     menuOptions = false;
     optionsMenuPos = 0;
@@ -238,10 +264,9 @@ void StatePlay::Init()
 
     walkSoundAccu = 0.0f;
     isWalking = false;
-    loadReady = false;
 }
 
-void StatePlay::InitParametric(bool makeTrees,bool makeWater,bool makeCaves,unsigned int seed_1, int worldType, char gameMode)
+void StatePlayCreative::InitParametric(bool makeTrees, bool makeWater,bool makeCaves,unsigned int seed_1,int worldType, char gameMode)
 {
     //set render manager instance
     mRender = RenderManager::InstancePtr();
@@ -283,17 +308,15 @@ void StatePlay::InitParametric(bool makeTrees,bool makeWater,bool makeCaves,unsi
 
     walkSoundAccu = 0.0f;
     isWalking = false;
-
-    cubeLight = 0.0f;
     bobCycle = PI/2.0f;
-    loadReady = true;
+    cubeLight = 0.0f;
+
+    InitCreativeInventory();
 
     mWorld->haveCompass = mWorld->HaveItemInBarSlots(Compass::getID());
-
-
 }
 
-void StatePlay::SetWorldAndSaveName(std::string worldName,std::string fileName)
+void StatePlayCreative::SetWorldAndSaveName(std::string worldName,std::string fileName)
 {
     if(mWorld != NULL)
     {
@@ -302,7 +325,7 @@ void StatePlay::SetWorldAndSaveName(std::string worldName,std::string fileName)
     saveFileName = fileName;
 }
 
-void StatePlay::LoadMap(std::string fileName,bool compressed)
+void StatePlayCreative::LoadMap(std::string fileName,bool compressed)
 {
     //enter loading screen
     LoadingScreen* loading = new LoadingScreen();
@@ -324,7 +347,7 @@ void StatePlay::LoadMap(std::string fileName,bool compressed)
     //then create our perfect world
     mWorld = new CraftWorld();
 
-    //load data
+     //load data
     if(compressed)
     {
         mWorld->LoadCompressedWorld(saveFileName);
@@ -348,6 +371,7 @@ void StatePlay::LoadMap(std::string fileName,bool compressed)
 
     int	curchunkTarget = mWorld->getChunkId(playerPosition);
     dt = mTimer.GetDeltaTime();
+
     // load textures
     LoadTextures();
     mWorld->GetTexturesIds();
@@ -370,7 +394,7 @@ void StatePlay::LoadMap(std::string fileName,bool compressed)
     mRender->fovv = mWorld->mainOptions.fov;
     RenderManager::InstancePtr()->SetPerspective(0, 480.0f / 272.0f, 0.18f, 1000.f);
 
-    loadReady = true;
+    InitCreativeInventory();
 
     mWorld->haveCompass = mWorld->HaveItemInBarSlots(Compass::getID());
 
@@ -379,48 +403,38 @@ void StatePlay::LoadMap(std::string fileName,bool compressed)
     delete loading;
 }
 
-void StatePlay::LoadTextures()
+void StatePlayCreative::LoadTextures()
 {
     //terrain texure
+    barItems = TextureHelper::Instance()->GetTexture(TextureHelper::Items1);
     texture = TextureHelper::Instance()->GetTexture(TextureHelper::Terrain1);
     texture_mips = TextureHelper::Instance()->GetTexture(TextureHelper::Terrain2);
     waterAnimation = TextureHelper::Instance()->GetTexture(TextureHelper::WaterAnimation);
-
-    invPlayerTex = TextureHelper::Instance()->GetTexture(TextureHelper::Steve);
     cloudsTex = TextureHelper::Instance()->GetTexture(TextureHelper::clouds1);
-    zombieTex = TextureHelper::Instance()->GetTexture(TextureHelper::zombieTexture);
-    cowTex = TextureHelper::Instance()->GetTexture(TextureHelper::cowTexture);
-
     blue = TextureHelper::Instance()->GetTexture(TextureHelper::Blue);
     red = TextureHelper::Instance()->GetTexture(TextureHelper::Red);
     black = TextureHelper::Instance()->GetTexture(TextureHelper::Black);
-
+    stars = TextureHelper::Instance()->GetTexture(TextureHelper::Stars);
     snowBall4 = TextureHelper::Instance()->GetTexture(TextureHelper::SnowBall3);
-
     suntex = TextureHelper::Instance()->GetTexture(TextureHelper::Sun);
     moontex = TextureHelper::Instance()->GetTexture(TextureHelper::Moon);
-    stars = TextureHelper::Instance()->GetTexture(TextureHelper::Stars);
-    rainTex  = TextureHelper::Instance()->GetTexture(TextureHelper::rainTexture);
+    grassColorTex = TextureHelper::Instance()->GetTexture(TextureHelper::vegetationColorMap);
 
-    barItems = TextureHelper::Instance()->GetTexture(TextureHelper::Items1);
-
-    pumpkinMask = new Sprite(TextureHelper::Instance()->GetTexture(TextureHelper::PumpkinMask));
-    pumpkinMask->SetPosition(240,136);
-    pumpkinMask->Scale(2.87f,2.84f);
-
+    // sprites
     waterScreen = new Sprite(TextureHelper::Instance()->GetTexture(TextureHelper::Blue));
     waterScreen->SetPosition(240,136);
     waterScreen->Scale(30,17);
 
     // hud section
-    int utilsSize = TextureManager::Instance()->getWidth(TextureHelper::Instance()->GetTexture(TextureHelper::Utils));
-    float utilScale = 364.0f/(float)utilsSize;
 
-    barSprite = new Sprite(TextureHelper::Instance()->GetTexture(TextureHelper::Utils),0*utilsSize/182,0*utilsSize/182,182*utilsSize/182,22*utilsSize/182);
+    float utilsSize = TextureManager::Instance()->getWidth(TextureHelper::Instance()->GetTexture(TextureHelper::Utils));
+    int utilScale = 364.0f/utilsSize;
+
+    barSprite = new Sprite(TextureHelper::Instance()->GetTexture(TextureHelper::Utils),0,0,182*utilsSize/182,22*utilsSize/182);
     barSprite->SetPosition(240,250);
     barSprite->Scale(utilScale,utilScale);
 
-    selectSprite = new Sprite(TextureHelper::Instance()->GetTexture(TextureHelper::Utils),0*utilsSize/182,22*utilsSize/182,24*utilsSize/182,24*utilsSize/182);
+    selectSprite = new Sprite(TextureHelper::Instance()->GetTexture(TextureHelper::Utils),0,22*utilsSize/182,24*utilsSize/182,24*utilsSize/182);
     selectSprite->SetPosition(80,250);
     selectSprite->Scale(utilScale,utilScale);
 
@@ -428,82 +442,7 @@ void StatePlay::LoadTextures()
     crossSprite->SetPosition(240,136);
     crossSprite->Scale(utilScale,utilScale);
 
-    hpCellSpriteW = new Sprite(TextureHelper::Instance()->GetTexture(TextureHelper::Utils),60*utilsSize/182,36*utilsSize/182,82*utilsSize/182,10*utilsSize/182);
-    hpCellSpriteW->SetPosition(100,29);
-    hpCellSpriteW->Scale(utilScale,utilScale);
-
-    hpCellSprite = new Sprite(TextureHelper::Instance()->GetTexture(TextureHelper::Utils),60*utilsSize/182,46*utilsSize/182,82*utilsSize/182,10*utilsSize/182);
-    hpCellSprite->SetPosition(100,21);
-    hpCellSprite->Scale(utilScale,utilScale);
-
-    hgCellSprite = new Sprite(TextureHelper::Instance()->GetTexture(TextureHelper::Utils),60*utilsSize/182,56*utilsSize/182,82*utilsSize/182,10*utilsSize/182);
-    hgCellSprite->SetPosition(100,24);
-    hgCellSprite->Scale(utilScale,utilScale);
-
-    arCellSprite = new Sprite(TextureHelper::Instance()->GetTexture(TextureHelper::Utils),60*utilsSize/182,66*utilsSize/182,82*utilsSize/182,10*utilsSize/182);
-    arCellSprite->SetPosition(100,27);
-    arCellSprite->Scale(utilScale,utilScale);
-
-    hpSprite = new Sprite(TextureHelper::Instance()->GetTexture(TextureHelper::Utils),0*utilsSize/182,66*utilsSize/182,10*utilsSize/182,10*utilsSize/182);
-    hpSprite->SetPosition(100,22);
-    hpSprite->Scale(utilScale,utilScale);
-
-    hpSpriteW = new Sprite(TextureHelper::Instance()->GetTexture(TextureHelper::Utils),20*utilsSize/182,66*utilsSize/182,10*utilsSize/182,10*utilsSize/182);
-    hpSpriteW->SetPosition(100,22);
-    hpSpriteW->Scale(utilScale,utilScale);
-
-    hpHardSprite = new Sprite(TextureHelper::Instance()->GetTexture(TextureHelper::Utils),0*utilsSize/182,56*utilsSize/182,10*utilsSize/182,10*utilsSize/182);
-    hpHardSprite->SetPosition(100,22);
-    hpHardSprite->Scale(utilScale,utilScale);
-
-    hpHardSpriteW = new Sprite(TextureHelper::Instance()->GetTexture(TextureHelper::Utils),20*utilsSize/182,56*utilsSize/182,10*utilsSize/182,10*utilsSize/182);
-    hpHardSpriteW->SetPosition(100,22);
-    hpHardSpriteW->Scale(utilScale,utilScale);
-
-    hpHalfSprite = new Sprite(TextureHelper::Instance()->GetTexture(TextureHelper::Utils),10*utilsSize/182,66*utilsSize/182,10*utilsSize/182,10*utilsSize/182);
-    hpHalfSprite->SetPosition(100,22);
-    hpHalfSprite->Scale(utilScale,utilScale);
-
-    hpHalfSpriteW = new Sprite(TextureHelper::Instance()->GetTexture(TextureHelper::Utils),30*utilsSize/182,66*utilsSize/182,10*utilsSize/182,10*utilsSize/182);
-    hpHalfSpriteW->SetPosition(100,22);
-    hpHalfSpriteW->Scale(utilScale,utilScale);
-
-    hpHardHalfSprite = new Sprite(TextureHelper::Instance()->GetTexture(TextureHelper::Utils),10*utilsSize/182,56*utilsSize/182,10*utilsSize/182,10*utilsSize/182);
-    hpHardHalfSprite->SetPosition(100,22);
-    hpHardHalfSprite->Scale(utilScale,utilScale);
-
-    hpHardHalfSpriteW = new Sprite(TextureHelper::Instance()->GetTexture(TextureHelper::Utils),30*utilsSize/182,56*utilsSize/182,10*utilsSize/182,10*utilsSize/182);
-    hpHardHalfSpriteW->SetPosition(100,22);
-    hpHardHalfSpriteW->Scale(utilScale,utilScale);
-
-    hgSprite = new Sprite(TextureHelper::Instance()->GetTexture(TextureHelper::Utils),30*utilsSize/182,46*utilsSize/182,10*utilsSize/182,10*utilsSize/182);
-    hgSprite->SetPosition(100,26);
-    hgSprite->Scale(utilScale,utilScale);
-
-    hgHalfSprite = new Sprite(TextureHelper::Instance()->GetTexture(TextureHelper::Utils),40*utilsSize/182,46*utilsSize/182,10*utilsSize/182,10*utilsSize/182);
-    hgHalfSprite->SetPosition(100,26);
-    hgHalfSprite->Scale(utilScale,utilScale);
-
-    bubbleSprite = new Sprite(TextureHelper::Instance()->GetTexture(TextureHelper::Utils),0*utilsSize/182,46*utilsSize/182,10*utilsSize/182,10*utilsSize/182);
-    bubbleSprite->SetPosition(100,27);
-    bubbleSprite->Scale(utilScale,utilScale);
-
-    arSprite = new Sprite(TextureHelper::Instance()->GetTexture(TextureHelper::Utils),10*utilsSize/182,46*utilsSize/182,10*utilsSize/182,10*utilsSize/182);
-    arSprite->SetPosition(100,27);
-    arSprite->Scale(utilScale,utilScale);
-
-    arHalfSprite = new Sprite(TextureHelper::Instance()->GetTexture(TextureHelper::Utils),20*utilsSize/182,46*utilsSize/182,10*utilsSize/182,10*utilsSize/182);
-    arHalfSprite->SetPosition(100,27);
-    arHalfSprite->Scale(utilScale,utilScale);
-
-    for(int j = 13; j >= 0; j--)
-    {
-        toolPointSprite[j] = new Sprite(TextureHelper::Instance()->GetTexture(TextureHelper::Utils),169*utilsSize/182,(49+(13-j)*2)*utilsSize/182,13*utilsSize/182,2*utilsSize/182,true);//200
-        toolPointSprite[j]->SetPosition(240,136);
-        toolPointSprite[j]->Scale(utilScale,utilScale);
-    }
-
-    //menu section
+    // menu section
     buttonSprite = new Sprite(TextureHelper::Instance()->GetTexture(TextureHelper::Buttons),0,0,95,12); // stand
     buttonSprite->SetPosition(240,150);
     buttonSprite->Scale(2,2);
@@ -521,10 +460,10 @@ void StatePlay::LoadTextures()
 
     // inventory section
 
-    int invGuiSize = TextureManager::Instance()->getWidth(TextureHelper::Instance()->GetTexture(TextureHelper::inv));
+    float invGuiSize = TextureManager::Instance()->getWidth(TextureHelper::Instance()->GetTexture(TextureHelper::inv));
     float invGuiScale = 352.0f/(float)invGuiSize;
 
-    invSprite = new Sprite(TextureHelper::Instance()->GetTexture(TextureHelper::inv));//200
+    invSprite = new Sprite(TextureHelper::Instance()->GetTexture(TextureHelper::invCreative));//200
     invSprite->SetPosition(240,136);
     invSprite->Scale(invGuiScale,invGuiScale);
 
@@ -540,8 +479,23 @@ void StatePlay::LoadTextures()
     furSprite->SetPosition(240,136);
     furSprite->Scale(invGuiScale,invGuiScale);
 
-    int invArrowSize = TextureManager::Instance()->getWidth(TextureHelper::Instance()->GetTexture(TextureHelper::furArrow));
-    float invArrowScale = 44.0f/(float)invArrowSize;
+    sliderSprite = new Sprite(TextureHelper::Instance()->GetTexture(TextureHelper::invSlider),0,0,12,15);//200
+    sliderSprite->SetPosition(240,136);
+    sliderSprite->Scale(invGuiScale,invGuiScale);
+
+    sliderLightedSprite = new Sprite(TextureHelper::Instance()->GetTexture(TextureHelper::invSlider),12,0,12,15);//200
+    sliderLightedSprite->SetPosition(240,136);
+    sliderLightedSprite->Scale(invGuiScale,invGuiScale);
+
+    float invArrowSize = TextureManager::Instance()->getWidth(TextureHelper::Instance()->GetTexture(TextureHelper::furArrow));
+    float invArrowScale = 44.0f/invArrowSize;
+
+    for(int j = 13; j >= 0; j--)
+    {
+        toolPointSprite[j] = new Sprite(TextureHelper::Instance()->GetTexture(TextureHelper::Utils),169*utilsSize/182,(49+(13-j)*2)*utilsSize/182,13*utilsSize/182,2*utilsSize/182,true);//200
+        toolPointSprite[j]->SetPosition(240,136);
+        toolPointSprite[j]->Scale(utilScale,utilScale);
+    }
 
     for(int j = 0; j <= 21; j++)
     {
@@ -561,7 +515,7 @@ void StatePlay::LoadTextures()
     }
 
     selectInvSprite = new Sprite(TextureHelper::Instance()->GetTexture(TextureHelper::cursor));//200
-    selectInvSprite->SetPosition(96,138);
+    selectInvSprite->SetPosition(96+(invXPosition*36),28+(invYPosition*36));
 
     invCellSprite = new Sprite(TextureHelper::Instance()->GetTexture(TextureHelper::invCell));//200
     invCellSprite->SetPosition(240,136);
@@ -572,20 +526,187 @@ void StatePlay::LoadTextures()
     skyBox = new SkyBox();
     destroyer = new Destroyer();
     starsBox = new StarsBox();
-    invPlayer = new InventoryPlayer();
 }
 
-void StatePlay::SetDayTimeAfterLoad()
+void StatePlayCreative::SetCreativePage(char page)
 {
 
 }
 
-void StatePlay::Enter()
+void StatePlayCreative::InitCreativeInventory()
 {
-    RenderManager::InstancePtr()->SetPerspective(55.0f, 480.0f / 272.0f, 0.18f, 1000.0f);//1000
+    inventoryItems.push_back(CobbleStone::getID());
+    inventoryItems.push_back(RockBlock::getID());
+    inventoryItems.push_back(DiamondOre::getID());
+    inventoryItems.push_back(GoldBlock::getID());
+    inventoryItems.push_back(IronOre::getID());
+    inventoryItems.push_back(CoalOre::getID());
+    inventoryItems.push_back(LapisOre::getID());
+    inventoryItems.push_back(RedstoneOre::getID());
+    inventoryItems.push_back(StoneBrick::getID());
+    inventoryItems.push_back(CrackedStoneBrick::getID());
+    inventoryItems.push_back(CarvedStoneBrick::getID());
+    inventoryItems.push_back(ClayBlock::getID());
+    inventoryItems.push_back(Diamond::getID());
+    inventoryItems.push_back(Gold::getID());
+    inventoryItems.push_back(Iron::getID());
+    inventoryItems.push_back(IronBlock::getID()); // bedrock
+    inventoryItems.push_back(LapisBlock::getID());
+    inventoryItems.push_back(BrickBlock::getID());
+    inventoryItems.push_back(MossyCobblestone::getID());
+    inventoryItems.push_back(Slab::getID());
+    inventoryItems.push_back(StoneSandHalfBlock::getID());
+    inventoryItems.push_back(OakHalfBlock::getID());
+    inventoryItems.push_back(BirchHalfBlock::getID());
+    inventoryItems.push_back(SpruceHalfBlock::getID());
+    inventoryItems.push_back(CobbleHalfBlock::getID());
+    inventoryItems.push_back(BrickHalfBlock::getID());
+    inventoryItems.push_back(HalfStoneBrick::getID());
+    inventoryItems.push_back(Obsidian::getID());
+    inventoryItems.push_back(WoodBlock::getID());
+    inventoryItems.push_back(WhiteWoodBlock::getID()); // birch
+    inventoryItems.push_back(DarkWoodBlock::getID()); // spruce
+    inventoryItems.push_back(LeavesBlock::getID());
+    inventoryItems.push_back(BirchLeaves::getID());
+    inventoryItems.push_back(SpruceLeaves::getID());
+    inventoryItems.push_back(DirtBlock::getID());
+    inventoryItems.push_back(GrassBlock::getID());
+    inventoryItems.push_back(SandBlock::getID());
+    inventoryItems.push_back(SandStone::getID());
+    inventoryItems.push_back(Gravel::getID());
+    inventoryItems.push_back(OakPlanks::getID());
+    inventoryItems.push_back(BirchPlanks::getID());
+    inventoryItems.push_back(SprucePlanks::getID());
+    inventoryItems.push_back(OakSaplingItem::getID());
+    inventoryItems.push_back(BirchSaplingItem::getID());
+    inventoryItems.push_back(SpruceSaplingItem::getID());
+    inventoryItems.push_back(IceBlock::getID());
+    inventoryItems.push_back(WaterBlock::getID());
+    inventoryItems.push_back(Lava::getID());
+    inventoryItems.push_back(SnowBlock::getID());
+    inventoryItems.push_back(SnowSoil::getID());
+    inventoryItems.push_back(Snow2::getID());
+    inventoryItems.push_back(Flower1Item::getID());
+    inventoryItems.push_back(Flower2Item::getID());
+    inventoryItems.push_back(MooshroomItem1::getID());
+    inventoryItems.push_back(MooshroomItem2::getID());
+    inventoryItems.push_back(CactusBlock::getID());
+    inventoryItems.push_back(MelonBlock::getID());
+    inventoryItems.push_back(Pumpkin3::getID());
+    inventoryItems.push_back(JackOLantern3::getID());
+    inventoryItems.push_back(IronBarsItem::getID());
+    inventoryItems.push_back(GlassPanelItem::getID());
+    inventoryItems.push_back(ChestBlock3::getID());
+    inventoryItems.push_back(CraftingTable::getID());
+    inventoryItems.push_back(FurnaceOff::getID());
+    inventoryItems.push_back(GlassBlock::getID());
+    inventoryItems.push_back(TNTBlock::getID());
+    inventoryItems.push_back(ShelfBlock::getID());
+    inventoryItems.push_back(NoteBlock::getID());
+    inventoryItems.push_back(JukeBox::getID());
+    inventoryItems.push_back(HayBale::getID());
+    inventoryItems.push_back(CoalBlock::getID());
+    inventoryItems.push_back(RedstoneBlock::getID());
+
+    for(int i = BlackWoolBlock::getID(); i <= WhiteWoolBlock::getID(); i++)
+    {
+        inventoryItems.push_back(i);
+    }
+
+    inventoryItems.push_back(WoodenFence::getID());
+    inventoryItems.push_back(BirchFence::getID());
+    inventoryItems.push_back(SpruceFence::getID());
+    inventoryItems.push_back(LadderItem::getID());
+    inventoryItems.push_back(TorchItem::getID());
+    inventoryItems.push_back(WoodenStair1::getID());
+    inventoryItems.push_back(BirchStair1::getID());
+    inventoryItems.push_back(SpruceStair1::getID());
+    inventoryItems.push_back(CobbleStair1::getID());
+    inventoryItems.push_back(BrickStair1::getID());
+    inventoryItems.push_back(TrapdoorClosed1::getID());
+
+    for(int i = BlackWoolCarpet::getID(); i <= WhiteWoolCarpet::getID(); i++)
+    {
+        inventoryItems.push_back(i);
+    }
+
+    inventoryItems.push_back(ItemFrameItem::getID());
+    inventoryItems.push_back(DoorItem::getID());
+    inventoryItems.push_back(BedItem::getID());
+    inventoryItems.push_back(Apple::getID());
+    inventoryItems.push_back(GoldenApple::getID());
+    inventoryItems.push_back(Coal::getID());
+    inventoryItems.push_back(DiamondItem::getID());
+    inventoryItems.push_back(IronBar::getID());
+    inventoryItems.push_back(GoldenBar::getID());
+    inventoryItems.push_back(Clock::getID());
+    inventoryItems.push_back(Compass::getID());
+
+    for(int i = WoodenPickaxe::getID(); i <= Scissors::getID(); i++)
+    {
+        inventoryItems.push_back(i);
+    }
+    inventoryItems.push_back(FlintAndSteel::getID());
+    for(int i = LeatherHelmet::getID(); i <= GoldenBoots::getID(); i++)
+    {
+        inventoryItems.push_back(i);
+    }
+
+    inventoryItems.push_back(Stick::getID());
+    inventoryItems.push_back(Bowl::getID());
+    inventoryItems.push_back(MooshroomBowl::getID());
+    inventoryItems.push_back(WheatSeeds::getID());
+    inventoryItems.push_back(Wheat::getID());
+    inventoryItems.push_back(WhiteBread::getID());
+    inventoryItems.push_back(RawBeef::getID());
+    inventoryItems.push_back(Steak::getID());
+    inventoryItems.push_back(Busket::getID());
+    inventoryItems.push_back(MilkBusket::getID());
+    inventoryItems.push_back(SnowBallItem::getID());
+    inventoryItems.push_back(Leather::getID());
+    inventoryItems.push_back(Brick::getID());
+    inventoryItems.push_back(Clay::getID());
+    inventoryItems.push_back(CaneItem::getID());
+    inventoryItems.push_back(Paper::getID());
+    inventoryItems.push_back(Book::getID());
+    inventoryItems.push_back(Bone::getID());
+    inventoryItems.push_back(BoneMeal::getID());
+    inventoryItems.push_back(Cookie::getID());
+    inventoryItems.push_back(MelonSeeds::getID());
+    inventoryItems.push_back(PumpkinSeeds::getID());
+    inventoryItems.push_back(MelonItem::getID());
+    inventoryItems.push_back(Potato::getID());
+    inventoryItems.push_back(BakedPotato::getID());
+    inventoryItems.push_back(PoisonedPotato::getID());
+    inventoryItems.push_back(Carrot::getID());
+    inventoryItems.push_back(Disk1::getID());
+    inventoryItems.push_back(Disk2::getID());
+    inventoryItems.push_back(Disk3::getID());
+    inventoryItems.push_back(Disk4::getID());
+    inventoryItems.push_back(Disk5::getID());
+    inventoryItems.push_back(Disk6::getID());
+    inventoryItems.push_back(Disk7::getID());
+    inventoryItems.push_back(Disk8::getID());
+    inventoryItems.push_back(Disk9::getID());
+    inventoryItems.push_back(Disk10::getID());
+    inventoryItems.push_back(Disk11::getID());
+    inventoryItems.push_back(Disk12::getID());
+
+    creativePage = 0;
+    creativePageMax = inventoryItems.size() / 27;
 }
 
-void StatePlay::CleanUp()
+void StatePlayCreative::SetDayTimeAfterLoad()
+{
+
+}
+
+void StatePlayCreative::Enter()
+{
+    RenderManager::InstancePtr()->SetPerspective(55.0f, 480.0f / 272.0f, 0.18f, 1000.0f);
+}
+
+void StatePlayCreative::CleanUp()
 {
     if(mSnowBalls.empty() == false)
     {
@@ -595,6 +716,8 @@ void StatePlay::CleanUp()
         }
         mSnowBalls.clear();
     }
+
+    inventoryItems.clear();
 
     delete mRender->mCam;
     mRender->mCam = NULL;
@@ -611,17 +734,17 @@ void StatePlay::CleanUp()
     delete crtSprite;
     delete chtSprite;
     delete selectInvSprite;
+    delete sliderSprite;
+    delete sliderLightedSprite;
 
     delete skyLight;
     delete skyMoonLight;
     delete skyBox;
     delete destroyer;
     delete starsBox;
-    delete invPlayer;
 
     delete furSprite;
     delete waterScreen;
-    delete pumpkinMask;
 
     for(unsigned int i = 0; i <= 13; i++)
     {
@@ -638,41 +761,20 @@ void StatePlay::CleanUp()
         delete toolPointSprite[i];
     }
 
-    delete hpCellSprite;
-    delete hpSprite;
-    delete hpHardSprite;
-    delete hpHalfSprite;
-    delete hpHardHalfSprite;
-    delete hpCellSpriteW;
-    delete hpSpriteW;
-    delete hpHardSpriteW;
-    delete hpHalfSpriteW;
-    delete hpHardHalfSpriteW;
-
-    delete hgCellSprite;
-    delete hgSprite;
-    delete hgHalfSprite;
-
-    delete arSprite;
-    delete arHalfSprite;
-    delete arCellSprite;
-
-    delete bubbleSprite;
-
     delete mWorld;
 }
 
-void StatePlay::Pause()
+void StatePlayCreative::Pause()
 {
 
 }
 
-void StatePlay::Resume()
+void StatePlayCreative::Resume()
 {
 
 }
 
-int StatePlay::FindChestId(int x, int y, int z)
+int StatePlayCreative::FindChestId(int x, int y, int z)
 {
     int o;
     int address;
@@ -692,7 +794,7 @@ int StatePlay::FindChestId(int x, int y, int z)
     return o;
 }
 
-int StatePlay::FindFurnaceId(int x, int y, int z)
+int StatePlayCreative::FindFurnaceId(int x, int y, int z)
 {
     int o;
     o = -1;
@@ -709,7 +811,7 @@ int StatePlay::FindFurnaceId(int x, int y, int z)
     return o;
 }
 
-void StatePlay::CheckForFurnFuel(Furnace* Fur)
+void StatePlayCreative::CheckForFurnFuel(Furnace* Fur)
 {
     int furnItem;
 
@@ -841,7 +943,7 @@ void StatePlay::CheckForFurnFuel(Furnace* Fur)
     }
 }
 
-void StatePlay::CheckForFurnWorking(Furnace* Fur)
+void StatePlayCreative::CheckForFurnWorking(Furnace* Fur)
 {
     int furnItem;
 
@@ -892,7 +994,7 @@ void StatePlay::CheckForFurnWorking(Furnace* Fur)
     }
 }
 
-void StatePlay::ReadyFurnSmelting(Furnace* Fur)
+void StatePlayCreative::ReadyFurnSmelting(Furnace* Fur)
 {
     int furnItem;
 
@@ -1158,7 +1260,7 @@ void StatePlay::CraftItem2x2()
     }
 } */
 
-void StatePlay::CraftItem2x2()
+void StatePlayCreative::CraftItem2x2()
 {
     craftItemId = -1;
     craftItemAm = -1;
@@ -1693,22 +1795,13 @@ void StatePlay::CraftItem2x2()
 
         // torch
         case 553:
-            if(((craftSlotId[0] == 277 || craftSlotId[0] == 392) && craftSlotId[2] == 276) || ((craftSlotId[1] == 277 || craftSlotId[1] == 392)  && craftSlotId[3] == 276))
+            if((craftSlotId[0] == 277 && craftSlotId[2] == 276) || (craftSlotId[1] == 277 && craftSlotId[3] == 276))
             {
                 craftItemId = 308;
                 craftItemSt = 1;
                 craftItemAm = 4;
             }
         break;
-
-            case 668:
-                if(((craftSlotId[0] == 277 || craftSlotId[0] == 392) && craftSlotId[2] == 276) || ((craftSlotId[1] == 277 || craftSlotId[1] == 392)  && craftSlotId[3] == 276))
-                {
-                    craftItemId = 308;
-                    craftItemSt = 1;
-                    craftItemAm = 4;
-                }
-                break;
 
         // jack o'lantern
         case 383:
@@ -1777,8 +1870,9 @@ void StatePlay::CraftItem2x2()
         }
     }
 }
+
 /// Need to create new crafting system. Too many recipes cause mistakes and errors due to this system
-void StatePlay::CraftItem3x3()
+void StatePlayCreative::CraftItem3x3()
 {
     craftItemId3 = -1;
     craftItemAm3 = -1;
@@ -3434,7 +3528,7 @@ void StatePlay::CraftItem3x3()
     }
 }
 
-void StatePlay::HandleEvents(StateManager* sManager)
+void StatePlayCreative::HandleEvents(StateManager* sManager)
 {
     //update delta time
     dt = mTimer.GetDeltaTime();
@@ -3464,432 +3558,419 @@ void StatePlay::HandleEvents(StateManager* sManager)
     //update input
     mSystemMgr->InputUpdate();
 
-    if(mWorld->HP > 0 && sleepTime <= 0.0f)
+    if(menuState == 0)//game state
     {
-        mWorld->playerGrowth = 1.65f;
-        if(menuState == 0)//game state
+        if(invEn == false && craft3xEn == false && chestEn == false && furnaceEn == false)
         {
-            if(invEn == false && craft3xEn == false && chestEn == false && furnaceEn == false)
+            //camera rotating
+            //camera rotate up
+            if(keyHold(InputHelper::Instance()->getButtonToAction(4)))
             {
-                if(tickShowSlotName > -0.1f)
+                if (startDt == true)
                 {
-                    tickShowSlotName -= dt;
-                }
-
-                //switch right
-                if(keyPressed(InputHelper::Instance()->getButtonToAction(9)))
-                {
-                    if (mWorld->invId[27+barPosition] != -1)
-                    {
-                        changeY = -0.16f;
-                        anim[0] = 1;
-                    }
-                    barPosition != 8 ? barPosition ++ : barPosition = 0;
-
-                    selectSprite->SetPosition(80 + (barPosition * 40),250);
-
-                    tickShowSlotName = 1.25f;
-
-                    startDt = 0;
-                    dT = 0;
-                    dET = 0;
+                    startDt = false;
                     dStd = -1;
                 }
-
-                //switch left
-                if(keyPressed(InputHelper::Instance()->getButtonToAction(8)))
+                fppCam->PitchView(1.0f*dt);
+                fppCam->PitchView(1.0f*dt);
+                shift_y > -0.06f ? shift_y -= 0.24*dt : shift_y = -0.06f;
+            }
+            else
+            {
+                if (shift_y < 0.0f)
                 {
-                    if (mWorld->invId[27+barPosition] != -1)
-                    {
-                        changeY = -0.16f;
-                        anim[0] = 1;
-                    }
-                    barPosition != 0 ? barPosition -- : barPosition = 8;
+                    shift_y += 0.24*dt;
+                }
+                if(abs(shift_y) <= 0.001f)
+                {
+                    shift_y = 0.0f;
+                }
+            }
 
-                    selectSprite->SetPosition(80 + (barPosition * 40),250);
-
-                    tickShowSlotName = 1.25f;
-
-                    startDt = 0;
-                    dT = 0;
-                    dET = 0;
+            //camera rotate down
+            if(keyHold(InputHelper::Instance()->getButtonToAction(5)))
+            {
+                if (startDt == true)
+                {
+                    startDt = false;
                     dStd = -1;
                 }
-
-                // drop 1 item
-                if(mSystemMgr->KeyPressed(PSP_CTRL_UP))
+                fppCam->PitchView(-1.0f*dt);
+                fppCam->PitchView(-1.0f*dt);
+                shift_y < 0.06f ? shift_y += 0.24*dt : shift_y = 0.06f;
+            }
+            else
+            {
+                if (shift_y > 0.0f)
                 {
-                    if(keyPressed(InputHelper::Instance()->getButtonToAction(14)))
-                    {
-                        if(mWorld->invId[27+barPosition] > 0)
-                        {
-                            Vector3 dropVelocity = Vector3(0,0,0);
-
-                            dropVelocity.x = (cosf((fppCam->horAngle/180.0f)*PI))*4.0f;
-                            dropVelocity.y = 2.0f;
-                            dropVelocity.z = (sinf((fppCam->horAngle/180.0f)*PI))*4.0f;
-
-                            if(mWorld->invSt[27+barPosition] == true)
-                            {
-                                if(mWorld->invAm[27+barPosition] > 0)
-                                {
-                                    mWorld->invAm[27+barPosition] -= 1;
-                                    mWorld->DropThisNoAlign(mWorld->invId[27+barPosition],1,mWorld->invSt[27+barPosition],Vector3(fppCam->m_vPosition.x,fppCam->m_vPosition.y-0.25f,fppCam->m_vPosition.z),dropVelocity);
-
-                                    if(mWorld->invAm[27+barPosition] == 0)
-                                    {
-                                        mWorld->invAm[27+barPosition] = -1;
-                                        mWorld->invSt[27+barPosition] = 0;
-                                        mWorld->invId[27+barPosition] = -1;
-                                    }
-                                }
-                            }
-                            else
-                            {
-                                mWorld->DropThisNoAlign(mWorld->invId[27+barPosition],mWorld->invAm[27+barPosition],mWorld->invSt[27+barPosition],Vector3(fppCam->m_vPosition.x,fppCam->m_vPosition.y-0.25f,fppCam->m_vPosition.z),dropVelocity);
-
-                                mWorld->invAm[27+barPosition] = -1;
-                                mWorld->invSt[27+barPosition] = 0;
-                                mWorld->invId[27+barPosition] = -1;
-                            }
-                        }
-                        return;
-                    }
+                    shift_y -= 0.24*dt;
                 }
-
-                //open menu
-                if(sleepTime == 0.0f)
+                if(abs(shift_y) <= 0.001f)
                 {
-                    if(keyPressed(InputHelper::Instance()->getButtonToAction(15)))
-                    {
-                        menuState = 1;
-                        menuOptions = false;
-                        optionsMenuPos = 0;
-                    }
+                    shift_y = 0.0f;
                 }
+            }
 
-                //camera rotate up
-                if(keyHold(InputHelper::Instance()->getButtonToAction(4)))
+            //camera rotate right
+            if(keyHold(InputHelper::Instance()->getButtonToAction(7)))
+            {
+                if (startDt == true)
                 {
+                    startDt = false;
+                    dStd = -1;
+                }
+                fppCam->RotateView(-2.0f*dt,0,1,0);
+                shift_x > -0.06f ? shift_x -= 0.24*dt : shift_x = -0.06f;
+            }
+            else
+            {
+                if (shift_x < 0.0f)
+                {
+                    shift_x += 0.24*dt;
+                }
+                if(abs(shift_x) <= 0.001f)
+                {
+                    shift_x = 0.0f;
+                }
+            }
+
+            //camera rotate left
+            if(keyHold(InputHelper::Instance()->getButtonToAction(6)))
+            {
+                if (startDt == true)
+                {
+                    startDt = false;
+                    dStd = -1;
+                }
+                fppCam->RotateView(2.0f*dt,0,1,0);
+                shift_x < 0.06f ? shift_x += 0.24*dt : shift_x = 0.06f;
+            }
+            else
+            {
+                if (shift_x > 0.0f)
+                {
+                    shift_x -= 0.24*dt;
+                }
+                if(abs(shift_x) <= 0.001f)
+                {
+                    shift_x = 0.0f;
+                }
+            }
+
+            //camera moving
+            moving = false;
+            moveForward = false;
+            bool diagonleMoving = false;
+
+            if(sleepTime == 0.0f)
+            {
+                //move forward
+                if(keyHold(InputHelper::Instance()->getButtonToAction(0)))
+                {
+                    float slowdown = 0.8f;
+                    float slowdown2 = 1.0f;
                     if (startDt == true)
                     {
                         startDt = false;
                         dStd = -1;
                     }
-                    fppCam->PitchView(1.0f*dt);
-                    fppCam->PitchView(1.0f*dt);
-                    shift_y > -0.06f ? shift_y -= 0.24*dt : shift_y = -0.06f;
-                }
-                else
-                {
-                    if (shift_y < 0.0f)
+                    moving = true;
+                    moveForward = true;
+
+                    if(walkingOnGround == false)
                     {
-                        shift_y += 0.24*dt;
+                        slowdown -= 0.2f;
+                        slowdown2 -= 0.2f;
                     }
-                    if(abs(shift_y) <= 0.001f)
+                    if(slowdown < 0.72)
                     {
-                        shift_y = 0.0f;
-                    }
-                }
-
-                //camera rotate down
-                if(keyHold(InputHelper::Instance()->getButtonToAction(5)))
-                {
-                    if (startDt == true)
-                    {
-                        startDt = false;
-                        dStd = -1;
-                    }
-                    fppCam->PitchView(-1.0f*dt);
-                    fppCam->PitchView(-1.0f*dt);
-                    shift_y < 0.06f ? shift_y += 0.24*dt : shift_y = 0.06f;
-                }
-                else
-                {
-                    if (shift_y > 0.0f)
-                    {
-                        shift_y -= 0.24*dt;
-                    }
-                    if(abs(shift_y) <= 0.001f)
-                    {
-                        shift_y = 0.0f;
-                    }
-                }
-
-                //camera rotate right
-                if(keyHold(InputHelper::Instance()->getButtonToAction(7)))
-                {
-                    if (startDt == true)
-                    {
-                        startDt = false;
-                        dStd = -1;
-                    }
-                    fppCam->RotateView(-2.0f*dt,0,1,0);
-                    shift_x > -0.06f ? shift_x -= 0.24*dt : shift_x = -0.06f;
-                }
-                else
-                {
-                    if (shift_x < 0.0f)
-                    {
-                        shift_x += 0.24*dt;
-                    }
-                    if(abs(shift_x) <= 0.001f)
-                    {
-                        shift_x = 0.0f;
-                    }
-                }
-
-                //camera rotate left
-                if(keyHold(InputHelper::Instance()->getButtonToAction(6)))
-                {
-                    if (startDt == true)
-                    {
-                        startDt = false;
-                        dStd = -1;
-                    }
-                    fppCam->RotateView(2.0f*dt,0,1,0);
-                    shift_x < 0.06f ? shift_x += 0.24*dt : shift_x = 0.06f;
-                }
-                else
-                {
-                    if (shift_x > 0.0f)
-                    {
-                        shift_x -= 0.24*dt;
-                    }
-                    if(abs(shift_x) <= 0.001f)
-                    {
-                        shift_x = 0.0f;
-                    }
-                }
-
-                //camera moving
-                moving = false;
-                moveForward = false;
-                bool diagonleMoving = false;
-
-                if(sleepTime == 0.0f)
-                {
-                    //move forward
-                    if(keyHold(InputHelper::Instance()->getButtonToAction(0)))
-                    {
-                        float slowdown = 0.8f;
-                        float slowdown2 = 1.0f;
-                        if (startDt == true)
-                        {
-                            startDt = false;
-                            dStd = -1;
-                        }
-                        moving = true;
-                        moveForward = true;
-
-                        if(walkingOnGround == false)
-                        {
-                            slowdown -= 0.2f;
-                            slowdown2 -= 0.2f;
-                        }
-                        if(slowdown < 0.72)
-                        {
-                            slowdown = 0.72f;
-                        }
-
-                        //move right at the same time
-                        if(keyHold(InputHelper::Instance()->getButtonToAction(3)))
-                        {
-                            diagonleMoving = true;
-                            fppCam->StrafePhysic(cameraMoveSpeed*slowdown);
-
-                            if(canFly)
-                                fppCam->MovePhysic(cameraMoveSpeed*slowdown);
-                            else
-                                fppCam->MovePhysicNoY(cameraMoveSpeed*slowdown);
-                        }
-
-                        //move left at the same time
-                        if(keyHold(InputHelper::Instance()->getButtonToAction(2)))
-                        {
-                            diagonleMoving = true;
-                            fppCam->StrafePhysic(-cameraMoveSpeed*slowdown);
-
-                            if(canFly)
-                                fppCam->MovePhysic(cameraMoveSpeed*slowdown);
-                            else
-                                fppCam->MovePhysicNoY(cameraMoveSpeed*slowdown);
-                        }
-
-                        if(!diagonleMoving)
-                        {
-                            if(canFly)
-                                fppCam->MovePhysic(cameraMoveSpeed*slowdown2);
-                            else
-                                fppCam->MovePhysicNoY(cameraMoveSpeed*slowdown2);
-                        }
-
-                        if(mWorld->HG > 0)
-                        {
-                            mWorld->HG -= dt/75.0f;
-                        }
+                        slowdown = 0.72f;
                     }
 
-                    //move back
-                    if(keyHold(InputHelper::Instance()->getButtonToAction(1)))
-                    {
-                        float slowdown = 0.8f;
-                        float slowdown2 = 1.0f;
-                        if (startDt == true)
-                        {
-                            startDt = false;
-                            dStd = -1;
-                        }
-                        moving = true;
-                        moveForward = false;
-
-                        if(walkingOnGround == false)
-                        {
-                            slowdown -= 0.2f;
-                            slowdown2 -= 0.2f;
-                        }
-                        if(slowdown < 0.72)
-                        {
-                            slowdown = 0.72f;
-                        }
-                        //move right at the same time
-                        if(keyHold(InputHelper::Instance()->getButtonToAction(3)))
-                        {
-                            diagonleMoving = true;
-                            fppCam->StrafePhysic(cameraMoveSpeed*slowdown);
-
-                            if(canFly)
-                                fppCam->MovePhysic(-cameraMoveSpeed*slowdown);
-                            else
-                                fppCam->MovePhysicNoY(-cameraMoveSpeed*slowdown);
-                        }
-
-                        //move left at the same time
-                        if(keyHold(InputHelper::Instance()->getButtonToAction(2)))
-                        {
-                            diagonleMoving = true;
-                            fppCam->StrafePhysic(-cameraMoveSpeed*slowdown);
-
-                            if(canFly)
-                                fppCam->MovePhysic(-cameraMoveSpeed*slowdown);
-                            else
-                                fppCam->MovePhysicNoY(-cameraMoveSpeed*slowdown);
-                        }
-
-                        if(!diagonleMoving)
-                        {
-                            if(canFly)
-                                fppCam->MovePhysic(-cameraMoveSpeed*slowdown2);
-                            else
-                                fppCam->MovePhysicNoY(-cameraMoveSpeed*slowdown2);
-                        }
-
-                        if(mWorld->HG > 0)
-                        {
-                            mWorld->HG -= dt/75.0f;
-                        }
-                    }
-
-                    //move right
+                    //move right at the same time
                     if(keyHold(InputHelper::Instance()->getButtonToAction(3)))
                     {
-                        float slowdown = 1.0f;
+                        diagonleMoving = true;
+                        fppCam->StrafePhysic(cameraMoveSpeed*slowdown);
 
-                        if(walkingOnGround == false)
-                        {
-                            slowdown -= 0.2f;
-                        }
-
-                        if (startDt == true)
-                        {
-                            startDt = false;
-                            dStd = -1;
-                        }
-                        if(!diagonleMoving)
-                        {
-                            fppCam->StrafePhysic(cameraMoveSpeed*slowdown);
-                            moving = true;
-                        }
-
-                        if(mWorld->HG > 0)
-                        {
-                            mWorld->HG -= dt/75.0f;
-                        }
+                        if(canFly)
+                            fppCam->MovePhysic(cameraMoveSpeed*slowdown);
+                        else
+                            fppCam->MovePhysicNoY(cameraMoveSpeed*slowdown);
                     }
 
-                    //move left
+                    //move left at the same time
                     if(keyHold(InputHelper::Instance()->getButtonToAction(2)))
                     {
-                        float slowdown = 1.0f;
+                        diagonleMoving = true;
+                        fppCam->StrafePhysic(-cameraMoveSpeed*slowdown);
 
-                        if(walkingOnGround == false)
-                        {
-                            slowdown -= 0.2f;
-                        }
-
-                        if (startDt == true)
-                        {
-                            startDt = false;
-                            dStd = -1;
-                        }
-                        if(!diagonleMoving)
-                        {
-                            fppCam->StrafePhysic(-cameraMoveSpeed*slowdown);
-                            moving = true;
-                        }
-
-                        if(mWorld->HG > 0)
-                        {
-                            mWorld->HG -= dt/75.0f;
-                        }
+                        if(canFly)
+                            fppCam->MovePhysic(cameraMoveSpeed*slowdown);
+                        else
+                            fppCam->MovePhysicNoY(cameraMoveSpeed*slowdown);
                     }
 
-                    // jumping/swiming
-                    if(keyHold(InputHelper::Instance()->getButtonToAction(12)))
+                    if(!diagonleMoving)
                     {
+                        if(canFly)
+                            fppCam->MovePhysic(cameraMoveSpeed*slowdown2);
+                        else
+                            fppCam->MovePhysicNoY(cameraMoveSpeed*slowdown2);
+                    }
+                }
+
+                //move back
+                if(keyHold(InputHelper::Instance()->getButtonToAction(1)))
+                {
+                    float slowdown = 0.8f;
+                    float slowdown2 = 1.0f;
+                    if (startDt == true)
+                    {
+                        startDt = false;
                         dStd = -1;
-                        if (headInWater || headInLava || mWorld->BlockAtPoint(Vector3(playerPosition.x,playerPosition.y-0.65f,playerPosition.z)) == WaterBlock::getID() || mWorld->BlockAtPoint(Vector3(playerPosition.x,playerPosition.y-0.65f,playerPosition.z)) == Lava::getID())
+                    }
+                    moving = true;
+                    moveForward = false;
+
+                    if(walkingOnGround == false)
+                    {
+                        slowdown -= 0.2f;
+                        slowdown2 -= 0.2f;
+                    }
+                    if(slowdown < 0.72)
+                    {
+                        slowdown = 0.72f;
+                    }
+
+                    //move right at the same time
+                    if(keyHold(InputHelper::Instance()->getButtonToAction(3)))
+                    {
+                        diagonleMoving = true;
+                        fppCam->StrafePhysic(cameraMoveSpeed*slowdown);
+
+                        if(canFly)
+                            fppCam->MovePhysic(-cameraMoveSpeed*slowdown);
+                        else
+                            fppCam->MovePhysicNoY(-cameraMoveSpeed*slowdown);
+                    }
+
+                    //move left at the same time
+                    if(keyHold(InputHelper::Instance()->getButtonToAction(2)))
+                    {
+                        diagonleMoving = true;
+                        fppCam->StrafePhysic(-cameraMoveSpeed*slowdown);
+
+                        if(canFly)
+                            fppCam->MovePhysic(-cameraMoveSpeed*slowdown);
+                        else
+                            fppCam->MovePhysicNoY(-cameraMoveSpeed*slowdown);
+                    }
+
+                    if(!diagonleMoving)
+                    {
+                        if(canFly)
+                            fppCam->MovePhysic(-cameraMoveSpeed*slowdown2);
+                        else
+                            fppCam->MovePhysicNoY(-cameraMoveSpeed*slowdown2);
+                    }
+                }
+
+                //move right
+                if(keyHold(InputHelper::Instance()->getButtonToAction(3)))
+                {
+                    float slowdown = 1.0f;
+
+                    if(walkingOnGround == false)
+                    {
+                        slowdown -= 0.2f;
+                    }
+
+                    if (startDt == true)
+                    {
+                        startDt = false;
+                        dStd = -1;
+                    }
+                    if(!diagonleMoving)
+                    {
+                        fppCam->StrafePhysic(cameraMoveSpeed*slowdown);
+                        moving = true;
+                    }
+                }
+
+                //move left
+                if(keyHold(InputHelper::Instance()->getButtonToAction(2)))
+                {
+                    float slowdown = 1.0f;
+
+                    if(walkingOnGround == false)
+                    {
+                        slowdown -= 0.2f;
+                    }
+
+                    if (startDt == true)
+                    {
+                        startDt = false;
+                        dStd = -1;
+                    }
+                    if(!diagonleMoving)
+                    {
+                        fppCam->StrafePhysic(-cameraMoveSpeed*slowdown);
+                        moving = true;
+                    }
+                }
+
+                // jumping/swiming
+                if(keyHold(InputHelper::Instance()->getButtonToAction(12)))
+                {
+                    dStd = -1;
+                    if (headInWater || headInLava|| mWorld->BlockAtPoint(Vector3(playerPosition.x,playerPosition.y-0.65f,playerPosition.z)) == WaterBlock::getID() || mWorld->BlockAtPoint(Vector3(playerPosition.x,playerPosition.y-0.65f,playerPosition.z)) == Lava::getID())	//Legit swimming
+                    {
+                        if (walkingOnGround)
                         {
-                            if(walkingOnGround == true)
-                            {
-                                jumping = true;
-                            }
-                            else
-                            {
-                                playerVelocity.y = 0.525 * JUMPVELOCITY;
-                            }
-                        }
-                        if (headInWater == false && headInLava == false && walkingOnGround == false && (footInWater == true || footInLava == true))	//Your above he water, so Jump out
+                            jumping = true;
+                        }else
                         {
-                            playerVelocity.y = 1.2 * JUMPVELOCITY;
+                            playerVelocity.y = 0.2 * JUMPVELOCITY;
                             walkingOnGround = false;
-                            if(mWorld->HG > 0.0001)
-                            {
-                                mWorld->HG -= 0.00001;
-                            }
                         }
-                        if(walkingOnGround == true)
+                    }
+                    if ((!headInWater || !headInLava) && !walkingOnGround && (footInWater || footInLava))	//Your above he water, so Jump out
+                    {
+
+                        playerVelocity.y = 1.2 * JUMPVELOCITY;
+                        walkingOnGround = false;
+                    }
+                    if(walkingOnGround)	//Just in case...
+                    {
+                        jumping = true;
+                    }
+                    else
+                        jumping = false;	//Don't bounce
+                }
+            }
+
+
+            // switch left
+            if(tickShowSlotName > -0.1f)
+            {
+                tickShowSlotName -= dt;
+            }
+            if(keyPressed(InputHelper::Instance()->getButtonToAction(9)))
+            {
+                if (mWorld->invId[27+barPosition] != -1)
+                {
+                    changeY = -0.16f;
+                    anim[0] = 1;
+                }
+                barPosition != 8 ? barPosition ++ : barPosition = 0;
+
+                selectSprite->SetPosition(80 + (barPosition * 40),250);
+
+                tickShowSlotName = 1.25f;
+
+                // reset destroying vars
+                startDt = 0;
+                dT = 0;
+                dET = 0;
+                dStd = -1;
+            }
+
+            //switch right
+            if(keyPressed(InputHelper::Instance()->getButtonToAction(8)))
+            {
+                if (mWorld->invId[27+barPosition] != -1)
+                {
+                    changeY = -0.16f;
+                    anim[0] = 1;
+                }
+                barPosition != 0 ? barPosition -- : barPosition = 8;
+
+                selectSprite->SetPosition(80 + (barPosition * 40),250);
+
+                tickShowSlotName = 1.25f;
+
+                // reset destroying vars
+                startDt = 0;
+                dT = 0;
+                dET = 0;
+                dStd = -1;
+            }
+
+            //menu
+            if(sleepTime == 0.0f)
+            {
+                if(keyPressed(InputHelper::Instance()->getButtonToAction(15)))
+                {
+                    menuState = 1;
+                    menuOptions = false;
+                    optionsMenuPos = 0;
+                }
+            }
+
+            // drop 1 item
+            if(mSystemMgr->KeyPressed(PSP_CTRL_UP))
+            {
+                if(keyPressed(InputHelper::Instance()->getButtonToAction(14)))
+                {
+                    if(mWorld->invId[27+barPosition] > 0)
+                    {
+                        Vector3 dropVelocity = Vector3(0,0,0);
+
+                        dropVelocity.x = (cosf((fppCam->horAngle/180.0f)*PI))*4.0f;
+                        dropVelocity.y = 2.0f;
+                        dropVelocity.z = (sinf((fppCam->horAngle/180.0f)*PI))*4.0f;
+
+                        if(mWorld->invSt[27+barPosition] == true)
                         {
-                            if(headInWater == false && headInLava == false)
+                            if(mWorld->invAm[27+barPosition] > 0)
                             {
-                                jumping = true;
+                                mWorld->invAm[27+barPosition] -= 1;
+                                mWorld->DropThisNoAlign(mWorld->invId[27+barPosition],1,mWorld->invSt[27+barPosition],Vector3(fppCam->m_vPosition.x,fppCam->m_vPosition.y-0.25f,fppCam->m_vPosition.z),dropVelocity);
+
+                                if(mWorld->invAm[27+barPosition] == 0)
+                                {
+                                    mWorld->invAm[27+barPosition] = -1;
+                                    mWorld->invSt[27+barPosition] = 0;
+                                    mWorld->invId[27+barPosition] = -1;
+                                }
                             }
                         }
                         else
                         {
-                            jumping = false;
+                            mWorld->DropThisNoAlign(mWorld->invId[27+barPosition],mWorld->invAm[27+barPosition],mWorld->invSt[27+barPosition],Vector3(fppCam->m_vPosition.x,fppCam->m_vPosition.y-0.25f,fppCam->m_vPosition.z),dropVelocity);
+
+                            mWorld->invAm[27+barPosition] = -1;
+                            mWorld->invSt[27+barPosition] = 0;
+                            mWorld->invId[27+barPosition] = -1;
                         }
                     }
+                    return;
                 }
+            }
 
+            // enable/disable fly mode
+            if(tickShowFlymodeMessage > -0.1f)
+            {
+                tickShowFlymodeMessage -= dt;
+            }
+            // arrow down
+            if(mSystemMgr->KeyPressed(PSP_CTRL_DOWN))
+            {
+                canFly = !canFly;
+                tickShowFlymodeMessage = 1.2f;
+            }
 
-           /* if (mSystemMgr->KeyPressed(PSP_CTRL_RTRIGGER)) //open inventory
+            /*if (mSystemMgr->KeyPressed(PSP_CTRL_RTRIGGER)) //open inventory
             {
                 if(mSystemMgr->KeyPressed(PSP_CTRL_LTRIGGER))
                 {
+                    if(craft3xEn == false && chestEn == false && furnaceEn == false)
+                    {
 
+                    }
                 }
-            } */
+            }*/
 
             //add cube
             if(keyPressed(InputHelper::Instance()->getButtonToAction(14)))
@@ -3898,28 +3979,106 @@ void StatePlay::HandleEvents(StateManager* sManager)
                 {
                     if(keyPressed(InputHelper::Instance()->getButtonToAction(13))) //open inventory
                     {
-                        if(craft3xEn == false && chestEn == false && furnaceEn == false)
-                        {
-                            invEn = true;
-                            dT = 0;
-                            dET = 0;
-                            chestId = -1;
-                            dStd = -1;
-                            return;
-                        }
+                        invEn = true;
+
+                        invXPosition = tempXInv;
+                        invYPosition = tempYInv;
+                        upEn = tempUpInv;
+                        selectInvSprite->SetPosition(80 + (invXPosition * 36),28+(invYPosition * 36));
+
+                        return;
                     }
                 }
-                if (startDt == true)
+                if (startDt == true) //stop destroying
                 {
-                    startDt = false; //stop destroying
+                    startDt = false;
                 }
 
+                /*if (mWorld->invId[27+barPosition] == 288) ///BREAD
+                {
+                    if((int)(mWorld->HG) < 20)
+                    {
+                        mSoundMgr->PlayEatSound();
+                        mWorld->mainStatistics.foodEaten += 1;
+                        mWorld->HG += 5;
+
+                        if(mWorld->HG > 20)
+                        {
+                            mWorld->HG = 20;
+                        }
+                        mWorld->invAm[27+barPosition] -= 1;
+                        if (mWorld->invAm[27+barPosition] == 0) // [27+barPosition] - selected item/block
+                        {
+                            mWorld->invAm[27+barPosition] = -1;
+                            mWorld->invId[27+barPosition] = -1;
+                            mWorld->invSt[27+barPosition] = 0;
+                        }
+                        return;
+                    }
+                }
+
+                if (mWorld->invId[27+barPosition] == 284) ///APPLE
+                {
+                    if((int)(mWorld->HG) < 20)
+                    {
+                        mSoundMgr->PlayEatSound();
+                        mWorld->mainStatistics.foodEaten += 1;
+                        mWorld->HG += 4;
+
+                        if(mWorld->HG > 20)
+                        {
+                            mWorld->HG = 20;
+                        }
+                        mWorld->invAm[27+barPosition] -= 1;
+                        if (mWorld->invAm[27+barPosition] == 0)
+                        {
+                            mWorld->invAm[27+barPosition] = -1;
+                            mWorld->invId[27+barPosition] = -1;
+                            mWorld->invSt[27+barPosition] = 0;
+                        }
+                        return;
+                    }
+                }
+
+                if (mWorld->invId[27+barPosition] == 303) ///MOOSHROOM BOWL
+                {
+                    if((int)(mWorld->HG) < 20)
+                    {
+                        mSoundMgr->PlayEatSound();
+                        mWorld->mainStatistics.foodEaten += 1;
+                        mWorld->HG += 6;
+
+                        if(mWorld->HG > 20)
+                        {
+                            mWorld->HG = 20;
+                        }
+                        mWorld->invId[27+barPosition] = 302; // turn it into simple stackable bowl
+                        mWorld->invSt[27+barPosition] = 1;
+                        return;
+                    }
+                }
+
+                if (mWorld->invId[27+barPosition] == 285) ///GOLDEN APPLE
+                {
+                    if((int)(mWorld->HG) < 20)
+                    {
+                        mSoundMgr->PlayEatSound();
+                        mWorld->mainStatistics.foodEaten += 1;
+                        mWorld->HG = 20;
+                        mWorld->HP = 20;
+                        mWorld->invAm[27+barPosition] -= 1;
+                        if (mWorld->invAm[27+barPosition] == 0)
+                        {
+                            mWorld->invAm[27+barPosition] = -1;
+                            mWorld->invId[27+barPosition] = -1;
+                            mWorld->invSt[27+barPosition] = 0;
+                        }
+                        return;
+                    }
+                }*/
 
                 if (mWorld->invId[27+barPosition] == 299) ///SNOWBALL THROWING
                 {
-                    changeY = -0.20f;
-                    anim[0] = 1;
-
                     mSoundMgr->PlayBowSound();
 
                     SnowBall2* NewSB = new SnowBall2(playerPosition.x,playerPosition.y,playerPosition.z);
@@ -3946,140 +4105,8 @@ void StatePlay::HandleEvents(StateManager* sManager)
                 BoundingBox collider = mWorld->blockTypes[mWorld->GetBlock(testPos.x,testPos.y,testPos.z)].collideBox;
                 BoundingBox testBox = BoundingBox(testPos.x+collider.min.x, testPos.y+collider.min.y, testPos.z+collider.min.z, testPos.x+collider.max.x, testPos.y+collider.max.y, testPos.z+collider.max.z);
 
-
-                if(mWorld->invId[27+barPosition] == Scissors::getID() || (mWorld->ItemType(mWorld->invId[27+barPosition]) == 'Y' && mWorld->invId[27+barPosition] != BoneMeal::getID())) // shear sheep or dye it
-                {
-                    if(mWorld->mSheeps.empty() == false)
-                    {
-                        for(float i = 0; i < 5.25f; i+=0.1f)
-                        {
-                            testPos = fppCam->m_vPosition + (rayDir * i);
-                            for(int f = 0; f < mWorld->mSheeps.size(); f++)
-                            {
-                                Sheep *TestSheep = mWorld->mSheeps[f];
-                                if(TestSheep->DistanceToPlayer() < 2.85 && TestSheep->kicked == false && TestSheep->damaged == false)
-                                {
-                                    if(TestSheep->bBox.contains(testPos))
-                                    {
-                                        if(mWorld->ItemType(mWorld->invId[27+barPosition]) == 'Y') // dye item
-                                        {
-                                            int newColor = 14;
-                                            switch(mWorld->invId[27+barPosition])
-                                            {
-                                                case 314: // brown
-                                                newColor = 6;
-                                                break;
-
-                                                case 318: // blue
-                                                newColor = 8;
-                                                break;
-
-                                                case 322: // white
-                                                newColor = 14;
-                                                break;
-
-                                                case 365: // lt gray
-                                                newColor = 13;
-                                                break;
-
-                                                case 366: // gray
-                                                newColor = 1;
-                                                break;
-
-                                                case 367: // black
-                                                newColor = 0;
-                                                break;
-
-                                                case 368: // pink
-                                                newColor = 3;
-                                                break;
-
-                                                case 369: // red
-                                                newColor = 2;
-                                                break;
-
-                                                case 370: // orange
-                                                newColor = 12;
-                                                break;
-
-                                                case 371: // yellow
-                                                newColor = 7;
-                                                break;
-
-                                                case 372: // lime
-                                                newColor = 5;
-                                                break;
-
-                                                case 373: // lime
-                                                newColor = 4;
-                                                break;
-
-                                                case 374: // lt blue
-                                                newColor = 9;
-                                                break;
-
-                                                case 375: // purple
-                                                newColor = 10;
-                                                break;
-
-                                                case 376: // magneta
-                                                newColor = 11;
-                                                break;
-                                            }
-
-                                            if(TestSheep->GetFurColor() != newColor)
-                                            {
-                                                TestSheep->SetFurColor(newColor);
-
-                                                mWorld->invAm[27+barPosition] -= 1;
-                                                if (mWorld->invAm[27+barPosition] == 0)
-                                                {
-                                                    mWorld->invAm[27+barPosition] = -1;
-                                                    mWorld->invId[27+barPosition] = -1;
-                                                    mWorld->invSt[27+barPosition] = 0;
-                                                }
-
-                                                animGo = true;
-                                                animDest = 0.0f;
-                                            }
-                                            return;
-                                        }
-
-                                        if(mWorld->invId[27+barPosition] == Scissors::getID())
-                                        {
-                                            if(TestSheep->sheared == false)
-                                            {
-                                                int woolNum = 1+rand()%3;
-                                                for(int i = 0; i < woolNum; i++)
-                                                {
-                                                    mWorld->DropThis(BlackWoolBlock::getID()+TestSheep->GetFurColor(),1,true,Vector3(TestSheep->position.x,TestSheep->position.y+0.3f,TestSheep->position.z));
-                                                }
-
-                                                TestSheep->sheared = true;
-                                                mSoundMgr->PlayShearSound();
-
-                                                mWorld->invAm[27+barPosition] -= 1;
-                                                if (mWorld->invAm[27+barPosition] == 0)
-                                                {
-                                                    mWorld->invAm[27+barPosition] = -1;
-                                                    mWorld->invId[27+barPosition] = -1;
-                                                    mWorld->invSt[27+barPosition] = 0;
-                                                }
-
-                                                animGo = true;
-                                                animDest = 0.0f;
-                                                return;
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    return;
-                }
-
-                for(float i = 0; i < 5.25f; i+=0.1f)
+                //move to the target +=0.5
+                for(float i = 0; i < 5.25f; i+=0.15f)
                 {
                     testPos = fppCam->m_vPosition + (rayDir * i);
 
@@ -4164,11 +4191,7 @@ void StatePlay::HandleEvents(StateManager* sManager)
                     {
                         if (selectedBlock == 4) //if it is WATER
                         {
-                            // well simulation
-                            if((mWorld->GetBlock(testPos.x-1, testPos.y, testPos.z) == 4 && mWorld->GetBlock(testPos.x-1, testPos.y, testPos.z-1) == 4 && mWorld->GetBlock(testPos.x, testPos.y, testPos.z-1) == 4) ||
-                               (mWorld->GetBlock(testPos.x+1, testPos.y, testPos.z) == 4 && mWorld->GetBlock(testPos.x+1, testPos.y, testPos.z-1) == 4 && mWorld->GetBlock(testPos.x, testPos.y, testPos.z-1) == 4) ||
-                               (mWorld->GetBlock(testPos.x-1, testPos.y, testPos.z) == 4 && mWorld->GetBlock(testPos.x-1, testPos.y, testPos.z+1) == 4 && mWorld->GetBlock(testPos.x, testPos.y, testPos.z+1) == 4) ||
-                               (mWorld->GetBlock(testPos.x+1, testPos.y, testPos.z) == 4 && mWorld->GetBlock(testPos.x+1, testPos.y, testPos.z+1) == 4 && mWorld->GetBlock(testPos.x, testPos.y, testPos.z+1) == 4))
+                            if((mWorld->GetBlock(testPos.x-1, testPos.y, testPos.z) == 4 && mWorld->GetBlock(testPos.x-1, testPos.y, testPos.z-1) == 4 && mWorld->GetBlock(testPos.x, testPos.y, testPos.z-1) == 4) || (mWorld->GetBlock(testPos.x+1, testPos.y, testPos.z) == 4 && mWorld->GetBlock(testPos.x+1, testPos.y, testPos.z-1) == 4 && mWorld->GetBlock(testPos.x, testPos.y, testPos.z-1) == 4) || (mWorld->GetBlock(testPos.x-1, testPos.y, testPos.z) == 4 && mWorld->GetBlock(testPos.x-1, testPos.y, testPos.z+1) == 4 && mWorld->GetBlock(testPos.x, testPos.y, testPos.z+1) == 4) || (mWorld->GetBlock(testPos.x+1, testPos.y, testPos.z) == 4 && mWorld->GetBlock(testPos.x+1, testPos.y, testPos.z+1) == 4 && mWorld->GetBlock(testPos.x, testPos.y, testPos.z+1) == 4))
                             {
                                 mWorld->GetBlock(testPos.x, testPos.y, testPos.z) = 4;
                             }
@@ -4177,6 +4200,7 @@ void StatePlay::HandleEvents(StateManager* sManager)
                                 mWorld->GetBlock(testPos.x, testPos.y, testPos.z) = 0;
 
                                 int	curchunkTarget = mWorld->getChunkId(testPos);
+
                                 mWorld->RebuildTransparentMeshChunk(curchunkTarget);
                                 fppCam->needUpdate = true;
                             }
@@ -4220,19 +4244,18 @@ void StatePlay::HandleEvents(StateManager* sManager)
                     //check if we are touch something
                     if(mWorld->BlockEditable(testPos.x,testPos.y,testPos.z) && testBox.contains(testPos))
                     {
-                        // we use hoes
-                        if(mWorld->invId[27+barPosition] >= 270 && mWorld->invId[27+barPosition] <= 274)
+                        if(mWorld->invId[27+barPosition] >= 270 && mWorld->invId[27+barPosition] <= 274) //hoes
                         {
                             if (selectedBlock == 1) //if it is grass
                             {
                                 mWorld->GetBlock(testPos.x, testPos.y, testPos.z) = 2;
-                                if(rand() % 11 == 0)
+                                if(rand() % 10 == 1)
                                 {
                                     mWorld->DropThis(286,1,true,testPos); //put seed in inventory
                                 }
 
-                                mWorld->invAm[27+barPosition] -= 1; // bit crashing to our hoe
-                                if(mWorld->invAm[27+barPosition] == 0) //destroy tool if it has 0 durability points
+                                mWorld->invAm[27+barPosition] -= 1; //bit break to our hoe
+                                if(mWorld->invAm[27+barPosition] == 0) //if it has 0 of solid we jut destroy it
                                 {
                                     mWorld->invAm[27+barPosition] = -1;
                                     mWorld->invId[27+barPosition] = -1;
@@ -4242,13 +4265,13 @@ void StatePlay::HandleEvents(StateManager* sManager)
                                 }
                                 int	curchunkTarget = mWorld->getChunkId(testPos);
 
+                                fppCam->needUpdate = true;
                                 //Rebuild nearby world
                                 mWorld->RebuildOpaqueMeshChunk(curchunkTarget);
-                                fppCam->needUpdate = true;
-
                                 mSoundMgr->PlayWalkSound(1);
                                 changeY = -0.16f;
                                 anim[0] = 1;
+                                //mWorld->rebuildTransparentChunk(curchunkTarget);
                                 return;
                             }
 
@@ -4258,7 +4281,7 @@ void StatePlay::HandleEvents(StateManager* sManager)
                                 mWorld->GetBlock(testPos.x, testPos.y, testPos.z) = 79;
 
                                 mWorld->invAm[27+barPosition] -= 1;
-                                if(mWorld->invAm[27+barPosition] == 0) //destroy tool if it has 0 durability points
+                                if(mWorld->invAm[27+barPosition] == 0) //if it has 0 of solid we jut destroy it
                                 {
                                     mWorld->invAm[27+barPosition] = -1;
                                     mWorld->invId[27+barPosition] = -1;
@@ -4269,13 +4292,104 @@ void StatePlay::HandleEvents(StateManager* sManager)
 
                                 int	curchunkTarget = mWorld->getChunkId(testPos);
 
+                                fppCam->needUpdate = true;
                                 //Rebuild nearby world
                                 mWorld->RebuildOpaqueMeshChunk(curchunkTarget);
-                                fppCam->needUpdate = true;
-
-                                mSoundMgr->PlayWalkSound(1); // play dirt sound
+                                mSoundMgr->PlayWalkSound(1);
                                 changeY = -0.16f;
                                 anim[0] = 1;
+                                //mWorld->rebuildTransparentChunk(curchunkTarget);
+                                return;
+                            }
+                        }
+
+                        if(mWorld->invId[27+barPosition] == BoneMeal::getID())
+                        {
+                            bool used = false;
+
+                            if (selectedBlock == GrassBlock::getID())
+                            {
+                                for(int xx = testPos.x-2; xx <= testPos.x+2; xx ++)
+                                {
+                                    for(int zz = testPos.z-2; zz <= testPos.z+2; zz ++)
+                                    {
+                                        for(int yy = testPos.y; yy > 0; yy--)
+                                        {
+                                            if(mWorld->GetBlock(xx,yy,zz) != 0)
+                                            {
+                                                if(mWorld->GetBlock(xx,yy,zz) == GrassBlock::getID())
+                                                {
+                                                    if(mWorld->GetBlock(xx,yy+1,zz) == 0)
+                                                    {
+                                                        if(rand()%10<=5)
+                                                        {
+                                                            rand() % 2 == 0 ? mWorld->GetBlock(xx,yy+1,zz) = Flower1::getID() : mWorld->GetBlock(xx,yy+1,zz) = Flower2::getID();
+                                                            if(rand()%2 == 0)
+                                                            {
+                                                                mWorld->GetBlock(xx,yy+1,zz) = TallGrass::getID();
+                                                            }
+                                                        }
+                                                        break;
+                                                    }
+                                                    else
+                                                    {
+                                                        break;
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    break;
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                                used = true;
+                            }
+                            if (selectedBlock >= WheatBlock1::getID() && selectedBlock <= WheatBlock5::getID())
+                            {
+                                mWorld->GetBlock(testPos.x, testPos.y, testPos.z) = WheatBlock6::getID();
+                                used = true;
+                            }
+                            if (selectedBlock >= MelonPlant1::getID() && selectedBlock <= MelonPlant3::getID())
+                            {
+                                mWorld->GetBlock(testPos.x, testPos.y, testPos.z) = MelonPlant4::getID();
+                                used = true;
+                            }
+                            if (selectedBlock >= PumpkinPlant1::getID() && selectedBlock <= PumpkinPlant3::getID())
+                            {
+                                mWorld->GetBlock(testPos.x, testPos.y, testPos.z) = PumpkinPlant4::getID();
+                                used = true;
+                            }
+                            if (selectedBlock >= PotatoPlant1::getID() && selectedBlock <= PotatoPlant3::getID())
+                            {
+                                mWorld->GetBlock(testPos.x, testPos.y, testPos.z) = PotatoPlant4::getID();
+                                used = true;
+                            }
+                            if (selectedBlock >= CarrotPlant1::getID() && selectedBlock <= CarrotPlant3::getID())
+                            {
+                                mWorld->GetBlock(testPos.x, testPos.y, testPos.z) = CarrotPlant4::getID();
+                                used = true;
+                            }
+
+                            if(used)
+                            {
+                                animGo = true;
+                                animDest = 0.0f;
+
+                                changeY = -0.1f;
+                                anim[0] = 1;
+
+                                mWorld->invAm[27+barPosition] -= 1;
+                                if(mWorld->invAm[27+barPosition] == 0)
+                                {
+                                    mWorld->invAm[27+barPosition] = -1;
+                                    mWorld->invSt[27+barPosition] = 0;
+                                    mWorld->invId[27+barPosition] = -1;
+                                }
+                                int	curchunkTarget = mWorld->getChunkId(testPos);
+                                fppCam->needUpdate = true;
+                                mWorld->RebuildTransparentMeshChunk(curchunkTarget);
                                 return;
                             }
                         }
@@ -4479,103 +4593,18 @@ void StatePlay::HandleEvents(StateManager* sManager)
                         if (selectedBlock == CraftingTable::getID()) // open crafting table menu
                         {
                             craft3xEn = true;
+
+                            invXPosition = tempXCT;
+                            invYPosition = tempYCT;
+                            upEn = tempUpCT;
+
+                            upEn == true ? selectInvSprite->SetPosition(204 + (invXPosition * 36),26+(invYPosition * 36)) : selectInvSprite->SetPosition(96+(invXPosition * 36),138+(invYPosition * 36));
+
                             return;
                         }
 
-                        if(mWorld->invId[27+barPosition] == BoneMeal::getID())
-                        {
-                            bool used = false;
-
-                            if (selectedBlock == GrassBlock::getID())
-                            {
-                                for(int xx = testPos.x-2; xx <= testPos.x+2; xx ++)
-                                {
-                                    for(int zz = testPos.z-2; zz <= testPos.z+2; zz ++)
-                                    {
-                                        for(int yy = testPos.y; yy > 0; yy--)
-                                        {
-                                            if(mWorld->GetBlock(xx,yy,zz) != 0)
-                                            {
-                                                if(mWorld->GetBlock(xx,yy,zz) == GrassBlock::getID())
-                                                {
-                                                    if(mWorld->GetBlock(xx,yy+1,zz) == 0)
-                                                    {
-                                                        if(rand()%10<=5)
-                                                        {
-                                                            rand() % 2 == 0 ? mWorld->GetBlock(xx,yy+1,zz) = Flower1::getID() : mWorld->GetBlock(xx,yy+1,zz) = Flower2::getID();
-                                                            if(rand()%2 == 0)
-                                                            {
-                                                                mWorld->GetBlock(xx,yy+1,zz) = TallGrass::getID();
-                                                            }
-                                                        }
-                                                        break;
-                                                    }
-                                                    else
-                                                    {
-                                                        break;
-                                                    }
-                                                }
-                                                else
-                                                {
-                                                    break;
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                                used = true;
-                            }
-                            if (selectedBlock >= WheatBlock1::getID() && selectedBlock <= WheatBlock5::getID())
-                            {
-                                mWorld->GetBlock(testPos.x, testPos.y, testPos.z) = WheatBlock6::getID();
-                                used = true;
-                            }
-                            if (selectedBlock >= MelonPlant1::getID() && selectedBlock <= MelonPlant3::getID())
-                            {
-                                mWorld->GetBlock(testPos.x, testPos.y, testPos.z) = MelonPlant4::getID();
-                                used = true;
-                            }
-                            if (selectedBlock >= PumpkinPlant1::getID() && selectedBlock <= PumpkinPlant3::getID())
-                            {
-                                mWorld->GetBlock(testPos.x, testPos.y, testPos.z) = PumpkinPlant4::getID();
-                                used = true;
-                            }
-                            if (selectedBlock >= PotatoPlant1::getID() && selectedBlock <= PotatoPlant3::getID())
-                            {
-                                mWorld->GetBlock(testPos.x, testPos.y, testPos.z) = PotatoPlant4::getID();
-                                used = true;
-                            }
-                            if (selectedBlock >= CarrotPlant1::getID() && selectedBlock <= CarrotPlant3::getID())
-                            {
-                                mWorld->GetBlock(testPos.x, testPos.y, testPos.z) = CarrotPlant4::getID();
-                                used = true;
-                            }
-
-                            if(used)
-                            {
-                                animGo = true;
-                                animDest = 0.0f;
-
-                                changeY = -0.1f;
-                                anim[0] = 1;
-
-                                mWorld->invAm[27+barPosition] -= 1;
-                                if(mWorld->invAm[27+barPosition] == 0)
-                                {
-                                    mWorld->invAm[27+barPosition] = -1;
-                                    mWorld->invSt[27+barPosition] = 0;
-                                    mWorld->invId[27+barPosition] = -1;
-                                }
-                                int	curchunkTarget = mWorld->getChunkId(testPos);
-                                mWorld->RebuildTransparentMeshChunk(curchunkTarget);
-
-                                fppCam->needUpdate = true;
-                                return;
-                            }
-                        }
-
                         // half block + half block = full block
-                        if (mWorld->blockTypes[mWorld->GetBlock(testPos.x, testPos.y, testPos.z)].blockModel == 1 &&
+                        if (mWorld->blockTypes[selectedBlock].blockModel == 1 &&
                             mWorld->blockTypes[mWorld->invId[27+barPosition]].blockModel == 1  &&
                             mWorld->GetBlock(testPos.x, testPos.y, testPos.z) == mWorld->invId[27+barPosition]
                            )
@@ -4678,7 +4707,6 @@ void StatePlay::HandleEvents(StateManager* sManager)
                             {
                                 playerBox = BoundingBox(Vector3(playerPosition.x - (mWorld->playerCollisionSize-0.03f),playerPosition.y - 1.59f,playerPosition.z - (mWorld->playerCollisionSize-0.03)),Vector3(playerPosition.x + (mWorld->playerCollisionSize-0.03),playerPosition.y + 0.2f,playerPosition.z + (mWorld->playerCollisionSize-0.03)));
                             }
-
                             if(!doorBox.intersect(playerBox))
                             {
                                 mWorld->GetBlock(testPos.x, testPos.y, testPos.z) = mWorld->GetBlock(testPos.x, testPos.y, testPos.z) + 4;
@@ -4820,17 +4848,6 @@ void StatePlay::HandleEvents(StateManager* sManager)
                             mSoundMgr->PlayFuseSound();
                             mWorld->RebuildOpaqueMeshChunk(mWorld->getChunkId(testPos));
                             fppCam->needUpdate = true;
-
-                            mWorld->invAm[27+barPosition] -= 1;
-                            if(mWorld->invAm[27+barPosition] <= 0)
-                            {
-                                mWorld->invId[27+barPosition] = -1;
-                                mWorld->invAm[27+barPosition] = -1;
-                                mWorld->invSt[27+barPosition] = 0;
-                            }
-
-                            animGo = true;
-                            animDest = 0.0f;
                             return;
                         }
 
@@ -4842,6 +4859,13 @@ void StatePlay::HandleEvents(StateManager* sManager)
                                 craft3xEn = false;
                                 chestEn = true;
                                 UseChest = mWorld->mChests[chestId];
+
+                                invXPosition = tempXChest;
+                                invYPosition = tempYChest;
+                                upEn = tempUpChest;
+
+                                upEn == true ? selectInvSprite->SetPosition(96 + (invXPosition * 36),26+(invYPosition * 36)) : selectInvSprite->SetPosition(96+(invXPosition * 36),138+(invYPosition * 36));
+
                                 return;
                             }
                         }
@@ -4855,6 +4879,13 @@ void StatePlay::HandleEvents(StateManager* sManager)
                                 chestEn = false;
                                 furnaceEn = true;
                                 UseFurnace = mWorld->mFurnaces[furnaceId];
+
+                                invXPosition = tempXFurnace;
+                                invYPosition = tempYFurnace;
+                                upEn = tempUpFurnace;
+
+                                upEn == true ? selectInvSprite->SetPosition(204,28+(invYPosition * 72)) : selectInvSprite->SetPosition(96+(invXPosition * 36),138+(invYPosition * 36));
+
                                 return;
                             }
                         }
@@ -4986,145 +5017,13 @@ void StatePlay::HandleEvents(StateManager* sManager)
                             }
                         }
 
-                        if(ceilf(mWorld->HG) < 20.0f && selectedBlock != Soil::getID() && selectedBlock != WateredSoil::getID())
-                        {
-                            bool foodEaten = false;
-
-                            if (mWorld->invId[27+barPosition] == 288) ///BREAD
-                            {
-                                foodEaten = true;
-                                mWorld->HG += 5;
-                            }
-
-                            if (mWorld->invId[27+barPosition] == 315) ///COOKIE
-                            {
-                                foodEaten = true;
-                                mWorld->HG += 1;
-                                mWorld->HP += 1;
-                            }
-
-                            if (mWorld->invId[27+barPosition] == RottenFlesh::getID()) ///ROTTEN FLESH
-                            {
-                                foodEaten = true;
-                                mWorld->HG += 1;
-
-                                if(rand() % 100 < 45)
-                                {
-                                    HurtPlayer(1);
-                                }
-                            }
-
-                            if (mWorld->invId[27+barPosition] == Potato::getID()) ///POTATO
-                            {
-                                foodEaten = true;
-                                mWorld->HG += 1;
-                            }
-
-                            if (mWorld->invId[27+barPosition] == PoisonedPotato::getID()) ///POSIONED POTATO
-                            {
-                                foodEaten = true;
-                                mWorld->HG += 1;
-
-                                HurtPlayer(4);
-                            }
-
-                            if (mWorld->invId[27+barPosition] == BakedPotato::getID()) ///BAKED POTATO
-                            {
-                                foodEaten = true;
-                                mWorld->HG += 5;
-                            }
-
-                            if (mWorld->invId[27+barPosition] == Carrot::getID()) ///CARROT
-                            {
-                                foodEaten = true;
-                                mWorld->HG += 3;
-                            }
-
-                            if (mWorld->invId[27+barPosition] == 311) ///MELON
-                            {
-                                foodEaten = true;
-                                mWorld->HG += 2;
-                            }
-
-                            if (mWorld->invId[27+barPosition] == 317) ///STEAK
-                            {
-                                foodEaten = true;
-                                mWorld->HG += 8;
-                            }
-
-                            if (mWorld->invId[27+barPosition] == 284) ///APPLE
-                            {
-                                foodEaten = true;
-                                mWorld->HG += 4;
-                            }
-
-                            if (mWorld->invId[27+barPosition] == 285) ///GOLDEN APPLE
-                            {
-                                foodEaten = true;
-                                mWorld->HG = 20;
-                                mWorld->HP = 20;
-                            }
-
-                            if (mWorld->invId[27+barPosition] == 303) ///MOOSHROOM BOWL
-                            {
-                                foodEaten = true;
-                                mWorld->HG += 6;
-                            }
-
-                            if(foodEaten)
-                            {
-                                mSoundMgr->PlayEatSound();
-                                mWorld->mainStatistics.foodEaten += 1;
-
-                                changeY = -0.20f;
-                                anim[0] = 1;
-
-                                Vector3 rayParticleDir = fppCam->m_vView - fppCam->m_vPosition;
-                                rayParticleDir.normalize();
-
-                                Vector3 particlePos = fppCam->m_vPosition + (rayParticleDir * 0.38f);
-
-                                if(mParticles.size() <= 52)
-                                {
-                                    for(int k = 0; k <= 5; k++) // 5 particles
-                                    {
-                                        Particle* FoodPart = new Particle(mWorld,"item crack",Vector3(particlePos.x,particlePos.y-0.18f,particlePos.z));
-                                        FoodPart->var1 = mWorld->invId[27+barPosition]-250;
-                                        mParticles.push_back(FoodPart);
-                                    }
-                                }
-
-                                if(mWorld->HG >= 20)
-                                {
-                                    mWorld->HG = 19.999f;
-                                }
-
-                                if(mWorld->invId[27+barPosition] == MooshroomBowl::getID())
-                                {
-                                    mWorld->invId[27+barPosition] = 302; // turn it into simple stackable bowl
-                                    mWorld->invSt[27+barPosition] = 1;
-                                }
-                                else
-                                {
-                                    mWorld->invAm[27+barPosition] -= 1;
-                                    if (mWorld->invAm[27+barPosition] == 0)
-                                    {
-                                        mWorld->invAm[27+barPosition] = -1;
-                                        mWorld->invId[27+barPosition] = -1;
-                                        mWorld->invSt[27+barPosition] = 0;
-                                    }
-                                }
-                                return;
-                            }
-                        }
-
                         BoundingBox testBox2 = BoundingBox(Vector3(cubePos.x - 0.5f,cubePos.y - 0.5f,cubePos.z - 0.5f),Vector3(cubePos.x + 0.5f,cubePos.y + 0.5f,cubePos.z + 0.5f));
                         Ray tesRay = Ray(fppCam->m_vPosition,rayDir);
 
+                        bool wasUpdated = false;
+
                         float distance = -1.0f;
                         tesRay.hasIntersected(testBox2,distance);
-
-                        bool wasUpdated = false;
 
                         if(distance != -1.0f)
                         {
@@ -5157,11 +5056,10 @@ void StatePlay::HandleEvents(StateManager* sManager)
 
                             testPos2 += testPos;
 
+                            int newPosBlockId = mWorld->GetBlock(testPos2.x,testPos2.y,testPos2.z);
+
                             //check if this block is empty
-                            if(mWorld->GetBlock(testPos2.x,testPos2.y,testPos2.z) == Lava::getID() ||
-                               mWorld->GetBlock(testPos2.x,testPos2.y,testPos2.z) == 4 ||
-                               mWorld->GetBlock(testPos2.x,testPos2.y,testPos2.z) == 0 ||
-                               mWorld->GetBlock(testPos2.x,testPos2.y,testPos2.z) == 93)
+                            if(newPosBlockId == Lava::getID() || newPosBlockId == 4 || newPosBlockId == 0 || newPosBlockId == 93 || (newPosBlockId >= WaterBlock1::getID() && newPosBlockId <= WaterBlock4::getID()))
                             {
                                 //now check if player is not there ;) we don't want to place cubes where we stand
                                 int boxX = (int)testPos2.x;
@@ -5200,25 +5098,26 @@ void StatePlay::HandleEvents(StateManager* sManager)
                                             mWorld->SetLigtSourcePosition(testPos2.x,testPos2.y,testPos2.z,mWorld->invId[27+barPosition]);
                                         }
 
-                                        if(mWorld->GetBlock(testPos2.x,testPos2.y,testPos2.z) == Lava::getID())
+                                        if(newPosBlockId == Lava::getID())
                                         {
                                             wasLight = true;
                                             mWorld->RemoveLigtSourceAtPosition(testPos2.x,testPos2.y,testPos2.z,112);
                                             mWorld->GetBlock(testPos2.x,testPos2.y,testPos2.z) = 0;
                                         }
 
-                                        if (mWorld->invId[27+barPosition]<250) // if block in our hands
+                                        if (mWorld->invId[27+barPosition] >= BlackWoolCarpet::getID() && mWorld->invId[27+barPosition] <= WhiteWoolCarpet::getID()) // if carpet in our hands
                                         {
-                                            if (mWorld->invId[27+barPosition] >= BlackWoolCarpet::getID() && mWorld->invId[27+barPosition] <= WhiteWoolCarpet::getID()) // if carpet in our hands
+                                            if(mWorld->BlockSpecial(testPos2.x,testPos2.y-1,testPos2.z) != 2)
                                             {
-                                                if(mWorld->BlockSpecial(testPos2.x,testPos2.y-1,testPos2.z) != 2)
+                                                if(mWorld->BlockSpecial(testPos2.x,testPos2.y-1,testPos2.z) != 0 || mWorld->BlockSolid(testPos2.x,testPos2.y-1,testPos2.z) == false)
                                                 {
-                                                    if(mWorld->BlockSpecial(testPos2.x,testPos2.y-1,testPos2.z) != 0 || mWorld->BlockSolid(testPos2.x,testPos2.y-1,testPos2.z) == false)
-                                                    {
-                                                        return;
-                                                    }
+                                                    return;
                                                 }
                                             }
+                                        }
+
+                                        if (mWorld->invId[27+barPosition]<250) // if block in our hands
+                                        {
 
                                             if(mWorld->invId[27+barPosition] == NoteBlock::getID()) // if we are putting note block
                                             {
@@ -5266,7 +5165,6 @@ void StatePlay::HandleEvents(StateManager* sManager)
                                             if(mWorld->invId[27+barPosition]!=-1) //multi-texturing blocks
                                             {
                                                 bool placed = true;
-
                                                 switch(mWorld->invId[27+barPosition])
                                                 {
                                                     case 75:
@@ -5338,7 +5236,7 @@ void StatePlay::HandleEvents(StateManager* sManager)
                                                     }
                                                     break;
 
-                                                    case 125:
+                                                    case 125: // oak stair
                                                     if(fppCam->horAngle > 45 && fppCam->horAngle < 135)
                                                     {
                                                         mWorld->GetBlock(testPos2.x,testPos2.y,testPos2.z) = 125; // 3
@@ -5511,7 +5409,6 @@ void StatePlay::HandleEvents(StateManager* sManager)
                                                     }
                                                     break;
 
-
                                                     default:
                                                     mWorld->GetBlock(testPos2.x,testPos2.y,testPos2.z) = mWorld->invId[27+barPosition];
                                                     break;
@@ -5536,7 +5433,7 @@ void StatePlay::HandleEvents(StateManager* sManager)
                                                 }
                                             }
                                         }
-                                        else //if it is item in our hand
+                                        else //if item in our hand
                                         {
                                             if(mWorld->invId[27+barPosition] == TorchItem::getID()) // if it is torch
                                             {
@@ -5561,7 +5458,7 @@ void StatePlay::HandleEvents(StateManager* sManager)
                                                 }
                                             }
 
-                                            if(mWorld->invId[27+barPosition] == WheatSeeds::getID()) // if it is seeds
+                                            if(mWorld->invId[27+barPosition] == 286) // if it is seeds
                                             {
                                                 if( mWorld->GetBlock(testPos2.x,testPos2.y-1,testPos2.z) == 79 || mWorld->GetBlock(testPos2.x,testPos2.y-1,testPos2.z) == 80) // planting seeds
                                                 {
@@ -5638,15 +5535,11 @@ void StatePlay::HandleEvents(StateManager* sManager)
                                                        mWorld->invSt[27+barPosition] = 0;
                                                        mWorld->invId[27+barPosition] = -1;
                                                     }
-                                                    mWorld->RebuildTransparentMeshChunk(mWorld->getChunkId(testPos2));
-
-                                                    animGo = true;
-                                                    animDest = 0.0f;
-
-                                                    changeY = -0.1f;
-                                                    anim[0] = 1;
                                                 }
-                                                return;
+                                                else
+                                                {
+                                                    return;
+                                                }
                                             }
 
                                             if(mWorld->invId[27+barPosition] == Carrot::getID())
@@ -5663,15 +5556,25 @@ void StatePlay::HandleEvents(StateManager* sManager)
                                                        mWorld->invSt[27+barPosition] = 0;
                                                        mWorld->invId[27+barPosition] = -1;
                                                     }
-                                                    mWorld->RebuildTransparentMeshChunk(mWorld->getChunkId(testPos2));
-
-                                                    animGo = true;
-                                                    animDest = 0.0f;
-
-                                                    changeY = -0.1f;
-                                                    anim[0] = 1;
                                                 }
-                                                return;
+                                                else
+                                                {
+                                                    return;
+                                                }
+                                            }
+
+                                            if(mWorld->invId[27+barPosition] >= 300 && mWorld->invId[27+barPosition] <= 301) // if it is moshrooms
+                                            {
+                                                mWorld->GetBlock(testPos2.x,testPos2.y,testPos2.z) = 77 + (mWorld->invId[27+barPosition] - 300);
+                                                fppCam->needUpdate = true;
+
+                                                mWorld->invAm[27+barPosition] -= 1;
+                                                if(mWorld->invAm[27+barPosition] == 0)
+                                                {
+                                                    mWorld->invAm[27+barPosition] = -1;
+                                                    mWorld->invSt[27+barPosition] = 0;
+                                                    mWorld->invId[27+barPosition] = -1;
+                                                }
                                             }
 
                                             if(mWorld->invId[27+barPosition] == GlassPanelItem::getID()) // if it is glass panel
@@ -5694,7 +5597,7 @@ void StatePlay::HandleEvents(StateManager* sManager)
                                                 wasUpdated = true;
                                             }
 
-                                            if(mWorld->invId[27+barPosition] == IronBarsItem::getID()) // if it is iron bars,kw
+                                            if(mWorld->invId[27+barPosition] == IronBarsItem::getID()) // if it is iron bars
                                             {
                                                 mWorld->GetBlock(testPos2.x,testPos2.y,testPos2.z) = IronBars::getID();
 
@@ -5714,26 +5617,14 @@ void StatePlay::HandleEvents(StateManager* sManager)
                                                 wasUpdated = true;
                                             }
 
-                                            if(mWorld->invId[27+barPosition] >= 300 && mWorld->invId[27+barPosition] <= 301) // if it is moshrooms
-                                            {
-                                                mWorld->GetBlock(testPos2.x,testPos2.y,testPos2.z) = 77 + (mWorld->invId[27+barPosition] - 300);
-                                                fppCam->needUpdate = true;
-
-                                                mWorld->invAm[27+barPosition] -= 1;
-                                                if(mWorld->invAm[27+barPosition] == 0)
-                                                {
-                                                    mWorld->invAm[27+barPosition] = -1;
-                                                    mWorld->invSt[27+barPosition] = 0;
-                                                    mWorld->invId[27+barPosition] = -1;
-                                                }
-                                            }
-
                                             if(mWorld->invId[27+barPosition] >= 294 && mWorld->invId[27+barPosition] <= 296) // if it is flowers or saplings
                                             {
-                                                if(mWorld->GetBlock(testPos2.x,testPos2.y-1,testPos2.z) == 1 || mWorld->GetBlock(testPos2.x,testPos2.y-1,testPos2.z) == 2) // if under is dirt or grass
+                                                if(mWorld->GetBlock(testPos2.x,testPos2.y-1,testPos2.z) == 1 || mWorld->GetBlock(testPos2.x,testPos2.y-1,testPos2.z) == 2 || mWorld->GetBlock(testPos2.x,testPos2.y-1,testPos2.z) == 29) // if under is dirt or grass
                                                 {
-                                                    mWorld->GetBlock(testPos2.x,testPos2.y,testPos2.z) = 119 + (mWorld->invId[27+barPosition] - 294); //very difficult expression >:
+                                                    mWorld->GetBlock(testPos2.x,testPos2.y,testPos2.z) = 119 + (mWorld->invId[27+barPosition] - 294);
                                                     fppCam->needUpdate = true;
+                                                    int chunkTarget = mWorld->getChunkId(testPos2);
+                                                    mWorld->RebuildTransparentMeshChunk(chunkTarget);
 
                                                     mWorld->invAm[27+barPosition] -= 1;
                                                     if(mWorld->invAm[27+barPosition] == 0)
@@ -5742,6 +5633,8 @@ void StatePlay::HandleEvents(StateManager* sManager)
                                                        mWorld->invSt[27+barPosition] = 0;
                                                        mWorld->invId[27+barPosition] = -1;
                                                     }
+
+                                                    wasUpdated = true;
                                                 }
                                                 else
                                                 {
@@ -5802,10 +5695,9 @@ void StatePlay::HandleEvents(StateManager* sManager)
 
                                                     fppCam->needUpdate = true;
                                                     int chunkTarget = mWorld->getChunkId(testPos2);
+
                                                     mWorld->RebuildTransparentMeshChunk(chunkTarget);
                                                     mWorld->rebuildNearestChunks(chunkTarget,testPos2);
-
-                                                    wasUpdated = true;
 
                                                     mWorld->invAm[27+barPosition] -= 1;
                                                     if(mWorld->invAm[27+barPosition] == 0)
@@ -5815,6 +5707,8 @@ void StatePlay::HandleEvents(StateManager* sManager)
                                                         mWorld->invId[27+barPosition] = -1;
                                                     }
 
+                                                    wasUpdated = true;
+
                                                     animGo = true;
                                                     animDest = 0.0f;
                                                 }
@@ -5823,7 +5717,6 @@ void StatePlay::HandleEvents(StateManager* sManager)
                                                     return;
                                                 }
                                             }
-
 
                                             if(mWorld->invId[27+barPosition] == BedItem::getID()) // if it is door item
                                             {
@@ -5896,8 +5789,7 @@ void StatePlay::HandleEvents(StateManager* sManager)
                                                 }
                                             }
 
-
-                                            if(mWorld->invId[27+barPosition] == ItemFrameItem::getID()) // if it is door item
+                                            if(mWorld->invId[27+barPosition] == ItemFrameItem::getID()) // if it is item frame
                                             {
                                                 bool placed = false;
                                                 unsigned int facing = 0;
@@ -5969,7 +5861,6 @@ void StatePlay::HandleEvents(StateManager* sManager)
                                                 }
                                             }
 
-
                                             if(mWorld->invId[27+barPosition] == 307) // if it is ladder item
                                             {
                                                 bool placed = false;
@@ -6014,8 +5905,6 @@ void StatePlay::HandleEvents(StateManager* sManager)
                                                     mWorld->RebuildTransparentMeshChunk(chunkTarget);
                                                     mWorld->rebuildNearestChunks(chunkTarget,testPos2);
 
-                                                    wasUpdated = true;
-
                                                     mWorld->invAm[27+barPosition] -= 1;
                                                     if(mWorld->invAm[27+barPosition] == 0)
                                                     {
@@ -6029,7 +5918,6 @@ void StatePlay::HandleEvents(StateManager* sManager)
                                                     return;
                                                 }
                                             }
-
 
                                             if(mWorld->invId[27+barPosition] == 293) // if it is cane item
                                             {
@@ -6072,55 +5960,91 @@ void StatePlay::HandleEvents(StateManager* sManager)
                                                 mWorld->GetBlock(testPos2.x,testPos2.y,testPos2.z) = 112;
                                                 mWorld->invId[27+barPosition] = 290;
 
+                                                wasLight = true;
+                                                mWorld->SetLigtSourcePosition(testPos2.x,testPos2.y,testPos2.z,mWorld->invId[27+barPosition]);
+
+                                                fppCam->needUpdate = true;
+
                                                 if(mWorld->mChunks[chunkTarget]->periodicallyUpadted == false)
                                                 {
                                                     mWorld->updatingChunks.push_back(chunkTarget);
                                                     mWorld->mChunks[chunkTarget]->periodicallyUpadted = true;
                                                 }
-
-                                                wasLight = true;
-                                                mWorld->SetLigtSourcePosition(testPos2.x,testPos2.y,testPos2.z,mWorld->invId[27+barPosition]);
-                                                fppCam->needUpdate = true;
                                             }
                                         }
 
-                                        // some animation stuff
                                         animGo = true;
                                         animDest = 0.0f;
 
-                                        changeY = -0.1f;
-                                        anim[0] = 1;
-
                                         mWorld->mainStatistics.blockPlaced += 1;
-
-                                        int chunkTarget = mWorld->getChunkId(testPos2);
 
                                         if(oldBlock < 250 && oldBlock != -1)
                                         {
                                             mSoundMgr->PlayWalkSound(mWorld->blockTypes[oldBlock].soundType);
                                         }
 
+                                       /* if(oldBlock == WaterBlock4::getID())
+                                        {
+                                            int up_block = mWorld->GetBlock(testPos2.x,testPos2.y+1,testPos2.z);
+                                            int bot_block = mWorld->GetBlock(testPos2.x,testPos2.y-1,testPos2.z);
+                                            int left_block = mWorld->GetBlock(testPos2.x-1,testPos2.y,testPos2.z);
+                                            int right_block = mWorld->GetBlock(testPos2.x+1,testPos2.y,testPos2.z);
+                                            int back_block = mWorld->GetBlock(testPos2.x,testPos2.y,testPos2.z-1);
+                                            int front_block =mWorld-> GetBlock(testPos2.x,testPos2.y,testPos2.z+1);
+
+                                            if(up_block >= WaterBlock1::getID() && up_block <= WaterBlock4::getID())
+                                            {
+                                                mWorld->UpdateFlood(Vector3(testPos2.x,testPos2.y+1,testPos2.z));
+                                            }
+                                            if(bot_block >= WaterBlock1::getID() && bot_block <= WaterBlock4::getID())
+                                            {
+                                                mWorld->UpdateFlood(Vector3(testPos2.x,testPos2.y-1,testPos2.z));
+                                            }
+                                            if(left_block >= WaterBlock1::getID() && left_block <= WaterBlock4::getID())
+                                            {
+                                                mWorld->UpdateFlood(Vector3(testPos2.x-1,testPos2.y,testPos2.z));
+                                            }
+                                            if(right_block >= WaterBlock1::getID() && right_block <= WaterBlock4::getID())
+                                            {
+                                                mWorld->UpdateFlood(Vector3(testPos2.x+1,testPos2.y,testPos2.z));
+                                            }
+                                            if(back_block >= WaterBlock1::getID() && back_block <= WaterBlock4::getID())
+                                            {
+                                                mWorld->UpdateFlood(Vector3(testPos2.x,testPos2.y,testPos2.z-1));
+                                            }
+                                            if(front_block >= WaterBlock1::getID() && front_block <= WaterBlock4::getID())
+                                            {
+                                                mWorld->UpdateFlood(Vector3(testPos2.x,testPos2.y,testPos2.z+1));
+                                            }
+                                            mWorld->UpdateFlood(Vector3(testPos2.x,testPos2.y,testPos2.z));
+                                        } */
+
+                                        int chunkTarget = mWorld->getChunkId(testPos2);
+
                                         //rebuild
                                         if(wasLight == true)
                                         {
-                                            mWorld->UpdateLightAreaIn(testPos2);
-                                            mWorld->RebuildFullMeshChunk(chunkTarget);
-                                            mWorld->rebuildNearestChunksForLight(chunkTarget,testPos2);
+                                            if(!wasUpdated)
+                                            {
+                                                mWorld->UpdateLightAreaIn(testPos2);
+
+                                                mWorld->RebuildFullMeshChunk(chunkTarget);
+                                                mWorld->rebuildNearestChunksForLight(chunkTarget,testPos2);
+                                            }
                                         }
                                         else
                                         {
-                                            mWorld->initPutBlocksLight(testPos2.x, testPos2.y+2, testPos2.z);
+                                            mWorld->initPutBlocksLight(testPos2.x, testPos2.y+1, testPos2.z);
 
                                             if(!wasUpdated)
                                             {
-                                                if(mWorld->GetLightLevel(testPos2.x,testPos2.y,testPos2.z) != 0)
+                                                if(mWorld->GetLightLevel(testPos2.x,testPos2.y,testPos2.z) > 0)
                                                 {
                                                     mWorld->UpdateLightAreaIn(testPos2);
                                                 }
 
                                                 mWorld->RebuildFullMeshChunk(chunkTarget);
-
-                                                if(mWorld->BlockTransparent(testPos2.x,testPos2.y,testPos2.z) || mWorld->GetBlock(testPos2.x,testPos2.y,testPos2.z) == WoodenFence::getID())
+                                                if(mWorld->BlockTransparent(testPos2.x,testPos2.y,testPos2.z) || mWorld->blockTypes[mWorld->GetBlock(testPos2.x,testPos2.y,testPos2.z)].blockModel == 2)
                                                 {
                                                     mWorld->rebuildNearestChunks(chunkTarget,testPos2);
                                                 }
@@ -6134,150 +6058,17 @@ void StatePlay::HandleEvents(StateManager* sManager)
                         break;
                     }
                 }
-
-                if(ceilf(mWorld->HG) < 20.0f)
-                {
-                    bool foodEaten = false;
-
-                    if (mWorld->invId[27+barPosition] == 288) ///BREAD
-                    {
-                        foodEaten = true;
-                        mWorld->HG += 5;
-                    }
-
-                    if (mWorld->invId[27+barPosition] == 315) ///COOKIE
-                    {
-                        foodEaten = true;
-                        mWorld->HG += 1;
-                        mWorld->HP += 1;
-                    }
-
-                    if (mWorld->invId[27+barPosition] == RottenFlesh::getID()) ///ROTTEN FLESH
-                    {
-                        foodEaten = true;
-                        mWorld->HG += 1;
-
-                        if(rand() % 100 < 45)
-                        {
-                            HurtPlayer(1);
-                        }
-                    }
-
-                    if (mWorld->invId[27+barPosition] == Potato::getID()) ///POTATO
-                    {
-                        foodEaten = true;
-                        mWorld->HG += 1;
-                    }
-
-                    if (mWorld->invId[27+barPosition] == PoisonedPotato::getID()) ///POSIONED POTATO
-                    {
-                        foodEaten = true;
-                        mWorld->HG += 1;
-
-                        HurtPlayer(4);
-                    }
-
-                    if (mWorld->invId[27+barPosition] == BakedPotato::getID()) ///BAKED POTATO
-                    {
-                        foodEaten = true;
-                        mWorld->HG += 5;
-                    }
-
-                    if (mWorld->invId[27+barPosition] == Carrot::getID()) ///CARROT
-                    {
-                        foodEaten = true;
-                        mWorld->HG += 3;
-                    }
-
-                    if (mWorld->invId[27+barPosition] == 311) ///MELON
-                    {
-                        foodEaten = true;
-                        mWorld->HG += 2;
-                    }
-
-                    if (mWorld->invId[27+barPosition] == 317) ///STEAK
-                    {
-                        foodEaten = true;
-                        mWorld->HG += 8;
-                    }
-
-                    if (mWorld->invId[27+barPosition] == 284) ///APPLE
-                    {
-                        foodEaten = true;
-                        mWorld->HG += 4;
-                    }
-
-                    if (mWorld->invId[27+barPosition] == 285) ///GOLDEN APPLE
-                    {
-                        foodEaten = true;
-                        mWorld->HG = 20;
-                        mWorld->HP = 20;
-                    }
-
-                    if (mWorld->invId[27+barPosition] == 303) ///MOOSHROOM BOWL
-                    {
-                        foodEaten = true;
-                        mWorld->HG += 6;
-                    }
-
-                    if(foodEaten)
-                    {
-                        mSoundMgr->PlayEatSound();
-                        mWorld->mainStatistics.foodEaten += 1;
-
-                        changeY = -0.20f;
-                        anim[0] = 1;
-
-                        Vector3 rayParticleDir = fppCam->m_vView - fppCam->m_vPosition;
-                        rayParticleDir.normalize();
-
-                        Vector3 particlePos = fppCam->m_vPosition + (rayParticleDir * 0.38f);
-
-                        if(mParticles.size() <= 52)
-                        {
-                            for(int k = 0; k <= 5; k++) // 5 particles
-                            {
-                                Particle* FoodPart = new Particle(mWorld,"item crack",Vector3(particlePos.x,particlePos.y-0.18f,particlePos.z));
-                                FoodPart->var1 = mWorld->invId[27+barPosition]-250;
-                                mParticles.push_back(FoodPart);
-                            }
-                        }
-
-                        if(mWorld->HG >= 20)
-                        {
-                            mWorld->HG = 19.999f;
-                        }
-
-                        if(mWorld->invId[27+barPosition] == MooshroomBowl::getID())
-                        {
-                            mWorld->invId[27+barPosition] = 302; // turn it into simple stackable bowl
-                            mWorld->invSt[27+barPosition] = 1;
-                        }
-                        else
-                        {
-                            mWorld->invAm[27+barPosition] -= 1;
-                            if (mWorld->invAm[27+barPosition] == 0)
-                            {
-                                mWorld->invAm[27+barPosition] = -1;
-                                mWorld->invId[27+barPosition] = -1;
-                                mWorld->invSt[27+barPosition] = 0;
-                            }
-                        }
-                        return;
-                    }
-                }
             }
 
-
-            if(keyPressed(InputHelper::Instance()->getButtonToAction(13)) || tryToDt == true)
+            if(keyPressed(InputHelper::Instance()->getButtonToAction(13))) //remove cube
             {
-                tryToDt = false;
+                mWorld->GetBlock(testPos1.x,testPos1.y,testPos1.z) = 0;
+                int chunkTarget = mWorld->getChunkId(testPos1);
 
-                //remove cube
                 Vector3 rayDir = fppCam->m_vView - fppCam->m_vPosition;
                 rayDir.normalize();
 
-                //we are takin our positiona and view vector
+                //we are takin our position and view vector
                 Vector3 testPos2;
                 testPos2 = Vector3(-1,-1,-1);
 
@@ -6285,504 +6076,31 @@ void StatePlay::HandleEvents(StateManager* sManager)
                 BoundingBox testBox = BoundingBox(testPos2.x+collider.min.x, testPos2.y+collider.min.y, testPos2.z+collider.min.z, testPos2.x+collider.max.x, testPos2.y+collider.max.y, testPos2.z+collider.max.z);
 
                 //we are moving slowly to the target +=0.5
-                for(float i = 0; i < 5.25f; i+=0.1f)
+                for(float i = 0; i < 5.25f; i+=0.15f)
                 {
                     testPos2 = fppCam->m_vPosition + (rayDir * i);
 
                     collider = mWorld->blockTypes[mWorld->GetBlock(testPos2.x,testPos2.y,testPos2.z)].collideBox;
                     testBox = BoundingBox(floorf(testPos2.x)+0.5f+collider.min.x, floorf(testPos2.y)+0.5f+collider.min.y, floorf(testPos2.z)+0.5f+collider.min.z, floorf(testPos2.x)+0.5f+collider.max.x, floorf(testPos2.y)+0.5f+collider.max.y, floorf(testPos2.z)+0.5f+collider.max.z);
 
-                    bool kick = false;
-                    if(mWorld->mZombies.empty() == false)
-                    {
-                        for(int f = 0; f < mWorld->mZombies.size(); f++)
-                        {
-                            Zombie *TestZombie = mWorld->mZombies[f];
-                            if(TestZombie->DistanceToPlayer() < 3.16f && TestZombie->kicked == false && TestZombie->damaged == false)
-                            {
-                                if(TestZombie->bBox.contains(testPos2))
-                                {
-                                    float damage = 1.0f;
-                                    bool weapon = false;
-
-                                    damage = mWorld->FetchDamagePoints(mWorld->invId[27+barPosition], weapon);
-
-                                    if(weapon == true)
-                                    {
-                                        mWorld->invAm[27+barPosition] -= 1+rand()%2;
-
-                                        if(mWorld->invAm[27+barPosition] <= 0)
-                                        {
-                                            mWorld->invId[27+barPosition] = -1;
-                                            mWorld->invAm[27+barPosition] = -1;
-                                            mWorld->invSt[27+barPosition] = false;
-
-                                            mSoundMgr->PlayBreakSound();
-                                        }
-                                    }
-
-                                    TestZombie->TakeDamage(damage,0.75f,dt);
-                                    kick = true;
-
-                                    animGo = true;
-                                    animDest = 0.0f;
-
-                                    changeY = -0.1f;
-                                    anim[0] = 1;
-                                    break;
-                                }
-                            }
-                        }
-                        if(kick == true)
-                        {
-                            return;
-                        }
-                    }
-
-
-                    if(mWorld->mCows.empty() == false)
-                    {
-                        for(int f = 0; f < mWorld->mCows.size(); f++)
-                        {
-                            Cow *TestCow = mWorld->mCows[f];
-                            if(TestCow->DistanceToPlayer() < 2.75 && TestCow->kicked == false && TestCow->damaged == false)
-                            {
-                                if(TestCow->bBox.contains(testPos2))
-                                {
-                                    float damage = 1.0f;
-                                    bool weapon = false;
-
-                                    damage = mWorld->FetchDamagePoints(mWorld->invId[27+barPosition], weapon);
-
-                                    if(weapon == true)
-                                    {
-                                        mWorld->invAm[27+barPosition] -= 1+rand()%2;
-
-                                        if(mWorld->invAm[27+barPosition] <= 0)
-                                        {
-                                            mWorld->invId[27+barPosition] = -1;
-                                            mWorld->invAm[27+barPosition] = -1;
-                                            mWorld->invSt[27+barPosition] = false;
-
-                                            mSoundMgr->PlayBreakSound();
-                                        }
-                                    }
-
-                                    TestCow->TakeDamage(damage,0.7f,dt);
-                                    kick = true;
-
-                                    animGo = true;
-                                    animDest = 0.0f;
-                                    break;
-                                }
-                            }
-                        }
-                        if(kick == true)
-                        {
-                            return;
-                        }
-                    }
-
-
-                    if(mWorld->mSheeps.empty() == false)
-                    {
-                        for(int f = 0; f < mWorld->mSheeps.size(); f++)
-                        {
-                            Sheep *TestSheep = mWorld->mSheeps[f];
-                            if(TestSheep->DistanceToPlayer() < 2.75 && TestSheep->kicked == false && TestSheep->damaged == false)
-                            {
-                                if(TestSheep->bBox.contains(testPos2))
-                                {
-                                    float damage = 1.0f;
-                                    bool weapon = false;
-
-                                    damage = mWorld->FetchDamagePoints(mWorld->invId[27+barPosition], weapon);
-
-                                    if(weapon == true)
-                                    {
-                                        mWorld->invAm[27+barPosition] -= 1+rand()%2;
-
-                                        if(mWorld->invAm[27+barPosition] <= 0)
-                                        {
-                                            mWorld->invId[27+barPosition] = -1;
-                                            mWorld->invAm[27+barPosition] = -1;
-                                            mWorld->invSt[27+barPosition] = false;
-
-                                            mSoundMgr->PlayBreakSound();
-                                        }
-                                    }
-
-                                    TestSheep->TakeDamage(damage,0.7f,dt);
-                                    kick = true;
-
-                                    animGo = true;
-                                    animDest = 0.0f;
-                                    break;
-                                }
-                            }
-                        }
-                        if(kick == true)
-                        {
-                            return;
-                        }
-                    }
-
-
-                    if(mWorld->mCreepers.empty() == false)
-                    {
-                        for(int f = 0; f < mWorld->mCreepers.size(); f++)
-                        {
-                            Creeper *TestCreeper = mWorld->mCreepers[f];
-                            if(mWorld->FastDistance2d(abs(TestCreeper->position.x-playerPosition.x)*10,abs(TestCreeper->position.z-playerPosition.z)*10)/10.0f + abs(TestCreeper->position.y-(playerPosition.y-0.7))/2.0f < 2.18 && TestCreeper->kicked == false && TestCreeper->damaged == false)
-                            {
-                                if(TestCreeper->bBox.contains(testPos2))
-                                {
-                                    float damage = 1.0f;
-                                    bool weapon = false;
-
-                                    damage = mWorld->FetchDamagePoints(mWorld->invId[27+barPosition], weapon);
-
-                                    if(weapon == true)
-                                    {
-                                        mWorld->invAm[27+barPosition] -= 1+rand()%2;
-
-                                        if(mWorld->invAm[27+barPosition] <= 0)
-                                        {
-                                            mWorld->invId[27+barPosition] = -1;
-                                            mWorld->invAm[27+barPosition] = -1;
-                                            mWorld->invSt[27+barPosition] = false;
-
-                                            mSoundMgr->PlayBreakSound();
-                                        }
-                                    }
-
-                                    TestCreeper->TakeDamage(damage,0.7f,dt);
-                                    kick = true;
-
-                                    animGo = true;
-                                    animDest = 0.0f;
-                                    break;
-                                }
-                            }
-                        }
-                        if(kick == true)
-                        {
-                            return;
-                        }
-                    }
-
-
-                    //check if we touch something
                     if(mWorld->BlockEditable(testPos2.x,testPos2.y,testPos2.z) && testBox.contains(testPos2))
                     {
-                        if(mWorld->GetBlock(testPos2.x,testPos2.y,testPos2.z) == NoteBlock::getID())
-                        {
-                            unsigned int noteBlockId = mWorld->FindNoteBlockID(testPos2);
+                        testPos1.x  = testPos2.x;
+                        testPos1.y  = testPos2.y;
+                        testPos1.z  = testPos2.z;
 
-                            if(noteBlockId != -1)
-                            {
-                                if(mWorld->GetBlock(testPos2.x,testPos2.y+1,testPos2.z) == 0)
-                                {
-                                    NoteBlockEntity* TestNoteBlock = mWorld->mNoteBlocks[noteBlockId];
-                                    mSoundMgr->PlayNoteSound(!(mWorld->BlockMaterial(testPos2.x,testPos2.y-1,testPos2.z) == 1 || mWorld->BlockMaterial(testPos2.x,testPos2.y-1,testPos2.z) == 8),TestNoteBlock->GetPitch());
-
-                                    float red, blue, green;
-                                    if(TestNoteBlock->GetNote() <= 12)
-                                    {
-                                        blue = 1.0 - (TestNoteBlock->GetNote()/12.0f);
-                                        green = (TestNoteBlock->GetNote()/12.0f);
-                                        red = 0.0f;
-                                    }
-                                    else
-                                    {
-                                        blue = 0.0f;
-                                        green = 1.0 - ((TestNoteBlock->GetNote()-12)/12.0f);
-                                        red = ((TestNoteBlock->GetNote()-12)/12.0f);
-                                    }
-                                    Particle* Note = new Particle(mWorld,"note",Vector3((int)testPos2.x+0.5f,(int)testPos2.y+1.1f,(int)testPos2.z+0.5f));
-                                    Note->SetColor(Vector3(red,green,blue));
-                                    mParticles.push_back(Note);
-                                }
-                            }
-                        }
-
-                        if (startDt == false)
-                        {
-                            testPos1.x  = testPos2.x;
-                            testPos1.y  = testPos2.y;
-                            testPos1.z  = testPos2.z;
-                            dET = 1.0f;
-                            dT = 0.0f;
-                            switch(mWorld->BlockMaterial(testPos1.x,testPos1.y,testPos1.z)) // fetch time of block breaking
-                            {
-                                case 1: // wood
-                                if(mWorld->invId[27+barPosition] == WoodenAxe::getID()) // wooden axe
-                                {
-                                    dET = 1.5f; // 1.5 СЃРµРєСѓРЅРґС‹
-                                }
-                                else if(mWorld->invId[27+barPosition] == StoneAxe::getID()) // stone axe
-                                {
-                                    dET = 0.75f;
-                                }
-                                else if(mWorld->invId[27+barPosition] == IronAxe::getID()) // iron axe
-                                {
-                                    dET = 0.5f;
-                                }
-                                else if(mWorld->invId[27+barPosition] == DiamondAxe::getID()) // diamond axe
-                                {
-                                    dET = 0.4f;
-                                }
-                                else if(mWorld->invId[27+barPosition] == GoldenAxe::getID()) // golden axe
-                                {
-                                    dET = 0.25f;
-                                }
-                                else
-                                {
-                                    dET = 3.0f;
-                                }
-                                break;
-
-                                case 2: // stone
-                                if(mWorld->invId[27+barPosition] == WoodenPickaxe::getID())
-                                {
-                                    dET = 1.5f;
-                                }
-                                else if(mWorld->invId[27+barPosition] == StonePickaxe::getID())
-                                {
-                                    dET = 0.75f;
-                                }
-                                else if(mWorld->invId[27+barPosition] == IronPickaxe::getID())
-                                {
-                                    dET = 0.5f;
-                                }
-                                else if(mWorld->invId[27+barPosition] == DiamondPickaxe::getID())
-                                {
-                                    dET = 0.4f;
-                                }
-                                else if(mWorld->invId[27+barPosition] == GoldenPickaxe::getID())
-                                {
-                                    dET = 0.25f;
-                                }
-                                else
-                                {
-                                    dET = 10.0f;
-                                }
-                                break;
-
-                                case 3: // soil
-                                if(mWorld->invId[27+barPosition] == 260)
-                                {
-                                    dET = 0.45f;
-                                }
-                                else if(mWorld->invId[27+barPosition] == 261)
-                                {
-                                    dET = 0.25f;
-                                }
-                                else if(mWorld->invId[27+barPosition] == 262)
-                                {
-                                    dET = 0.15f;
-                                }
-                                else if(mWorld->invId[27+barPosition] == 263)
-                                {
-                                    dET = 0.15f;
-                                }
-                                else if(mWorld->invId[27+barPosition] == 264)
-                                {
-                                    dET = 0.1f;
-                                }
-                                else
-                                {
-                                    dET = 0.9f;
-                                }
-                                break;
-
-                                case 4: // leaves
-                                if(mWorld->invId[27+barPosition] == 275)
-                                {
-                                    dET = 0.1f;
-                                }
-                                else
-                                {
-                                    dET = 0.4f;
-                                }
-                                break;
-
-                                case 5: // obsidian
-                                if(mWorld->invId[27+barPosition] == 253)
-                                {
-                                    dET = 15.0f;
-                                }
-                                else
-                                {
-                                    dET = 250.0f;
-                                }
-                                break;
-
-                                case 6: // bedrock
-                                dET = 36000.0f;
-                                break;
-
-                                break;
-
-                                case 7: // ores
-                                if(mWorld->invId[27+barPosition] == 250)
-                                {
-                                    dET = 2.25f;
-                                }
-                                else if(mWorld->invId[27+barPosition] == 251)
-                                {
-                                    dET = 1.15f;
-                                }
-                                else if(mWorld->invId[27+barPosition] == 252)
-                                {
-                                    dET = 0.75f;
-                                }
-                                else if(mWorld->invId[27+barPosition] == 253)
-                                {
-                                    dET = 0.6f;
-                                }
-                                else if(mWorld->invId[27+barPosition] == 254)
-                                {
-                                    dET = 0.4f;
-                                }
-                                else
-                                {
-                                    dET = 15.0f;
-                                }
-                                break;
-
-                                case 8: // strong wood
-                                if(mWorld->invId[27+barPosition] == 265) // wooden axe
-                                {
-                                    dET = 1.9f; //
-                                }
-                                else if(mWorld->invId[27+barPosition] == 266) // stone axe
-                                {
-                                    dET = 0.95f;
-                                }
-                                else if(mWorld->invId[27+barPosition] == 267) // iron axe
-                                {
-                                    dET = 0.65f;
-                                }
-                                else if(mWorld->invId[27+barPosition] == 268) // diamond axe
-                                {
-                                    dET = 0.5f;
-                                }
-                                else if(mWorld->invId[27+barPosition] == 269) // golden axe
-                                {
-                                    dET = 0.35f;
-                                }
-                                else
-                                {
-                                    dET = 3.75f;
-                                }
-                                break;
-
-                                case 9: // strong stone
-                                if(mWorld->invId[27+barPosition] == 250)
-                                {
-                                    dET = 2.65f;
-                                }
-                                else if(mWorld->invId[27+barPosition] == 251)
-                                {
-                                    dET = 1.35f;
-                                }
-                                else if(mWorld->invId[27+barPosition] == 252)
-                                {
-                                    dET = 0.9f;
-                                }
-                                else if(mWorld->invId[27+barPosition] == 253)
-                                {
-                                    dET = 0.7f;
-                                }
-                                else if(mWorld->invId[27+barPosition] == 254)
-                                {
-                                    dET = 0.45f;
-                                }
-                                else
-                                {
-                                    dET = 17.5f;
-                                }
-                                break;
-
-                                case 10: // metal
-                                if(mWorld->invId[27+barPosition] == 250)
-                                {
-                                    dET = 25.0f;
-                                }
-                                else if(mWorld->invId[27+barPosition] == 251)
-                                {
-                                    dET = 10.0f;
-                                }
-                                else if(mWorld->invId[27+barPosition] == 252)
-                                {
-                                    dET = 5.0f;
-                                }
-                                else if(mWorld->invId[27+barPosition] == 253)
-                                {
-                                    dET = 2.5f;
-                                }
-                                else if(mWorld->invId[27+barPosition] == 254)
-                                {
-                                    dET = 25.0f;
-                                }
-                                else
-                                {
-                                    dET = 25.0f;
-                                }
-                                break;
-
-                                default:
-                                dET = 0.3f;
-                                break;
-
-                            }
-                            dT = 0;
-                            startDt = true;
-                        }
-                        break;
-                    }
-                }
-            }
-
-            //remove cube
-            if(keyHold(InputHelper::Instance()->getButtonToAction(13)))
-            {
-                if (startDt == true)
-                {
-                    if(animGo == false)
-                    {
-                        mSoundMgr->PlayDigSound(mWorld->BlockSoundAtPos(Vector3(testPos1.x,testPos1.y,testPos1.z)));
-
-                        animGo = true;
-                        animDest = 0.0f;
-                    }
-
-                    if(headInWater) // slow removing under water
-                    {
-                        dT < dET ? dT += dt*0.2 : dT = 0;
-                    }
-                    else
-                    {
-                        dT < dET ? dT += dt : dT = 0;
-                    }
-
-                    dStd = ceilf(dT*(100/(float)dET))/10.0f;
-                    //remove block
-                    if (dT >= dET)
-                    {
+                        dT = 0;
+                        startDt = true;
                         bool wasLight = false;
                         int oldBlock = 0;
                         oldBlock = mWorld->GetBlock(testPos1.x,testPos1.y,testPos1.z);
-                        if(oldBlock != -1)//if it's light block
+
+                        if(mWorld->LightSourceBlock(oldBlock))//if it's light block
                         {
-                            if(mWorld->LightSourceBlock(oldBlock))
-                            {
-                                wasLight = true;
-                            }
+                            wasLight = true;
                         }
 
-                        if(oldBlock >= ChestBlock1::getID() && oldBlock <= ChestBlock4::getID()) // chest destroying
+                        if(oldBlock >= ChestBlock1::getID() && oldBlock <= ChestBlock4::getID()) // if it is chest
                         {
                             chestId = FindChestId(testPos1.x,testPos1.y,testPos1.z);
                             if(chestId != -1)
@@ -6809,9 +6127,40 @@ void StatePlay::HandleEvents(StateManager* sManager)
                                         }
                                     }
                                 }
-
                                 delete mWorld->mChests[chestId];
                                 mWorld->mChests.erase(mWorld->mChests.begin()+chestId);
+                            }
+                        }
+
+                        if(oldBlock == FurnaceOff::getID() || oldBlock == FurnaceOn::getID())
+                        {
+                            furnaceId = FindFurnaceId(testPos1.x,testPos1.y,testPos1.z);
+                            if(furnaceId != -1)
+                            {
+                                // drop all items in furnace
+                                Furnace* TestFurnace = mWorld->mFurnaces[furnaceId];
+                                for(int i = 0; i <= 2; i++)
+                                {
+                                    if(TestFurnace->furnaceSlotId[i] > 0)
+                                    {
+                                        Vector3 dropVelocity = Vector3(0,0,0);
+
+                                        dropVelocity.x = (-15+rand()%30)*0.1f;
+                                        dropVelocity.y = 3.0f;
+                                        dropVelocity.z = (-15+rand()%30)*0.1f;
+
+                                        if(TestFurnace->furnaceSlotAm[i] > 0)
+                                        {
+                                            mWorld->DropThisNoAlign(TestFurnace->furnaceSlotId[i],TestFurnace->furnaceSlotAm[i],TestFurnace->furnaceSlotSt[i],Vector3(testPos1.x+0.5f,testPos1.y+0.25f,testPos1.z+0.5f),dropVelocity);
+
+                                            TestFurnace->furnaceSlotAm[i] = -1;
+                                            TestFurnace->furnaceSlotSt[i] = 0;
+                                            TestFurnace->furnaceSlotId[i] = -1;
+                                        }
+                                    }
+                                }
+                                delete mWorld->mFurnaces[furnaceId];
+                                mWorld->mFurnaces.erase(mWorld->mFurnaces.begin()+furnaceId);
                             }
                         }
 
@@ -6859,49 +6208,46 @@ void StatePlay::HandleEvents(StateManager* sManager)
                             mWorld->DestroyItemFrameEntity(testPos1);
                         }
 
-                        if(oldBlock == FurnaceOff::getID() || oldBlock == FurnaceOn::getID()) // furnace destroying
+                        if(mWorld->invId[27+barPosition] >= 250 && mWorld->invId[27+barPosition] <= 275)
                         {
-                            furnaceId = FindFurnaceId(testPos1.x,testPos1.y,testPos1.z);
-                            if(furnaceId != -1)
+                            mWorld->invAm[27+barPosition] -= 1;
+
+                            if(mWorld->invAm[27+barPosition] == 0)
                             {
-                                // drop all items in furnace
-                                Furnace* TestFurnace = mWorld->mFurnaces[furnaceId];
-                                for(int i = 0; i <= 2; i++)
+                                Vector3 rayParticleDir = fppCam->m_vView - fppCam->m_vPosition;
+                                rayParticleDir.normalize();
+
+                                Vector3 particlePos = fppCam->m_vPosition + (rayParticleDir * 0.38f);
+
+                                if(mParticles.size() <= 52)
                                 {
-                                    if(TestFurnace->furnaceSlotId[i] > 0)
+                                    for(int k = 0; k <= 5; k++) // 5 particles
                                     {
-                                        Vector3 dropVelocity = Vector3(0,0,0);
-
-                                        dropVelocity.x = (-15+rand()%30)*0.1f;
-                                        dropVelocity.y = 3.0f;
-                                        dropVelocity.z = (-15+rand()%30)*0.1f;
-
-                                        if(TestFurnace->furnaceSlotAm[i] > 0)
-                                        {
-                                            mWorld->DropThisNoAlign(TestFurnace->furnaceSlotId[i],TestFurnace->furnaceSlotAm[i],TestFurnace->furnaceSlotSt[i],Vector3(testPos1.x+0.5f,testPos1.y+0.25f,testPos1.z+0.5f),dropVelocity);
-
-                                            TestFurnace->furnaceSlotAm[i] = -1;
-                                            TestFurnace->furnaceSlotSt[i] = 0;
-                                            TestFurnace->furnaceSlotId[i] = -1;
-                                        }
+                                        Particle* ToolPart = new Particle(mWorld,"item crack",Vector3(particlePos.x,particlePos.y-0.18f,particlePos.z));
+                                        ToolPart->var1 = mWorld->invId[27+barPosition]-250;
+                                        mParticles.push_back(ToolPart);
                                     }
                                 }
-                                delete mWorld->mFurnaces[furnaceId];
-                                mWorld->mFurnaces.erase(mWorld->mFurnaces.begin()+furnaceId);
+
+                                mWorld->invId[27+barPosition] = -1;
+                                mWorld->invAm[27+barPosition] = -1;
+                                mWorld->invSt[27+barPosition] = 0;
+                                mSoundMgr->PlayBreakSound();
                             }
                         }
 
-                        if(oldBlock >= 57 && oldBlock <= 58)
+                        if(oldBlock >= 57 && oldBlock <= 58) // if it is door
                         {
                             mWorld->GetBlock(testPos1.x,testPos1.y,testPos1.z) = 0;
                             mWorld->GetBlock(testPos1.x,testPos1.y-1,testPos1.z) = 0;
                         }
 
-                        if(oldBlock >= 49 && oldBlock <= 56)
+                        if(oldBlock >= 49 && oldBlock <= 56) // if it is door
                         {
                             mWorld->GetBlock(testPos1.x,testPos1.y,testPos1.z) = 0;
                             mWorld->GetBlock(testPos1.x,testPos1.y+1,testPos1.z) = 0;
                         }
+
 
                         if(oldBlock == BedBlock1::getID())
                         {
@@ -6945,9 +6291,9 @@ void StatePlay::HandleEvents(StateManager* sManager)
                             mWorld->GetBlock(testPos1.x,testPos1.y,testPos1.z+1) = 0;
                         }
 
-                        if(oldBlock == IceBlock::getID())
+                        if(oldBlock == 32) // if it is ice
                         {
-                            mWorld->GetBlock(testPos1.x,testPos1.y,testPos1.z) = WaterBlock::getID();
+                            mWorld->GetBlock(testPos1.x,testPos1.y,testPos1.z) = 4;
                         }
                         else
                         {
@@ -6992,257 +6338,12 @@ void StatePlay::HandleEvents(StateManager* sManager)
                                         break;
                                     }
 
-                                    if(mWorld->GetBlock(testPos2.x,testPos2.y,testPos2.z) == CaneBlock::getID())
-                                    {
-                                        mWorld->DropThis(CaneItem::getID(),testPos2);
-                                    }
-                                    if(mWorld->GetBlock(testPos2.x,testPos2.y,testPos2.z) == CactusBlock::getID())
-                                    {
-                                        mWorld->DropThis(CactusBlock::getID(),testPos2);
-                                    }
                                     mWorld->GetBlock(testPos2.x,testPos2.y,testPos2.z) = 0;
                                 }
                             }
                         }
 
-                        if(mWorld->invId[27+barPosition] >= 250 && mWorld->invId[27+barPosition] <= 275) // tool breaking
-                        {
-                            mWorld->invAm[27+barPosition] -= 1;
-                            if(mWorld->invAm[27+barPosition] <= 0)
-                            {
-                                Vector3 rayParticleDir = fppCam->m_vView - fppCam->m_vPosition;
-                                rayParticleDir.normalize();
-
-                                Vector3 particlePos = fppCam->m_vPosition + (rayParticleDir * 0.38f);
-
-                                if(mParticles.size() <= 52)
-                                {
-                                    for(int k = 0; k <= 5; k++) // 5 particles
-                                    {
-                                        Particle* ToolPart = new Particle(mWorld,"item crack",Vector3(particlePos.x,particlePos.y-0.18f,particlePos.z));
-                                        ToolPart->var1 = mWorld->invId[27+barPosition]-250;
-                                        mParticles.push_back(ToolPart);
-                                    }
-                                }
-
-                                mWorld->invId[27+barPosition] = -1;
-                                mWorld->invAm[27+barPosition] = -1;
-                                mWorld->invSt[27+barPosition] = 0;
-                                mSoundMgr->PlayBreakSound();
-                            }
-                        }
-
-                        switch(oldBlock)
-                        {
-                        case 9: // oak leaves
-                            if(mWorld->invId[27+barPosition] != 275)
-                            {
-                                if ((rand() % 50) == 0)
-                                {
-                                    mWorld->DropThis(284,testPos1);
-                                }
-
-                                if ((rand() % 15) == 0)
-                                {
-                                    mWorld->DropThis(296,testPos1);
-                                }
-                            }
-                            else
-                            {
-                                mWorld->DropThis(mWorld->LootBlock(oldBlock),testPos1);
-                            }
-                        break;
-
-                        case 37: // spruce leaves
-                            if(mWorld->invId[27+barPosition] != 275)
-                            {
-                                if (rand() % 10 == 1)
-                                {
-                                    mWorld->DropThis(309,testPos1);
-                                }
-                            }
-                            else
-                            {
-                                mWorld->DropThis(mWorld->LootBlock(oldBlock),testPos1);
-                            }
-                        break;
-
-                        case 38: // birch leaves
-                            if(mWorld->invId[27+barPosition] != 275)
-                            {
-                                if (rand() % 16 == 1)
-                                {
-                                    mWorld->DropThis(310,testPos1);
-                                }
-                            }
-                            else
-                            {
-                                mWorld->DropThis(mWorld->LootBlock(oldBlock),testPos1);
-                            }
-                        break;
-
-                        case 139: // wheat
-                            mWorld->DropThis(Wheat::getID(),testPos1);
-                            mWorld->DropThis(WheatSeeds::getID(),1+rand()%2,testPos1);
-                        break;
-
-                        case 93: // snow cover
-                            if(mWorld->invId[27+barPosition] >= 260 && mWorld->invId[27+barPosition] <= 264)
-                            {
-                                mWorld->DropThis(299,4,testPos1);
-                            }
-                        break;
-
-                        // ore digging with special tools
-                        case 3: // stone
-                            if(mWorld->invId[27+barPosition] >= WoodenPickaxe::getID() && mWorld->invId[27+barPosition] <= GoldenPickaxe::getID())
-                            {
-                                mWorld->DropThis(mWorld->LootBlock(oldBlock),testPos1);
-                            }
-                        break;
-
-                        case 36: // cobblestone
-                            if(mWorld->invId[27+barPosition] >= WoodenPickaxe::getID() && mWorld->invId[27+barPosition] <= GoldenPickaxe::getID())
-                            {
-                                mWorld->DropThis(mWorld->LootBlock(oldBlock),testPos1);
-                            }
-                        break;
-
-                        case 41: // iron ore
-                            if(mWorld->invId[27+barPosition] >= StonePickaxe::getID() && mWorld->invId[27+barPosition] <= GoldenPickaxe::getID())
-                            {
-                                mWorld->DropThis(mWorld->LootBlock(oldBlock),testPos1);
-                            }
-                        break;
-
-                        case 42: // coal ore
-                            if(mWorld->invId[27+barPosition] >= WoodenPickaxe::getID() && mWorld->invId[27+barPosition] <= GoldenPickaxe::getID())
-                            {
-                                mWorld->DropThis(mWorld->LootBlock(oldBlock),testPos1);
-                            }
-                        break;
-
-                        case 43: // diamond ore
-                            if(mWorld->invId[27+barPosition] >= IronPickaxe::getID() && mWorld->invId[27+barPosition] <= GoldenPickaxe::getID())
-                            {
-                                mWorld->DropThis(mWorld->LootBlock(oldBlock),testPos1);
-                            }
-                        break;
-
-                        case 44: // redstone ore
-                            if(mWorld->invId[27+barPosition] >= IronPickaxe::getID() && mWorld->invId[27+barPosition] <= GoldenPickaxe::getID())
-                            {
-                                mWorld->DropThis(mWorld->LootBlock(oldBlock),3,testPos1);
-                                mWorld->DropThis(mWorld->LootBlock(oldBlock),1+rand()%2,testPos1);
-                            }
-                        break;
-
-                        case 45: // lapis ore
-                            if(mWorld->invId[27+barPosition] >= StonePickaxe::getID() && mWorld->invId[27+barPosition] <= GoldenPickaxe::getID())
-                            {
-                                mWorld->DropThis(mWorld->LootBlock(oldBlock),3,testPos1);
-                                mWorld->DropThis(mWorld->LootBlock(oldBlock),1+rand()%5,testPos1);
-                            }
-                        break;
-
-                        case 46: // obsidian
-                            if(mWorld->invId[27+barPosition] == DiamondPickaxe::getID() )
-                            {
-                                mWorld->DropThis(mWorld->LootBlock(oldBlock),3,testPos1);
-                                mWorld->DropThis(mWorld->LootBlock(oldBlock),1+rand()%5,testPos1);
-                            }
-                        break;
-
-                        case 5: // golden ore
-                            if(mWorld->invId[27+barPosition] >= IronPickaxe::getID() && mWorld->invId[27+barPosition] <= GoldenPickaxe::getID())
-                            {
-                                mWorld->DropThis(mWorld->LootBlock(oldBlock),testPos1);
-                            }
-                        break;
-                        //
-
-                        case 99: // clay block
-                            mWorld->DropThis(mWorld->LootBlock(oldBlock),2,testPos1);
-                            mWorld->DropThis(mWorld->LootBlock(oldBlock),2,testPos1);
-                        break;
-
-                        case 81: // melon block
-                            mWorld->DropThis(mWorld->LootBlock(oldBlock),2,testPos1);
-
-                            mWorld->DropThis(mWorld->LootBlock(oldBlock),1+rand()%5,testPos1);
-                        break;
-
-                        case 133: // final melon plant
-                            mWorld->DropThis(MelonSeeds::getID(),1+rand()%3,testPos1);
-                        break;
-
-                        case 181: // final pumpkin plant
-                            mWorld->DropThis(PumpkinSeeds::getID(),1+rand()%3,testPos1);
-                        break;
-
-                        case 185: // matrue potato
-                            mWorld->DropThis(Potato::getID(),1,testPos1);
-                            mWorld->DropThis(Potato::getID(),rand() % 4,testPos1);
-
-                            if(rand() % 100 <= 1)
-                            {
-                                mWorld->DropThis(PoisonedPotato::getID(),1,testPos1);
-                            }
-                        break;
-
-                        case 189: // matrue carrot
-                            mWorld->DropThis(Carrot::getID(),1,testPos1);
-                            mWorld->DropThis(Carrot::getID(),rand() % 4,testPos1);
-                        break;
-
-                        case 33: // cane
-                            mWorld->DropThis(mWorld->LootBlock(oldBlock),testPos1);
-                            for(int checkY = testPos1.y+1; checkY <= testPos1.y+5; checkY++)
-                            {
-                                Vector3 testPos2 = Vector3(testPos1.x,checkY,testPos1.z);
-                                if(mWorld->GetBlock(testPos2.x,testPos2.y,testPos2.z) != 33)
-                                {
-                                    if(mWorld->ChunksEqual(testPos1, testPos2) == false)
-                                    {
-                                        int chunkTarget = mWorld->getChunkId(testPos2);
-                                        mWorld->RebuildTransparentMeshChunk(chunkTarget);
-                                    }
-                                    break;
-                                }
-
-                                mWorld->GetBlock(testPos2.x,testPos2.y,testPos2.z) = 0;
-                                mWorld->DropThis(mWorld->LootBlock(oldBlock),testPos2);
-                            }
-                        break;
-
-                        case 116: // tall grass
-                        if (rand() % 8 == 1)
-                        {
-                            mWorld->DropThis(WheatSeeds::getID(),testPos1);
-                        }
-                        break;
-
-                        case 113: // gravel
-                        if (rand() % 12 == 0)
-                        {
-                            mWorld->DropThis(Flint::getID(),testPos1);
-                        }
-                        else
-                        {
-                            mWorld->DropThis(mWorld->LootBlock(oldBlock),testPos1);
-                        }
-                        break;
-
-                        default: // all other blocks
-                            mWorld->DropThis(mWorld->LootBlock(oldBlock),testPos1);
-                        break;
-                        }
-
                         mWorld->mainStatistics.blockDestroyed += 1;
-                        if(mWorld->mainStatistics.blockDestroyed == 1)
-                        {
-                            tutorialTimer = 10.0f;
-                        }
 
                         if(oldBlock == GlassBlock::getID() || oldBlock == IceBlock::getID())
                         {
@@ -7250,15 +6351,12 @@ void StatePlay::HandleEvents(StateManager* sManager)
                         }
                         else
                         {
-                            if(oldBlock >= 0 && oldBlock < mWorld->blockTypes.size())
-                            {
-                                mSoundMgr->PlayEndDigSound(mWorld->blockTypes[oldBlock].soundType);
-                            }
+                            mSoundMgr->PlayEndDigSound(mWorld->blockTypes[oldBlock].soundType);
                         }
 
-                        if(mParticles.size() <= 52 && oldBlock >= 0)
+                        if(mParticles.size() <= 52)
                         {
-                            for(int k = 0; k <= 8; k++) // 9 particles
+                            for(int k = 0; k <= 6; k++) // 9 particles
                             {
                                 Particle* Smoke2 = new Particle(mWorld,"block crack",Vector3((int)testPos1.x + 0.5f + (-0.3+(rand() % 7)*0.1f),(int)testPos1.y + 0.5f + (-0.2+(rand() % 5)*0.1f),(int)testPos1.z + 0.5f + (-0.3+(rand() % 7)*0.1f)));
                                 Smoke2->var1 = oldBlock;
@@ -7266,11 +6364,46 @@ void StatePlay::HandleEvents(StateManager* sManager)
                             }
                         }
 
+                        animGo = true;
+                        animDest = 0.0f;
+
                         //check if this block is a support for light block or ladder
-                        mWorld->CheckForTorchSupport(testPos1.x,testPos1.y,testPos1.z,mWorld->GetBlock(testPos1.x,testPos1.y,testPos1.z));
+                        mWorld->CheckForTorchSupport(testPos1.x,testPos1.y,testPos1.z,0);
                         mWorld->CheckForLadderSupport(testPos1.x,testPos1.y,testPos1.z);
                         mWorld->DestroyAroundTrapdoors(testPos1.x,testPos1.y,testPos1.z);
                         mWorld->DestroyAroundItemFrames(testPos1.x,testPos1.y,testPos1.z);
+
+                        /*int up_block = mWorld->GetBlock(testPos1.x,testPos1.y+1,testPos1.z);
+                        int bot_block = mWorld->GetBlock(testPos1.x,testPos1.y-1,testPos1.z);
+                        int left_block = mWorld->GetBlock(testPos1.x-1,testPos1.y,testPos1.z);
+                        int right_block = mWorld->GetBlock(testPos1.x+1,testPos1.y,testPos1.z);
+                        int back_block = mWorld->GetBlock(testPos1.x,testPos1.y,testPos1.z-1);
+                        int front_block = mWorld->GetBlock(testPos1.x,testPos1.y,testPos1.z+1);
+
+                        if(up_block >= WaterBlock1::getID() && up_block <= WaterBlock4::getID())
+                        {
+                            mWorld->UpdateFlood(Vector3(testPos1.x,testPos1.y+1,testPos1.z));
+                        }
+                        if(bot_block >= WaterBlock1::getID() && bot_block <= WaterBlock4::getID())
+                        {
+                            mWorld->UpdateFlood(Vector3(testPos1.x,testPos1.y-1,testPos1.z));
+                        }
+                        if(left_block >= WaterBlock1::getID() && left_block <= WaterBlock4::getID())
+                        {
+                            mWorld->UpdateFlood(Vector3(testPos1.x-1,testPos1.y,testPos1.z));
+                        }
+                        if(right_block >= WaterBlock1::getID() && right_block <= WaterBlock4::getID())
+                        {
+                            mWorld->UpdateFlood(Vector3(testPos1.x+1,testPos1.y,testPos1.z));
+                        }
+                        if(back_block >= WaterBlock1::getID() && back_block <= WaterBlock4::getID())
+                        {
+                            mWorld->UpdateFlood(Vector3(testPos1.x,testPos1.y,testPos1.z-1));
+                        }
+                        if(front_block >= WaterBlock1::getID() && front_block <= WaterBlock4::getID())
+                        {
+                            mWorld->UpdateFlood(Vector3(testPos1.x,testPos1.y,testPos1.z+1));
+                        }*/
 
                         int chunkTarget = mWorld->getChunkId(testPos1);
 
@@ -7286,7 +6419,7 @@ void StatePlay::HandleEvents(StateManager* sManager)
                             }
                             else
                             {
-                                mWorld->initPutBlocksLight(testPos1.x, testPos1.y+2, testPos1.z);
+                                mWorld->initPutBlocksLight(testPos1.x, testPos1.y+1, testPos1.z);
                                 if(mWorld->GetLightLevel(testPos1.x-1,testPos1.y,testPos1.z) != 0 ||
                                    mWorld->GetLightLevel(testPos1.x+1,testPos1.y,testPos1.z) != 0 ||
                                    mWorld->GetLightLevel(testPos1.x,testPos1.y-1,testPos1.z) != 0 ||
@@ -7302,238 +6435,155 @@ void StatePlay::HandleEvents(StateManager* sManager)
                             }
                         }
 
-                        if(mWorld->HG > 0.01)
-                        {
-                            mWorld->HG -= (1.0f)/64.0f;
-                        }
-
                         fppCam->needUpdate = true;
                         testPos1 = Vector3(-1,-1,-1);
                         startDt = false;
-                        tryToDt = true;
-                        dT = 0;
-                        dET = 0;
                         chestId = -1;
-                        dStd = -1;
+                        break;
                     }
                 }
             }
-            else
+        }
+
+        /// INVENTORY SECTOR
+        if(invEn == true || craft3xEn == true || chestEn == true || furnaceEn == true)
+        {
+            if(mSystemMgr->KeyPressed(PSP_CTRL_CIRCLE))
             {
-                if (startDt != false)
+                if(invEn == true)
                 {
-                    dT = 0;
-                    dStd = -1;
-                    startDt = false;
-                    chestId = -1;
+                    tempXInv = invXPosition;
+                    tempYInv = invYPosition;
+                    tempUpInv = upEn;
                 }
 
-            }
+                if(furnaceEn == true)
+                {
+                    tempXFurnace = invXPosition;
+                    tempYFurnace = invYPosition;
+                    tempUpFurnace = upEn;
+                }
+
+                if(chestEn == true)
+                {
+                    tempXChest = invXPosition;
+                    tempYChest = invYPosition;
+                    tempUpChest = upEn;
+                }
+
+                if(craft3xEn == true)
+                {
+                    tempXCT = invXPosition;
+                    tempYCT = invYPosition;
+                    tempUpCT = upEn;
+
+                    for(int i = 0; i <= 8; i++)
+                    {
+                        if(craftSlotId3[i] > 0)
+                        {
+                            Vector3 dropVelocity = Vector3(0,0,0);
+
+                            dropVelocity.x = (cosf((fppCam->horAngle/180.0f)*PI))*4.0f;
+                            dropVelocity.y = 2.0f;
+                            dropVelocity.z = (sinf((fppCam->horAngle/180.0f)*PI))*4.0f;
+
+                            if(craftSlotAm3[i] > 0)
+                            {
+                                mWorld->DropThisNoAlign(craftSlotId3[i],craftSlotAm3[i],craftSlotSt3[i],Vector3(fppCam->m_vPosition.x,fppCam->m_vPosition.y-0.25f,fppCam->m_vPosition.z),dropVelocity);
+
+                                craftSlotAm3[i] = -1;
+                                craftSlotSt3[i] = 0;
+                                craftSlotId3[i] = -1;
+                            }
+                        }
+                    }
+                }
+
+                invXPosition = 0;
+                invYPosition = 0;
+
+                upEn = false;
+
+                invEn = false;
+                craft3xEn = false;
+                furnaceEn = false;
+                chestEn = false;
+
+                furnaceEn = false;
+
+                chestId = -1;
+
+                UseChest = 0;
+                UseFurnace = 0;
+
+                mWorld->haveCompass = mWorld->HaveItemInBarSlots(Compass::getID());
+
+                return;
             }
 
-            /// INVENTORY
-
-            if(invEn == true || craft3xEn == true || chestEn == true || furnaceEn == true)
+        if(keyHold(InputHelper::Instance()->getButtonToAction(14))) // if you press R
+        {
+            if(invEn == true)
             {
-                //Craft item
-                if(mSystemMgr->KeyPressed(PSP_CTRL_CIRCLE))
+                if(usingSlider == false)
                 {
-                    if(invEn == true)
-                    {
-                        for(int i = 0; i <= 3; i++)
-                        {
-                            if(craftSlotId[i] > 0)
-                            {
-                                Vector3 dropVelocity = Vector3(0,0,0);
-
-                                dropVelocity.x = (cosf((fppCam->horAngle/180.0f)*PI))*4.0f;
-                                dropVelocity.y = 2.0f;
-                                dropVelocity.z = (sinf((fppCam->horAngle/180.0f)*PI))*4.0f;
-
-                                if(craftSlotAm[i] > 0)
-                                {
-                                    mWorld->DropThisNoAlign(craftSlotId[i],craftSlotAm[i],craftSlotSt[i],Vector3(fppCam->m_vPosition.x,fppCam->m_vPosition.y-0.25f,fppCam->m_vPosition.z),dropVelocity);
-
-                                    craftSlotAm[i] = -1;
-                                    craftSlotSt[i] = 0;
-                                    craftSlotId[i] = -1;
-                                }
-                            }
-                        }
-                        craftItemId = -1;
-                        craftItemAm = -1;
-                        craftItemSt = false;
-                    }
-
-                    if(craft3xEn == true)
-                    {
-                        for(int i = 0; i <= 8; i++)
-                        {
-                            if(craftSlotId3[i] > 0)
-                            {
-                                Vector3 dropVelocity = Vector3(0,0,0);
-
-                                dropVelocity.x = (cosf((fppCam->horAngle/180.0f)*PI))*4.0f;
-                                dropVelocity.y = 2.0f;
-                                dropVelocity.z = (sinf((fppCam->horAngle/180.0f)*PI))*4.0f;
-
-                                if(craftSlotAm3[i] > 0)
-                                {
-                                    mWorld->DropThisNoAlign(craftSlotId3[i],craftSlotAm3[i],craftSlotSt3[i],Vector3(fppCam->m_vPosition.x,fppCam->m_vPosition.y-0.25f,fppCam->m_vPosition.z),dropVelocity);
-
-                                    craftSlotAm3[i] = -1;
-                                    craftSlotSt3[i] = 0;
-                                    craftSlotId3[i] = -1;
-                                }
-                            }
-                        }
-                        craftItemId3 = -1;
-                        craftItemAm3 = -1;
-                        craftItemSt3 = false;
-                    }
-
-                    if(upEn == true)
-                    {
-                        invXPosition = 0;
-                        invYPosition = 0;
-                    }
-                    selectInvSprite->SetPosition(96+(invXPosition * 36),138+(invYPosition * 36));
-
-                    invEn = false;
-                    craft3xEn = false;
-                    furnaceEn = false;
-                    chestEn = false;
-                    upEn = false;
-                    furnaceEn = false;
-                    chestId = -1;
-                    armorEn = false;
-
-                    UseChest = 0;
-                    UseFurnace = 0;
-
-                    mWorld->haveCompass = mWorld->HaveItemInBarSlots(Compass::getID());
-                    return;
+                    usingSlider = true;
                 }
+            }
+        }
+        else
+        {
+            if(usingSlider == true)
+            {
+                usingSlider = false;
+            }
+        }
 
-                if(keyPressed(InputHelper::Instance()->getButtonToAction(14))) // if you press R
+        if(keyPressed(InputHelper::Instance()->getButtonToAction(14))) // if you press R
+        {
+            if(furnaceEn == true)
+            {
+                if(UseFurnace->furnaceSlotId[2] != -1)
                 {
-                    if(invEn == true) // if 2x craft menu is open
+                    if(mWorld->mId == UseFurnace->furnaceSlotId[2])
                     {
-                        if(craftItemId != -1) // if craft cell is not empty
+                        if(UseFurnace->furnaceSlotSt[2] == 1)
                         {
-                            if(mWorld->mId == craftItemId) // if item in craft cell = item in your mouse
+                            if(mWorld->mAm+UseFurnace->furnaceSlotAm[2] <= 64)
                             {
-                                if(craftItemSt == 1) // if item in craft cell is stackble
-                                {
-                                    if(mWorld->mAm+craftItemAm <= 64) //if sum of item in you mouse and items in craft cell is lower or equal than 64
-                                    {
-                                        for(int i = 0; i <= 3; i++) // check items in craft menu
-                                        {
-                                            craftSlotAm[i] -= 1;
-                                            if(craftSlotAm[i] == 0) // delete if 0
-                                            {
-                                                craftSlotId[i] = -1;
-                                                craftSlotAm[i] = -1;
-                                                craftSlotSt[i] = 0;
-                                            }
-                                        }
+                                mWorld->mAm += UseFurnace->furnaceSlotAm[2];
 
-                                        mWorld->mAm += craftItemAm; // item in mouse ++
-                                        mWorld->mainStatistics.itemsCrafted += craftItemAm;
-
-                                        CraftItem2x2(); // repeat function because in craft menu we can lost items
-                                    }
-                                }
-                            }
-
-                            if(mWorld->mId == -1) //if you haven't mouse item
-                            {
-                                for(int i = 0; i <= 3; i++)
-                                {
-                                    craftSlotAm[i] -= 1;
-                                    if(craftSlotAm[i] == 0)
-                                    {
-                                        craftSlotId[i] = -1;
-                                        craftSlotAm[i] = -1;
-                                        craftSlotSt[i] = 0;
-                                    }
-                                }
-                                mWorld->mId = craftItemId; // mouse item id = id of craft cell item
-                                mWorld->mAm = craftItemAm;
-                                mWorld->mSt = craftItemSt;
-                                mWorld->mainStatistics.itemsCrafted += craftItemAm;
-
-                                CraftItem2x2();
-
-                            }
-                        }
-                    }
-
-
-                    if(furnaceEn == true)
-                    {
-                        if(UseFurnace->furnaceSlotId[2] != -1)
-                        {
-                            if(mWorld->mId == UseFurnace->furnaceSlotId[2])
-                            {
-                                if(UseFurnace->furnaceSlotSt[2] == 1)
-                                {
-                                    if(mWorld->mAm+UseFurnace->furnaceSlotAm[2] <= 64)
-                                    {
-                                        mWorld->mAm += UseFurnace->furnaceSlotAm[2];
-
-                                        UseFurnace->furnaceSlotAm[2] = -1;
-                                        UseFurnace->furnaceSlotId[2] = -1;
-                                        UseFurnace->furnaceSlotSt[2] = 0;
-                                    }
-                                }
-                            }
-
-                            if(mWorld->mId == -1) //if you haven't mouse item
-                            {
-                                mWorld->mId = UseFurnace->furnaceSlotId[2];
-                                mWorld->mAm = UseFurnace->furnaceSlotAm[2];
-                                mWorld->mSt = UseFurnace->furnaceSlotSt[2];
-
-                                UseFurnace->furnaceSlotId[2] = -1;
                                 UseFurnace->furnaceSlotAm[2] = -1;
+                                UseFurnace->furnaceSlotId[2] = -1;
                                 UseFurnace->furnaceSlotSt[2] = 0;
                             }
                         }
                     }
 
-
-                    if(craft3xEn == true)
+                    if(mWorld->mId == -1) //if you haven't mouse item
                     {
-                        if(craftItemId3 != -1)
+                        mWorld->mId = UseFurnace->furnaceSlotId[2];
+                        mWorld->mAm = UseFurnace->furnaceSlotAm[2];
+                        mWorld->mSt = UseFurnace->furnaceSlotSt[2];
+
+                        UseFurnace->furnaceSlotId[2] = -1;
+                        UseFurnace->furnaceSlotAm[2] = -1;
+                        UseFurnace->furnaceSlotSt[2] = 0;
+                    }
+                }
+            }
+
+
+            if(craft3xEn == true)
+            {
+                if(craftItemId3 != -1)
+                {
+
+                    if(mWorld->mId == craftItemId3)
+                    {
+                        if(craftItemSt3 == 1)
                         {
-
-                            if(mWorld->mId == craftItemId3)
-                            {
-                                if(craftItemSt3 == 1)
-                                {
-                                    if(mWorld->mAm+craftItemAm3 <= 64)
-                                    {
-                                        for(int i = 0; i <= 8; i++)
-                                        {
-                                            craftSlotAm3[i] -= 1;
-                                            if(craftSlotAm3[i] == 0)
-                                            {
-                                                craftSlotId3[i] = -1;
-                                                craftSlotAm3[i] = -1;
-                                                craftSlotSt3[i] = 0;
-                                            }
-                                        }
-
-                                        mWorld->mAm += craftItemAm3;
-                                        mWorld->mainStatistics.itemsCrafted += craftItemAm3;
-
-                                        CraftItem3x3();
-                                    }
-                                }
-                            }
-
-                            if(mWorld->mId == -1)
+                            if(mWorld->mAm+craftItemAm3 <= 64)
                             {
                                 for(int i = 0; i <= 8; i++)
                                 {
@@ -7545,395 +6595,488 @@ void StatePlay::HandleEvents(StateManager* sManager)
                                         craftSlotSt3[i] = 0;
                                     }
                                 }
-                                mWorld->mId = craftItemId3;
-                                mWorld->mAm = craftItemAm3;
-                                mWorld->mSt = craftItemSt3;
+
+                                mWorld->mAm += craftItemAm3;
                                 mWorld->mainStatistics.itemsCrafted += craftItemAm3;
 
                                 CraftItem3x3();
                             }
                         }
                     }
-                }
 
-                //switch right
-                if(keyPressed(InputHelper::Instance()->getButtonToAction(9)))
-                {
-                    if (upEn == 0) // if your mouse in neither of craft menus
+                    if(mWorld->mId == -1)
                     {
-                        if(armorEn == true)
+                        for(int i = 0; i <= 8; i++)
                         {
-                            invXPosition != 1 ? invXPosition ++ : invXPosition = 1;
-                            selectInvSprite->SetPosition(96+(invXPosition * 108),26+(invYPosition * 72));
+                            craftSlotAm3[i] -= 1;
+                            if(craftSlotAm3[i] == 0)
+                            {
+                                craftSlotId3[i] = -1;
+                                craftSlotAm3[i] = -1;
+                                craftSlotSt3[i] = 0;
+                            }
                         }
-                        else
-                        {
-                            invXPosition != 8 ? invXPosition ++ : invXPosition = 8;
-                            selectInvSprite->SetPosition(96+(invXPosition * 36),138+(invYPosition * 36));
-                        }
-                    }
-                    else
-                    {
-                        if(invEn == 1)
-                        {
-                            invXPosition != 1 ? invXPosition ++ : invXPosition = 1;
-                            selectInvSprite->SetPosition(276 + (invXPosition * 36),46+(invYPosition * 36));
-                        }
-                        if(craft3xEn == 1)
-                        {
-                            invXPosition != 2 ? invXPosition ++ : invXPosition = 2;
-                            selectInvSprite->SetPosition(204 + (invXPosition * 36),26+(invYPosition * 36));
-                        }
-                        if(chestEn == 1) // if it is in chest
-                        {
-                            invXPosition != 8 ? invXPosition ++ : invXPosition = 8;
-                            selectInvSprite->SetPosition(96 + (invXPosition * 36),26+(invYPosition * 36));
-                        }
+                        mWorld->mId = craftItemId3;
+                        mWorld->mAm = craftItemAm3;
+                        mWorld->mSt = craftItemSt3;
+                        mWorld->mainStatistics.itemsCrafted += craftItemAm3;
+
+                        CraftItem3x3();
                     }
                 }
+            }
+        }
 
-                //switch left
-                if(keyPressed(InputHelper::Instance()->getButtonToAction(8)))
+        //switch right
+        if(keyPressed(InputHelper::Instance()->getButtonToAction(9)))
+        {
+            if (upEn == 0) // if your mouse in neither of craft menus
+            {
+                if(invXPosition == 8 && invYPosition == 6) // move to destroy slot
                 {
-                    if (upEn == 0) // not only craft but chest too
+                    if(invEn == true)
                     {
-                        invXPosition != 0 ? invXPosition -- : invXPosition = 0;
+                        selectInvSprite->SetPosition(406,244);
+                        onDestroySlot = true;
+                        return;
+                    }
+                }
 
+                invXPosition != 8 ? invXPosition ++ : invXPosition = 8;
+                if(invEn == false)
+                {
+                    selectInvSprite->SetPosition(96+(invXPosition * 36),138+(invYPosition * 36));
+                }
+                else
+                {
+                    if(onDestroySlot)
+                    {
+                        return;
+                    }
+                    selectInvSprite->SetPosition(80 + (invXPosition * 36),28+(invYPosition * 36));
+                }
+            }
+            else
+            {
+                if(craft3xEn == 1)
+                {
+                    invXPosition != 2 ? invXPosition ++ : invXPosition = 2;
+                    selectInvSprite->SetPosition(204 + (invXPosition * 36),26+(invYPosition * 36));
+                }
+                if(chestEn == 1) // if it is in chest
+                {
+                    invXPosition != 8 ? invXPosition ++ : invXPosition = 8;
+                    selectInvSprite->SetPosition(96 + (invXPosition * 36),26+(invYPosition * 36));
+                }
+            }
+        }
+
+        //switch left
+        if(keyPressed(InputHelper::Instance()->getButtonToAction(8)))
+        {
+            if (upEn == 0) // not only craft but chest too
+            {
+                if(onDestroySlot)
+                {
+                    if(invEn == true)
+                    {
+                        onDestroySlot = false;
+                        selectInvSprite->SetPosition(80 + (invXPosition * 36),28+(invYPosition * 36));
+                        return;
+                    }
+                }
+                invXPosition != 0 ? invXPosition -- : invXPosition = 0;
+                if(invEn == false)
+                {
+                    selectInvSprite->SetPosition(96+(invXPosition * 36),138+(invYPosition * 36));
+                }
+                else
+                {
+                    selectInvSprite->SetPosition(80 + (invXPosition * 36),28+(invYPosition * 36));
+                }
+            }
+            else
+            {
+                invXPosition != 0 ? invXPosition -- : invXPosition = 0;
+                if(craft3xEn == 1)
+                {
+                    selectInvSprite->SetPosition(204 + (invXPosition * 36),26+(invYPosition * 36));
+                }
+                if(chestEn == 1)
+                {
+                    selectInvSprite->SetPosition(96 + (invXPosition * 36),26+(invYPosition * 36));
+                }
+            }
+        }
+
+        //switch down
+        if(keyPressed(InputHelper::Instance()->getButtonToAction(11)))
+        {
+            if(usingSlider)
+            {
+                creativePage ++;
+                if(creativePage > creativePageMax)
+                {
+                    creativePage = creativePageMax;
+                }
+                return;
+            }
+            if (upEn == 0)
+            {
+                if(invEn == false)
+                {
+                    invYPosition != 3 ? invYPosition ++ : invYPosition = 3;
+                    selectInvSprite->SetPosition(96+(invXPosition * 36),138+(invYPosition * 36));
+                }
+                else
+                {
+                    if(onDestroySlot)
+                    {
+                        return;
+                    }
+                    invYPosition != 6 ? invYPosition ++ : invYPosition = 6;
+                    selectInvSprite->SetPosition(80 + (invXPosition * 36),28+(invYPosition * 36));
+                }
+            }
+            else
+            {
+                if (craft3xEn == 1)
+                {
+                    if (invYPosition == 2)
+                    {
+                        upEn = 0;
+                        invYPosition = 0;
+                        invXPosition = 3 + invXPosition;
                         selectInvSprite->SetPosition(96+(invXPosition * 36),138+(invYPosition * 36));
-
-                        if(armorEn == true)
-                        {
-                            selectInvSprite->SetPosition(96+(invXPosition * 108),26+(invYPosition * 72));
-                        }
+                        return;
                     }
-                    else
-                    {
-                        invXPosition != 0 ? invXPosition -- : invXPosition = 0;
-                        if(invEn == 1)
-                        {
-                            selectInvSprite->SetPosition(276 + (invXPosition * 36),46+(invYPosition * 36));
-                        }
-                        if(craft3xEn == 1)
-                        {
-                            selectInvSprite->SetPosition(204 + (invXPosition * 36),26+(invYPosition * 36));
-                        }
-                        if(chestEn == 1)
-                        {
-                            selectInvSprite->SetPosition(96 + (invXPosition * 36),26+(invYPosition * 36));
-                        }
-                    }
+                    invYPosition != 2 ? invYPosition ++ : invYPosition = 2;
+                    selectInvSprite->SetPosition(204 + (invXPosition * 36),26+(invYPosition * 36));
                 }
 
-                //switch down
-                if(keyPressed(InputHelper::Instance()->getButtonToAction(11)))
+                if (chestEn == 1)
                 {
-                    if (upEn == 0)
+                    if (invYPosition == 2)
                     {
-                        if(armorEn == true)
-                        {
-                            invYPosition ++;
-                            selectInvSprite->SetPosition(96+(invXPosition * 108),26+(invYPosition * 72));
-
-                            if(invYPosition == 2)
-                            {
-                                if(invXPosition == 1)
-                                {
-                                    invXPosition = 3;
-                                }
-                                invYPosition = 0;
-                                armorEn = false;
-
-                                selectInvSprite->SetPosition(96+(invXPosition * 36),138+(invYPosition * 36));
-                            }
-                        }
-                        else
-                        {
-                            invYPosition != 3 ? invYPosition ++ : invYPosition = 3;
-                            selectInvSprite->SetPosition(96+(invXPosition * 36),138+(invYPosition * 36));
-                        }
-                    }
-                    else
-                    {
-                        if (invEn == 1) //if mouse in the down of menu
-                        {
-                            if (invYPosition == 1)
-                            {
-                                upEn = 0; // we go to standart inv menu
-                                invYPosition = 0;
-                                invXPosition = 5 + invXPosition;
-                                selectInvSprite->SetPosition(96+(invXPosition * 36),138+(invYPosition * 36));
-                                return;
-                            }
-                            invYPosition != 1 ? invYPosition ++ : invYPosition = 1;
-                            selectInvSprite->SetPosition(276 + (invXPosition * 36),46+(invYPosition * 36));
-                        }
-
-                        if (craft3xEn == 1)
-                        {
-                            if (invYPosition == 2)
-                            {
-                                upEn = 0;
-                                invYPosition = 0;
-                                invXPosition = 3 + invXPosition;
-                                selectInvSprite->SetPosition(96+(invXPosition * 36),138+(invYPosition * 36));
-                                return;
-                            }
-                            invYPosition != 2 ? invYPosition ++ : invYPosition = 2;
-                            selectInvSprite->SetPosition(204 + (invXPosition * 36),26+(invYPosition * 36));
-                        }
-
-                        if (chestEn == 1)
-                        {
-                            if (invYPosition == 2)
-                            {
-                                upEn = 0;
-                                invYPosition = 0;
-                                selectInvSprite->SetPosition(96+(invXPosition * 36),138+(invYPosition * 36));
-                                return;
-                            }
-                            invYPosition != 1 ? invYPosition ++ : invYPosition = 2;
-                            selectInvSprite->SetPosition(96 + (invXPosition * 36),26+(invYPosition * 36));
-                        }
-
-                        if (furnaceEn == 1)
-                        {
-                            if (invYPosition == 1)
-                            {
-                                upEn = 0;
-                                invYPosition = 0;
-                                invXPosition = 3;
-                                selectInvSprite->SetPosition(96+(invXPosition * 36),138+(invYPosition * 36));
-                                return;
-                            }
-                            invYPosition != 1 ? invYPosition ++ : invYPosition = 1;
-                            selectInvSprite->SetPosition(204 ,26+(invYPosition * 72));
-                        }
-                    }
-                }
-
-                //switch up
-                if(keyPressed(InputHelper::Instance()->getButtonToAction(10)))
-                {
-                    if (upEn == 0)
-                    {
-                        if (invYPosition == 0)
-                        {
-                            if(invEn == 1)
-                            {
-                                if((invXPosition == 5 || invXPosition == 6) && armorEn == false)
-                                {
-                                    invXPosition -= 5;
-                                    invYPosition = 1;
-                                    selectInvSprite->SetPosition(276 + (invXPosition * 36),46+(invYPosition * 36));
-                                    upEn = true;
-                                }
-                                if((invXPosition == 0 || invXPosition == 3) && armorEn == false && upEn == false)
-                                {
-                                    if(invXPosition == 3)
-                                    {
-                                        invXPosition = 1;
-                                    }
-                                    invYPosition = 1;
-                                    selectInvSprite->SetPosition(96 + (invXPosition * 108),26+(invYPosition * 72));
-                                    armorEn = true;
-                                }
-                            }
-                            if(craft3xEn == 1)
-                            {
-                                if(invXPosition >= 3 && invXPosition <= 5)
-                                {
-                                    invXPosition -= 3;
-                                    invYPosition = 2;
-                                    selectInvSprite->SetPosition(204 + (invXPosition * 36),26+(invYPosition * 36));
-                                    upEn = 1;
-                                }
-                            }
-                            if(chestEn == 1)
-                            {
-                                invYPosition = 2;
-                                selectInvSprite->SetPosition(96 + (invXPosition * 36),26+(invYPosition * 36));
-                                upEn = 1;
-                            }
-                            if(furnaceEn == 1)
-                            {
-                                if(invXPosition == 3)
-                                {
-                                    invYPosition = 1;
-                                    selectInvSprite->SetPosition(204,26+(invYPosition * 72));
-                                    upEn = 1;
-                                }
-                            }
-                            return;
-                        }
-                        invYPosition != 0 ? invYPosition -- : invYPosition = 0;
+                        upEn = 0;
+                        invYPosition = 0;
                         selectInvSprite->SetPosition(96+(invXPosition * 36),138+(invYPosition * 36));
+                        return;
+                    }
+                    invYPosition != 1 ? invYPosition ++ : invYPosition = 2;
+                    selectInvSprite->SetPosition(96 + (invXPosition * 36),26+(invYPosition * 36));
+                }
 
-                        if(armorEn == true)
+                if (furnaceEn == 1)
+                {
+                    if (invYPosition == 1)
+                    {
+                        upEn = 0;
+                        invYPosition = 0;
+                        invXPosition = 3;
+                        selectInvSprite->SetPosition(96+(invXPosition * 36),138+(invYPosition * 36));
+                        return;
+                    }
+                    invYPosition != 1 ? invYPosition ++ : invYPosition = 1;
+                    selectInvSprite->SetPosition(204 ,26+(invYPosition * 72));
+                }
+            }
+        }
+
+        //switch up
+        if(keyPressed(InputHelper::Instance()->getButtonToAction(10)))
+        {
+            if(usingSlider)
+            {
+                creativePage --;
+                if(creativePage < 0)
+                {
+                    creativePage = 0;
+                }
+                return;
+            }
+            if (upEn == 0)
+            {
+                if (invYPosition == 0 && invEn == false)
+                {
+                    if(craft3xEn == 1)
+                    {
+                        if(invXPosition >= 3 && invXPosition <= 5)
                         {
-                            selectInvSprite->SetPosition(96 + (invXPosition * 108),26+(invYPosition * 72));
+                            invXPosition -= 3;
+                            invYPosition = 2;
+                            selectInvSprite->SetPosition(204 + (invXPosition * 36),26+(invYPosition * 36));
+                            upEn = 1;
                         }
                     }
-                    else
+                    if(chestEn == 1)
                     {
-                        invYPosition != 0 ? invYPosition -- : invYPosition = 0;
-
-                        if(invEn == 1)
+                        invYPosition = 2;
+                        selectInvSprite->SetPosition(96 + (invXPosition * 36),26+(invYPosition * 36));
+                        upEn = 1;
+                    }
+                    if(furnaceEn == 1)
+                    {
+                        if(invXPosition == 3)
                         {
-                            selectInvSprite->SetPosition(276 + (invXPosition * 36),46+(invYPosition * 36));
-                        }
-                        if(craft3xEn == 1)
-                        {
-                            selectInvSprite->SetPosition(204 + (invXPosition * 36),26+(invYPosition * 36));
-                        }
-                        if(chestEn == 1)
-                        {
-                            selectInvSprite->SetPosition(96 + (invXPosition * 36),26+(invYPosition * 36));
-                        }
-                        if(furnaceEn == 1)
-                        {
+                            invYPosition = 1;
                             selectInvSprite->SetPosition(204,26+(invYPosition * 72));
+                            upEn = 1;
                         }
+                    }
+                    return;
+                }
+
+                if(onDestroySlot)
+                {
+                    if(invEn == true)
+                    {
+                        return;
                     }
                 }
 
+                invYPosition != 0 ? invYPosition -- : invYPosition = 0;
 
-                if(mSystemMgr->KeyPressed(PSP_CTRL_CROSS))
+                if(invEn == false)
                 {
-                    if (upEn == 0)
+                    selectInvSprite->SetPosition(96+(invXPosition * 36),138+(invYPosition * 36));
+                }
+                else
+                {
+                    selectInvSprite->SetPosition(80 + (invXPosition * 36),28+(invYPosition * 36));
+                }
+            }
+            else
+            {
+                invYPosition != 0 ? invYPosition -- : invYPosition = 0;
+
+                if(craft3xEn == 1)
+                {
+                    selectInvSprite->SetPosition(204 + (invXPosition * 36),26+(invYPosition * 36));
+                }
+                if(chestEn == 1)
+                {
+                    selectInvSprite->SetPosition(96 + (invXPosition * 36),26+(invYPosition * 36));
+                }
+                if(furnaceEn == 1)
+                {
+                    selectInvSprite->SetPosition(204,26+(invYPosition * 72));
+                }
+            }
+        }
+
+        /*
+        /// FETCHING NAME OF THE ITEM IN SELECTED SLOT
+        if(mSystemMgr->KeyHold(PSP_CTRL_TRIANGLE))
+        {
+            bool nameFetched = false;
+            if (upEn == 0)
+            {
+                if(invEn == false) // inventory
+                {
+                    if (mWorld->mId == -1 && mWorld->invId[invYPosition*9 + invXPosition] != -1)
                     {
-                        if(armorEn == false)
+                        slotId = mWorld->invId[invYPosition*9 + invXPosition];
+                        showSlotName = true;
+                        nameFetched = true;
+                    }
+                }
+                else
+                {
+                    if (invYPosition == 6)
+                    {
+                        if (mWorld->mId == -1 && mWorld->invId[27 + invXPosition] != -1)
                         {
-                            if (mWorld->mId == -1)
-                            {
-                                if (mWorld->invId[invYPosition*9 + invXPosition] != -1)
-                                {
-                                    mWorld->mId = mWorld->invId[invYPosition*9 + invXPosition];
-                                    mWorld->mAm = mWorld->invAm[invYPosition*9 + invXPosition];
-                                    mWorld->mSt = mWorld->invSt[invYPosition*9 + invXPosition];
-                                    mWorld->invId[invYPosition*9 + invXPosition] = -1;
-                                    mWorld->invAm[invYPosition*9 + invXPosition] = -1;
-                                    mWorld->invSt[invYPosition*9 + invXPosition] = 0;
-                                }
-                            }
-                            else
-                            {
-                                if (mWorld->invId[invYPosition*9 + invXPosition] == -1)
-                                {
-                                    mWorld->invId[invYPosition*9 + invXPosition]=mWorld->mId;
-                                    mWorld->invAm[invYPosition*9 + invXPosition]=mWorld->mAm;
-                                    mWorld->invSt[invYPosition*9 + invXPosition]=mWorld->mSt;
-                                    mWorld->mId = -1;
-                                    mWorld->mAm = -1;
-                                    mWorld->mSt = 0;
-                                }
-
-                                if (mWorld->invId[invYPosition*9 + invXPosition] == mWorld->mId)
-                                {
-                                    if(mWorld->invSt[invYPosition*9 + invXPosition] == 1)
-                                    {
-                                        if (mWorld->invAm[invYPosition*9 + invXPosition]+mWorld->mAm < 64)
-                                        {
-                                            mWorld->invAm[invYPosition*9 + invXPosition]+=mWorld->mAm;
-                                            mWorld->mId = -1;
-                                            mWorld->mAm = -1;
-                                            mWorld->mSt = 0;
-                                        }
-                                        else
-                                        {
-                                            mWorld->mAm = (mWorld->invAm[invYPosition*9 + invXPosition] + mWorld->mAm) - 64;
-                                            mWorld->invAm[invYPosition*9 + invXPosition]=64;
-
-                                            if(mWorld->mAm == 0)
-                                            {
-                                                mWorld->mAm = -1;
-                                                mWorld->mId = -1;
-                                                mWorld->mSt = 0;
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                        else
-                        {
-                            if (mWorld->mId == -1)
-                            {
-                                if (mWorld->armorId[invYPosition*2 + invXPosition] != 324+invYPosition*2+invXPosition) // 324+invYPosition*2+invXPosition is an id of sample armor item
-                                {
-                                    mWorld->mId = mWorld->armorId[invYPosition*2 + invXPosition];
-                                    mWorld->mAm = mWorld->armorAm[invYPosition*2 + invXPosition];
-                                    mWorld->mSt = mWorld->armorSt[invYPosition*2 + invXPosition];
-                                    mWorld->armorId[invYPosition*2 + invXPosition] = 324+invYPosition*2+invXPosition;
-                                    mWorld->armorAm[invYPosition*2 + invXPosition] = -1;
-                                    mWorld->armorSt[invYPosition*2 + invXPosition] = false;
-                                }
-                            }
-                            else
-                            {
-                                if (mWorld->armorId[invYPosition*2 + invXPosition] == 324+invYPosition*2+invXPosition)
-                                {
-                                    if(mWorld->mId == 324+invYPosition*2+invXPosition+4 || /* all leather armor */
-                                       mWorld->mId == 324+invYPosition*2+invXPosition+8 || /* all chain armor */
-                                       mWorld->mId == 324+invYPosition*2+invXPosition+12|| /* all iron armor */
-                                       mWorld->mId == 324+invYPosition*2+invXPosition+16|| /* all diamond armor */
-                                       mWorld->mId == 324+invYPosition*2+invXPosition+20|| /* all golde armor */
-                                       (invXPosition == 0 && invYPosition == 0 && mWorld->mId == Pumpkin3::getID()) /** it is pumpkin and cursor on helmet slot **/
-                                      ) // crazy code monkey skill
-                                    {
-                                        mWorld->armorId[invYPosition*2 + invXPosition]=mWorld->mId;
-                                        mWorld->armorAm[invYPosition*2 + invXPosition]=mWorld->mAm;
-                                        mWorld->armorSt[invYPosition*2 + invXPosition]=mWorld->mSt;
-                                        mWorld->mId = -1;
-                                        mWorld->mAm = -1;
-                                        mWorld->mSt = false;
-                                    }
-                                }
-                            }
+                            slotId = mWorld->invId[27 + invXPosition];
+                            showSlotName = true;
+                            nameFetched = true;
                         }
                     }
                     else
                     {
-                        if (invEn == 1)
+                        if (mWorld->mId == -1)
                         {
-                            if (mWorld->mId == -1)
+                            if (creativePage*53 + invYPosition*9 + invXPosition < inventoryItems.size() && invYPosition * invXPosition != 40)
                             {
-                                if (craftSlotId[invYPosition*2 + invXPosition] != -1)
+                                if (inventoryItems[creativePage*53 + invYPosition*9 + invXPosition] != -1)
                                 {
-                                    mWorld->mId = craftSlotId[invYPosition*2 + invXPosition];
-                                    mWorld->mAm = craftSlotAm[invYPosition*2 + invXPosition];
-                                    mWorld->mSt = craftSlotSt[invYPosition*2 + invXPosition];
-                                    craftSlotId[invYPosition*2 + invXPosition] = -1;
-                                    craftSlotAm[invYPosition*2 + invXPosition] = -1;
-                                    craftSlotSt[invYPosition*2 + invXPosition] = 0;
+                                    slotId = inventoryItems[creativePage*53 + invYPosition*9 + invXPosition];
+                                    showSlotName = true;
+                                    nameFetched = true;
                                 }
                             }
-                            else
+                        }
+                    }
+                }
+            }
+            else
+            {
+                if (craft3xEn == 1) // crafting table
+                {
+                    if (mWorld->mId == -1)
+                    {
+                        if (craftSlotId3[invYPosition*3 + invXPosition] != -1)
+                        {
+                            slotId = craftSlotId3[invYPosition*3 + invXPosition];
+                            showSlotName = true;
+                            nameFetched = true;
+                        }
+                    }
+                }
+                if (chestEn == 1) // chest
+                {
+                    if (mWorld->mId == -1)
+                    {
+                        if (UseChest->chestSlotId[invYPosition*9 + invXPosition] != -1)
+                        {
+                            slotId = UseChest->chestSlotId[invYPosition*9 + invXPosition];
+                            showSlotName = true;
+                            nameFetched = true;
+                        }
+                    }
+                }
+                if(furnaceEn == true) // furnace
+                {
+                    if (mWorld->mId == -1)
+                    {
+                        if (UseFurnace->furnaceSlotId[invYPosition] != -1)
+                        {
+                            slotId = UseFurnace->furnaceSlotId[invYPosition];
+                            showSlotName = true;
+                            nameFetched = true;
+                        }
+                    }
+                }
+            }
+            if(nameFetched == false) // if we didn't fetch the name, then clear all realtive vars to avoid issues
+            {
+                if(showSlotName)
+                {
+                    showSlotName = false;
+                    slotId = -1;
+                }
+            }
+        }
+        else
+        {
+            showSlotName = false;
+            slotId = -1;
+        }
+        /// END THERE
+        */
+
+        if(mSystemMgr->KeyPressed(PSP_CTRL_CROSS))
+        {
+            if (upEn == 0)
+            {
+                if(invEn == false)
+                {
+                    if (mWorld->mId == -1)
+                    {
+                        if (mWorld->invId[invYPosition*9 + invXPosition] != -1)
+                        {
+                            mWorld->mId = mWorld->invId[invYPosition*9 + invXPosition];
+                            mWorld->mAm = mWorld->invAm[invYPosition*9 + invXPosition];
+                            mWorld->mSt = mWorld->invSt[invYPosition*9 + invXPosition];
+                            mWorld->invId[invYPosition*9 + invXPosition] = -1;
+                            mWorld->invAm[invYPosition*9 + invXPosition] = -1;
+                            mWorld->invSt[invYPosition*9 + invXPosition] = 0;
+                        }
+                    }
+                    else
+                    {
+                        if (mWorld->invId[invYPosition*9 + invXPosition] == -1)
+                        {
+                            mWorld->invId[invYPosition*9 + invXPosition]=mWorld->mId;
+                            mWorld->invAm[invYPosition*9 + invXPosition]=mWorld->mAm;
+                            mWorld->invSt[invYPosition*9 + invXPosition]=mWorld->mSt;
+                            mWorld->mId = -1;
+                            mWorld->mAm = -1;
+                            mWorld->mSt = 0;
+                        }
+
+                        if (mWorld->invId[invYPosition*9 + invXPosition] == mWorld->mId)
+                        {
+                            if(mWorld->invSt[invYPosition*9 + invXPosition] == 1)
                             {
-                                if (craftSlotId[invYPosition*2 + invXPosition] == -1)
+                                if (mWorld->invAm[invYPosition*9 + invXPosition]+mWorld->mAm < 64)
                                 {
-                                    craftSlotId[invYPosition*2 + invXPosition]=mWorld->mId;
-                                    craftSlotAm[invYPosition*2 + invXPosition]=mWorld->mAm;
-                                    craftSlotSt[invYPosition*2 + invXPosition]=mWorld->mSt;
+                                    mWorld->invAm[invYPosition*9 + invXPosition]+=mWorld->mAm;
                                     mWorld->mId = -1;
                                     mWorld->mAm = -1;
                                     mWorld->mSt = 0;
                                 }
-
-                                if (craftSlotId[invYPosition*2 + invXPosition] == mWorld->mId)
+                                else
                                 {
-                                    if(craftSlotSt[invYPosition*2 + invXPosition] == 1)
+                                    mWorld->mAm = (mWorld->invAm[invYPosition*9 + invXPosition] + mWorld->mAm) - 64;
+                                    mWorld->invAm[invYPosition*9 + invXPosition]=64;
+
+                                    if(mWorld->mAm == 0)
                                     {
-                                    if (craftSlotAm[invYPosition*2 + invXPosition]+mWorld->mAm < 64)
+                                        mWorld->mAm = -1;
+                                        mWorld->mId = -1;
+                                        mWorld->mSt = 0;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    if(onDestroySlot)
+                    {
+                        if(mWorld->mId != -1)
+                        {
+                            mWorld->mId = -1;
+                            mWorld->mAm = -1;
+                            mWorld->mSt = 0;
+
+                            mSoundMgr->PlayBreakSound();
+                        }
+                        return;
+                    }
+                    else if (invYPosition == 6)
+                    {
+                        if (mWorld->mId == -1)
+                        {
+                            if (mWorld->invId[27 + invXPosition] != -1)
+                            {
+                                mWorld->mId = mWorld->invId[27 + invXPosition];
+                                mWorld->mAm = mWorld->invAm[27 + invXPosition];
+                                mWorld->mSt = mWorld->invSt[27 + invXPosition];
+                                mWorld->invId[27 + invXPosition] = -1;
+                                mWorld->invAm[27 + invXPosition] = -1;
+                                mWorld->invSt[27 + invXPosition] = 0;
+                            }
+                        }
+                        else
+                        {
+                            if (mWorld->invId[27 + invXPosition] == -1)
+                            {
+                                mWorld->invId[27 + invXPosition]=mWorld->mId;
+                                mWorld->invAm[27 + invXPosition]=mWorld->mAm;
+                                mWorld->invSt[27 + invXPosition]=mWorld->mSt;
+                                mWorld->mId = -1;
+                                mWorld->mAm = -1;
+                                mWorld->mSt = 0;
+                            }
+
+                            if (mWorld->invId[27 + invXPosition] == mWorld->mId)
+                            {
+                                if(mWorld->invSt[27 + invXPosition] == 1)
+                                {
+                                    if (mWorld->invAm[27 + invXPosition]+mWorld->mAm < 64)
                                     {
-                                        craftSlotAm[invYPosition*2 + invXPosition]+=mWorld->mAm;
+                                        mWorld->invAm[27 + invXPosition]+=mWorld->mAm;
                                         mWorld->mId = -1;
                                         mWorld->mAm = -1;
                                         mWorld->mSt = 0;
                                     }
                                     else
                                     {
-                                        mWorld->mAm = (craftSlotAm[invYPosition*2 + invXPosition] + mWorld->mAm) - 64;
-                                        craftSlotAm[invYPosition*2 + invXPosition]=64;
+                                        mWorld->mAm = (mWorld->invAm[27 + invXPosition] + mWorld->mAm) - 64;
+                                        mWorld->invAm[27 + invXPosition]=64;
 
                                         if(mWorld->mAm == 0)
                                         {
@@ -7942,190 +7085,303 @@ void StatePlay::HandleEvents(StateManager* sManager)
                                             mWorld->mSt = 0;
                                         }
                                     }
-                                    }
-                                }
-                            }
-                            CraftItem2x2();
-                        }
-
-                        if (craft3xEn == 1)
-                        {
-                            if (mWorld->mId == -1)
-                            {
-                                if (craftSlotId3[invYPosition*3 + invXPosition] != -1)
-                                {
-                                    mWorld->mId = craftSlotId3[invYPosition*3 + invXPosition];
-                                    mWorld->mAm = craftSlotAm3[invYPosition*3 + invXPosition];
-                                    mWorld->mSt = craftSlotSt3[invYPosition*3 + invXPosition];
-                                    craftSlotId3[invYPosition*3 + invXPosition] = -1;
-                                    craftSlotAm3[invYPosition*3 + invXPosition] = -1;
-                                    craftSlotSt3[invYPosition*3 + invXPosition] = 0;
-                                }
-                            }
-                            else
-                            {
-                                if (craftSlotId3[invYPosition*3 + invXPosition] == -1)
-                                {
-                                    craftSlotId3[invYPosition*3 + invXPosition]=mWorld->mId;
-                                    craftSlotAm3[invYPosition*3 + invXPosition]=mWorld->mAm;
-                                    craftSlotSt3[invYPosition*3 + invXPosition]=mWorld->mSt;
-                                    mWorld->mId = -1;
-                                    mWorld->mAm = -1;
-                                    mWorld->mSt = 0;
-                                }
-
-                                if (craftSlotId3[invYPosition*3 + invXPosition] == mWorld->mId)
-                                {
-                                    if(craftSlotSt3[invYPosition*3 + invXPosition] == 1)
-                                    {
-                                        if (craftSlotAm3[invYPosition*3 + invXPosition]+mWorld->mAm < 64)
-                                        {
-                                            craftSlotAm3[invYPosition*3 + invXPosition]+=mWorld->mAm;
-                                            mWorld->mId = -1;
-                                            mWorld->mAm = -1;
-                                            mWorld->mSt = 0;
-                                        }
-                                        else
-                                        {
-                                            mWorld->mAm = (craftSlotAm3[invYPosition*3 + invXPosition] + mWorld->mAm) - 64;
-                                            craftSlotAm3[invYPosition*3 + invXPosition]=64;
-
-                                            if(mWorld->mAm == 0)
-                                            {
-                                                mWorld->mAm = -1;
-                                                mWorld->mId = -1;
-                                                mWorld->mSt = 0;
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                            CraftItem3x3();
-                        }
-                        //Chest
-                        if (chestEn == 1)
-                        {
-                            if (mWorld->mId == -1)
-                            {
-                                if (UseChest->chestSlotId[invYPosition*9 + invXPosition] != -1)
-                                {
-                                    mWorld->mId = UseChest->chestSlotId[invYPosition*9 + invXPosition];
-                                    mWorld->mAm = UseChest->chestSlotAm[invYPosition*9 + invXPosition];
-                                    mWorld->mSt = UseChest->chestSlotSt[invYPosition*9 + invXPosition];
-                                    UseChest->chestSlotId[invYPosition*9 + invXPosition] = -1;
-                                    UseChest->chestSlotAm[invYPosition*9 + invXPosition] = -1;
-                                    UseChest->chestSlotSt[invYPosition*9 + invXPosition] = 0;
-                                }
-                            }
-                            else
-                            {
-                                if (UseChest->chestSlotId[invYPosition*9 + invXPosition] == -1)
-                                {
-                                    UseChest->chestSlotId[invYPosition*9 + invXPosition]=mWorld->mId;
-                                    UseChest->chestSlotAm[invYPosition*9 + invXPosition]=mWorld->mAm;
-                                    UseChest->chestSlotSt[invYPosition*9 + invXPosition]=mWorld->mSt;
-                                    mWorld->mId = -1;
-                                    mWorld->mAm = -1;
-                                    mWorld->mSt = 0;
-                                }
-
-                                if (UseChest->chestSlotId[invYPosition*9 + invXPosition] == mWorld->mId)
-                                {
-                                    if(UseChest->chestSlotSt[invYPosition*9 + invXPosition] == 1)
-                                    {
-                                        if (UseChest->chestSlotAm[+invYPosition*9 + invXPosition]+mWorld->mAm < 64)
-                                        {
-                                            UseChest->chestSlotAm[invYPosition*9 + invXPosition]+=mWorld->mAm;
-                                            mWorld->mId = -1;
-                                            mWorld->mAm = -1;
-                                            mWorld->mSt = 0;
-                                        }
-                                        else
-                                        {
-                                            mWorld->mAm = (UseChest->chestSlotAm[invYPosition*9 + invXPosition] + mWorld->mAm) - 64;
-                                            UseChest->chestSlotAm[invYPosition*9 + invXPosition]=64;
-
-                                            if(mWorld->mAm == 0)
-                                            {
-                                                mWorld->mAm = -1;
-                                                mWorld->mId = -1;
-                                                mWorld->mSt = 0;
-                                            }
-                                        }
-                                    }
                                 }
                             }
                         }
-                        //furnace
-                        if(furnaceEn == true)
+                    }
+                    else
+                    {
+                        if (mWorld->mId == -1)
                         {
-                            if (mWorld->mId == -1)
+                            if (creativePage*27 + invYPosition*9 + invXPosition < inventoryItems.size()) // creativePage*53 + invYPosition*9 + invXPosition - выбранный слот в инветаре с учетом страницы
                             {
-                                if (UseFurnace->furnaceSlotId[invYPosition] != -1)
-                                {
-                                    mWorld->mId = UseFurnace->furnaceSlotId[invYPosition];
-                                    mWorld->mAm = UseFurnace->furnaceSlotAm[invYPosition];
-                                    mWorld->mSt = UseFurnace->furnaceSlotSt[invYPosition];
-                                    UseFurnace->furnaceSlotId[invYPosition] = -1;
-                                    UseFurnace->furnaceSlotAm[invYPosition] = -1;
-                                    UseFurnace->furnaceSlotSt[invYPosition] = 0;
-                                }
-                            }
-                            else
-                            {
-                                if (UseFurnace->furnaceSlotId[invYPosition] == -1)
-                                {
-                                    UseFurnace->furnaceSlotId[invYPosition]=mWorld->mId;
-                                    UseFurnace->furnaceSlotAm[invYPosition]=mWorld->mAm;
-                                    UseFurnace->furnaceSlotSt[invYPosition]=mWorld->mSt;
-                                    mWorld->mId = -1;
-                                    mWorld->mAm = -1;
-                                    mWorld->mSt = 0;
-                                }
+                                mWorld->mId = inventoryItems[creativePage*27 + invYPosition*9 + invXPosition];
 
-                                if (UseFurnace->furnaceSlotId[invYPosition] == mWorld->mId)
+                                if(inventoryItems[creativePage*27 + invYPosition*9 + invXPosition] >= 250)
                                 {
-                                    if(UseFurnace->furnaceSlotSt[invYPosition] == 1)
+                                    if(mWorld->DurabilityPointsItem(inventoryItems[creativePage*27 + invYPosition*9 + invXPosition]) != -1)
                                     {
-                                        if (UseFurnace->furnaceSlotAm[invYPosition]+mWorld->mAm < 64)
+                                        mWorld->mAm = mWorld->DurabilityPointsItem(inventoryItems[creativePage*27 + invYPosition*9 + invXPosition]);
+                                        mWorld->mSt = 0;
+                                    }
+                                    else
+                                    {
+                                        if(mWorld->StackableItem(inventoryItems[creativePage*27 + invYPosition*9 + invXPosition]))
                                         {
-                                            UseFurnace->furnaceSlotAm[invYPosition]+=mWorld->mAm;
-                                            mWorld->mId = -1;
-                                            mWorld->mAm = -1;
-                                            mWorld->mSt = 0;
+                                            mWorld->mAm = 64;
+                                            mWorld->mSt = true;
                                         }
                                         else
                                         {
-                                            mWorld->mAm = (UseFurnace->furnaceSlotAm[invYPosition] + mWorld->mAm) - 64;
-                                            UseFurnace->furnaceSlotAm[invYPosition]=64;
-
-                                            if(mWorld->mAm == 0)
-                                            {
-                                                mWorld->mAm = -1;
-                                                mWorld->mId = -1;
-                                                mWorld->mSt = 0;
-                                            }
+                                            mWorld->mAm = 1;
+                                            mWorld->mSt = false;
                                         }
                                     }
                                 }
+                                else
+                                {
+                                    mWorld->mAm = 64;
+                                    mWorld->mSt = 1;
+                                }
                             }
-                            CheckForFurnFuel(UseFurnace);
-                            CheckForFurnWorking(UseFurnace);
                         }
                     }
                 }
-
-                if(mSystemMgr->KeyPressed(PSP_CTRL_SQUARE))
+            }
+            else
+            {
+                if (craft3xEn == 1)
                 {
-                    if (upEn == 0)
+                    if (mWorld->mId == -1)
                     {
-                        if (mWorld->invId[invYPosition*9 + invXPosition] == mWorld->mId)
+                        if (craftSlotId3[invYPosition*3 + invXPosition] != -1)
+                        {
+                            mWorld->mId = craftSlotId3[invYPosition*3 + invXPosition];
+                            mWorld->mAm = craftSlotAm3[invYPosition*3 + invXPosition];
+                            mWorld->mSt = craftSlotSt3[invYPosition*3 + invXPosition];
+                            craftSlotId3[invYPosition*3 + invXPosition] = -1;
+                            craftSlotAm3[invYPosition*3 + invXPosition] = -1;
+                            craftSlotSt3[invYPosition*3 + invXPosition] = 0;
+                        }
+                    }
+                    else
+                    {
+                        if (craftSlotId3[invYPosition*3 + invXPosition] == -1)
+                        {
+                            craftSlotId3[invYPosition*3 + invXPosition]=mWorld->mId;
+                            craftSlotAm3[invYPosition*3 + invXPosition]=mWorld->mAm;
+                            craftSlotSt3[invYPosition*3 + invXPosition]=mWorld->mSt;
+                            mWorld->mId = -1;
+                            mWorld->mAm = -1;
+                            mWorld->mSt = 0;
+                        }
+
+                        if (craftSlotId3[invYPosition*3 + invXPosition] == mWorld->mId)
+                        {
+                            if(craftSlotSt3[invYPosition*3 + invXPosition] == 1)
+                            {
+                                if (craftSlotAm3[invYPosition*3 + invXPosition]+mWorld->mAm < 64)
+                                {
+                                    craftSlotAm3[invYPosition*3 + invXPosition]+=mWorld->mAm;
+                                    mWorld->mId = -1;
+                                    mWorld->mAm = -1;
+                                    mWorld->mSt = 0;
+                                }
+                                else
+                                {
+                                    mWorld->mAm = (craftSlotAm3[invYPosition*3 + invXPosition] + mWorld->mAm) - 64;
+                                    craftSlotAm3[invYPosition*3 + invXPosition]=64;
+
+                                    if(mWorld->mAm == 0)
+                                    {
+                                        mWorld->mAm = -1;
+                                        mWorld->mId = -1;
+                                        mWorld->mSt = 0;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    CraftItem3x3();
+                }
+                //Chest
+                if (chestEn == 1)
+                {
+                    if (mWorld->mId == -1)
+                    {
+                        if (UseChest->chestSlotId[invYPosition*9 + invXPosition] != -1)
+                        {
+                            mWorld->mId = UseChest->chestSlotId[invYPosition*9 + invXPosition];
+                            mWorld->mAm = UseChest->chestSlotAm[invYPosition*9 + invXPosition];
+                            mWorld->mSt = UseChest->chestSlotSt[invYPosition*9 + invXPosition];
+                            UseChest->chestSlotId[invYPosition*9 + invXPosition] = -1;
+                            UseChest->chestSlotAm[invYPosition*9 + invXPosition] = -1;
+                            UseChest->chestSlotSt[invYPosition*9 + invXPosition] = 0;
+                        }
+                    }
+                    else
+                    {
+                        if (UseChest->chestSlotId[invYPosition*9 + invXPosition] == -1)
+                        {
+                            UseChest->chestSlotId[invYPosition*9 + invXPosition]=mWorld->mId;
+                            UseChest->chestSlotAm[invYPosition*9 + invXPosition]=mWorld->mAm;
+                            UseChest->chestSlotSt[invYPosition*9 + invXPosition]=mWorld->mSt;
+                            mWorld->mId = -1;
+                            mWorld->mAm = -1;
+                            mWorld->mSt = 0;
+                        }
+
+                        if (UseChest->chestSlotId[invYPosition*9 + invXPosition] == mWorld->mId)
+                        {
+                            if(UseChest->chestSlotSt[invYPosition*9 + invXPosition] == 1)
+                            {
+                                if (UseChest->chestSlotAm[+invYPosition*9 + invXPosition]+mWorld->mAm < 64)
+                                {
+                                    UseChest->chestSlotAm[invYPosition*9 + invXPosition]+=mWorld->mAm;
+                                    mWorld->mId = -1;
+                                    mWorld->mAm = -1;
+                                    mWorld->mSt = 0;
+                                }
+                                else
+                                {
+                                    mWorld->mAm = (UseChest->chestSlotAm[invYPosition*9 + invXPosition] + mWorld->mAm) - 64;
+                                    UseChest->chestSlotAm[invYPosition*9 + invXPosition]=64;
+
+                                    if(mWorld->mAm == 0)
+                                    {
+                                        mWorld->mAm = -1;
+                                        mWorld->mId = -1;
+                                        mWorld->mSt = 0;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                //furnace
+                if(furnaceEn == true)
+                {
+                    if (mWorld->mId == -1)
+                    {
+                        if (UseFurnace->furnaceSlotId[invYPosition] != -1)
+                        {
+                            mWorld->mId = UseFurnace->furnaceSlotId[invYPosition];
+                            mWorld->mAm = UseFurnace->furnaceSlotAm[invYPosition];
+                            mWorld->mSt = UseFurnace->furnaceSlotSt[invYPosition];
+                            UseFurnace->furnaceSlotId[invYPosition] = -1;
+                            UseFurnace->furnaceSlotAm[invYPosition] = -1;
+                            UseFurnace->furnaceSlotSt[invYPosition] = 0;
+                        }
+                    }
+                    else
+                    {
+                        if (UseFurnace->furnaceSlotId[invYPosition] == -1)
+                        {
+                            UseFurnace->furnaceSlotId[invYPosition]=mWorld->mId;
+                            UseFurnace->furnaceSlotAm[invYPosition]=mWorld->mAm;
+                            UseFurnace->furnaceSlotSt[invYPosition]=mWorld->mSt;
+                            mWorld->mId = -1;
+                            mWorld->mAm = -1;
+                            mWorld->mSt = 0;
+                        }
+
+                        if (UseFurnace->furnaceSlotId[invYPosition] == mWorld->mId)
+                        {
+                            if(UseFurnace->furnaceSlotSt[invYPosition] == 1)
+                            {
+                                if (UseFurnace->furnaceSlotAm[invYPosition]+mWorld->mAm < 64)
+                                {
+                                    UseFurnace->furnaceSlotAm[invYPosition]+=mWorld->mAm;
+                                    mWorld->mId = -1;
+                                    mWorld->mAm = -1;
+                                    mWorld->mSt = 0;
+                                }
+                                else
+                                {
+                                    mWorld->mAm = (UseFurnace->furnaceSlotAm[invYPosition] + mWorld->mAm) - 64;
+                                    UseFurnace->furnaceSlotAm[invYPosition]=64;
+
+                                    if(mWorld->mAm == 0)
+                                    {
+                                        mWorld->mAm = -1;
+                                        mWorld->mId = -1;
+                                        mWorld->mSt = 0;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    CheckForFurnFuel(UseFurnace);
+                    CheckForFurnWorking(UseFurnace);
+                }
+            }
+        }
+
+        if(mSystemMgr->KeyPressed(PSP_CTRL_SQUARE))
+        {
+            if (upEn == 0)
+            {
+                if(invEn == false)
+                {
+                    if (mWorld->invId[invYPosition*9 + invXPosition] == mWorld->mId)
+                    {
+                        if(mWorld->mSt == true)
+                        {
+                            if (mWorld->invAm[invYPosition*9 + invXPosition] != 64)
+                            {
+                                mWorld->invAm[invYPosition*9 + invXPosition] += 1;
+
+                                mWorld->mAm -= 1;
+
+                                if(mWorld->mAm == 0)
+                                {
+                                    mWorld->mId = -1;
+                                    mWorld->mAm = -1;
+                                }
+                                return;
+                            }
+                        }
+                    }
+
+                    if (mWorld->mId != -1)
+                    {
+                        if(mWorld->mSt == true)
+                        {
+                           if (mWorld->invId[invYPosition*9 + invXPosition] == -1)
+                           {
+                                mWorld->invId[invYPosition*9 + invXPosition] = mWorld->mId;
+                                mWorld->invAm[invYPosition*9 + invXPosition] = 1;
+                                mWorld->invSt[invYPosition*9 + invXPosition] = 1;
+
+                                mWorld->mAm -= 1;
+
+                                if(mWorld->mAm == 0)
+                                {
+                                    mWorld->mId = -1;
+                                    mWorld->mAm = -1;
+                                    mWorld->mSt = 0;
+                                }
+
+                                return;
+                            }
+                        }
+                    }
+                    else
+                    {
+                       if (mWorld->invId[invYPosition*9 + invXPosition] != -1 && mWorld->invSt[invYPosition*9 + invXPosition] == 1)
+                       {
+                           if(mWorld->invAm[invYPosition*9 + invXPosition] == 1)
+                           {
+                               mWorld->mId = mWorld->invId[invYPosition*9 + invXPosition];
+                               mWorld->mAm = 1;
+                               mWorld->mSt = mWorld->invSt[invYPosition*9 + invXPosition];
+
+                               mWorld->invId[invYPosition*9 + invXPosition] = -1;
+                               mWorld->invAm[invYPosition*9 + invXPosition] = -1;
+                               mWorld->invSt[invYPosition*9 + invXPosition] = 0;
+                           }
+                           if(mWorld->invAm[invYPosition*9 + invXPosition] > 1)
+                           {
+                               mWorld->mId = mWorld->invId[invYPosition*9 + invXPosition];
+                               mWorld->mAm = ceilf((float)(mWorld->invAm[invYPosition*9 + invXPosition]/2.0f));
+                               mWorld->mSt = mWorld->invSt[invYPosition*9 + invXPosition];
+
+                               mWorld->invAm[invYPosition*9 + invXPosition] = mWorld->invAm[invYPosition*9 + invXPosition]-mWorld->mAm;
+                           }
+                        }
+                    }
+                }
+                else
+                {
+                    if(invYPosition == 6)
+                    {
+                        if (mWorld->invId[27 + invXPosition] == mWorld->mId)
                         {
                             if(mWorld->mSt == true)
                             {
-                                if (mWorld->invAm[invYPosition*9 + invXPosition] != 64)
+                                if (mWorld->invAm[27 + invXPosition] != 64)
                                 {
-                                    mWorld->invAm[invYPosition*9 + invXPosition] += 1;
+                                    mWorld->invAm[27 + invXPosition] += 1;
 
                                     mWorld->mAm -= 1;
 
@@ -8143,11 +7399,11 @@ void StatePlay::HandleEvents(StateManager* sManager)
                         {
                             if(mWorld->mSt == true)
                             {
-                               if (mWorld->invId[invYPosition*9 + invXPosition] == -1)
+                               if (mWorld->invId[27 + invXPosition] == -1)
                                {
-                                    mWorld->invId[invYPosition*9 + invXPosition] = mWorld->mId;
-                                    mWorld->invAm[invYPosition*9 + invXPosition] = 1;
-                                    mWorld->invSt[invYPosition*9 + invXPosition] = 1;
+                                    mWorld->invId[27 + invXPosition] = mWorld->mId;
+                                    mWorld->invAm[27 + invXPosition] = 1;
+                                    mWorld->invSt[27 + invXPosition] = 1;
 
                                     mWorld->mAm -= 1;
 
@@ -8163,830 +7419,621 @@ void StatePlay::HandleEvents(StateManager* sManager)
                         }
                         else
                         {
-                           if (mWorld->invId[invYPosition*9 + invXPosition] != -1 && mWorld->invSt[invYPosition*9 + invXPosition] == 1)
+                           if (mWorld->invId[27 + invXPosition] != -1 && mWorld->invSt[27 + invXPosition] == 1)
                            {
-                               if(mWorld->invAm[invYPosition*9 + invXPosition] == 1)
+                               if(mWorld->invAm[27 + invXPosition] == 1)
                                {
-                                   mWorld->mId = mWorld->invId[invYPosition*9 + invXPosition];
+                                   mWorld->mId = mWorld->invId[27 + invXPosition];
                                    mWorld->mAm = 1;
-                                   mWorld->mSt = mWorld->invSt[invYPosition*9 + invXPosition];
+                                   mWorld->mSt = mWorld->invSt[27 + invXPosition];
 
-                                   mWorld->invId[invYPosition*9 + invXPosition] = -1;
-                                   mWorld->invAm[invYPosition*9 + invXPosition] = -1;
-                                   mWorld->invSt[invYPosition*9 + invXPosition] = 0;
+                                   mWorld->invId[27 + invXPosition] = -1;
+                                   mWorld->invAm[27 + invXPosition] = -1;
+                                   mWorld->invSt[27 + invXPosition] = 0;
                                }
-                               if(mWorld->invAm[invYPosition*9 + invXPosition] > 1)
+                               if(mWorld->invAm[27 + invXPosition] > 1)
                                {
-                                   mWorld->mId = mWorld->invId[invYPosition*9 + invXPosition];
-                                   mWorld->mAm = ceilf((float)(mWorld->invAm[invYPosition*9 + invXPosition]/2.0f));
-                                   mWorld->mSt = mWorld->invSt[invYPosition*9 + invXPosition];
+                                   mWorld->mId = mWorld->invId[27 + invXPosition];
+                                   mWorld->mAm = ceilf((float)(mWorld->invAm[27 + invXPosition]/2.0f));
+                                   mWorld->mSt = mWorld->invSt[27 + invXPosition];
 
-                                   mWorld->invAm[invYPosition*9 + invXPosition] = mWorld->invAm[invYPosition*9 + invXPosition]-mWorld->mAm;
+                                   mWorld->invAm[27 + invXPosition] = mWorld->invAm[27 + invXPosition]-mWorld->mAm;
                                }
+                            }
+                        }
+                    }
+                }
+            }
+            else
+            {
+
+                ///CRAFT TABLE
+                if (craft3xEn == 1)
+                {
+                    if (craftSlotId3[invYPosition*3 + invXPosition] == mWorld->mId)
+                    {
+                        if(mWorld->mSt == true)
+                        {
+                            if (craftSlotAm3[invYPosition*3 + invXPosition] != 64)
+                            {
+                                craftSlotAm3[invYPosition*3 + invXPosition] += 1;
+
+                                mWorld->mAm -= 1;
+
+                                if(mWorld->mAm == 0)
+                                {
+                                    mWorld->mId = -1;
+                                    mWorld->mAm = -1;
+                                }
+                                CraftItem3x3();
+                                return;
+                            }
+                        }
+                    }
+
+                    if (mWorld->mId != -1)
+                    {
+                        if(mWorld->mSt == true)
+                        {
+                           if (craftSlotId3[invYPosition*3 + invXPosition] == -1)
+                           {
+                               craftSlotId3[invYPosition*3 + invXPosition] = mWorld->mId;
+                               craftSlotAm3[invYPosition*3 + invXPosition] = 1;
+                               craftSlotSt3[invYPosition*3 + invXPosition] = 1;
+
+                               mWorld->mAm -= 1;
+
+                               if(mWorld->mAm == 0)
+                               {
+                                    mWorld->mId = -1;
+                                    mWorld->mAm = -1;
+                                    mWorld->mSt = 0;
+                               }
+                               CraftItem3x3();
+                               return;
+                           }
+                        }
+                   }
+                    else
+                    {
+                       if (craftSlotId3[invYPosition*3 + invXPosition] != -1 && craftSlotSt3[invYPosition*3 + invXPosition] == 1)
+                       {
+                           if(craftSlotAm3[invYPosition*3 + invXPosition] == 1)
+                           {
+                               mWorld->mId = craftSlotId3[invYPosition*3 + invXPosition];
+                               mWorld->mAm = 1;
+                               mWorld->mSt = craftSlotSt3[invYPosition*3 + invXPosition];
+
+                               craftSlotId3[invYPosition*3 + invXPosition] = -1;
+                               craftSlotAm3[invYPosition*3 + invXPosition] = -1;
+                               craftSlotSt3[invYPosition*3 + invXPosition] = 0;
+                           }
+                           if(craftSlotAm3[invYPosition*3 + invXPosition] > 1)
+                           {
+                               mWorld->mId = craftSlotId3[invYPosition*3 + invXPosition];
+                               mWorld->mAm = ceilf((float)(craftSlotAm3[invYPosition*3 + invXPosition]/2.0f));
+                               mWorld->mSt = craftSlotSt3[invYPosition*3 + invXPosition];
+
+                               craftSlotAm3[invYPosition*3 + invXPosition] = craftSlotAm3[invYPosition*3 + invXPosition]-mWorld->mAm;
+                           }
+                        }
+                    }
+                   CraftItem3x3();
+                }
+
+                ///CHEST
+                if (chestEn == 1)
+                {
+                    if (UseChest->chestSlotId[invYPosition*9 + invXPosition] == mWorld->mId)
+                    {
+                        if(mWorld->mSt == true)
+                        {
+                            if (UseChest->chestSlotAm[invYPosition*9 + invXPosition] != 64)
+                            {
+                                UseChest->chestSlotAm[invYPosition*9 + invXPosition] += 1;
+
+                                mWorld->mAm -= 1;
+                                if(mWorld->mAm == 0)
+                                {
+                                    mWorld->mId = -1;
+                                    mWorld->mAm = -1;
+                                }
+                                return;
+                            }
+                        }
+                    }
+
+                    if (mWorld->mId != -1)
+                    {
+                        if(mWorld->mSt == true)
+                        {
+                            if (UseChest->chestSlotId[invYPosition*9 + invXPosition] == -1)
+                            {
+                                UseChest->chestSlotId[invYPosition*9 + invXPosition] = mWorld->mId;
+                                UseChest->chestSlotAm[invYPosition*9 + invXPosition] = 1;
+                                UseChest->chestSlotSt[invYPosition*9 + invXPosition] = 1;
+
+                                mWorld->mAm -= 1;
+
+                                if(mWorld->mAm == 0)
+                                {
+                                    mWorld->mId = -1;
+                                    mWorld->mAm = -1;
+                                    mWorld->mSt = 0;
+                                }
+                                return;
                             }
                         }
                     }
                     else
                     {
-                        ///2x CRAFT
-                        if (invEn == 1)
-                        {
-                            if (craftSlotId[invYPosition*2 + invXPosition] == mWorld->mId)
-                            {
-                                if(mWorld->mSt == true)
-                                {
-                                    if (craftSlotAm[invYPosition*2 + invXPosition] != 64)
-                                    {
-                                        craftSlotAm[invYPosition*2 + invXPosition] += 1;
+                       if (UseChest->chestSlotId[invYPosition*9 + invXPosition] != -1 && UseChest->chestSlotSt[invYPosition*9 + invXPosition] == 1)
+                       {
+                           if(UseChest->chestSlotAm[invYPosition*9 + invXPosition] == 1)
+                           {
+                               mWorld->mId = UseChest->chestSlotId[invYPosition*9 + invXPosition];
+                               mWorld->mAm = 1;
+                               mWorld->mSt = UseChest->chestSlotSt[invYPosition*9 + invXPosition];
 
-                                        mWorld->mAm -= 1;
-
-                                        if(mWorld->mAm == 0)
-                                        {
-                                            mWorld->mId = -1;
-                                            mWorld->mAm = -1;
-                                        }
-                                        CraftItem2x2();
-                                        return;
-                                    }
-                                }
-                            }
-
-                            if (mWorld->mId != -1)
-                            {
-                                if(mWorld->mSt == true)
-                                {
-                                   if (craftSlotId[invYPosition*2 + invXPosition] == -1)
-                                   {
-                                       craftSlotId[invYPosition*2 + invXPosition] = mWorld->mId;
-                                       craftSlotAm[invYPosition*2 + invXPosition] = 1;
-                                       craftSlotSt[invYPosition*2 + invXPosition] = 1;
-
-                                       mWorld->mAm -= 1;
-
-                                       if(mWorld->mAm == 0)
-                                       {
-                                            mWorld->mId = -1;
-                                            mWorld->mAm = -1;
-                                            mWorld->mSt = 0;
-                                        }
-                                        CraftItem2x2();
-                                        return;
-                                    }
-                                }
-                            }
-                            else
-                            {
-                               if (craftSlotId[invYPosition*2 + invXPosition] != -1 && craftSlotSt[invYPosition*2 + invXPosition] == 1)
-                               {
-                                   if(craftSlotAm[invYPosition*2 + invXPosition] == 1)
-                                   {
-                                       mWorld->mId = craftSlotId[invYPosition*2 + invXPosition];
-                                       mWorld->mAm = 1;
-                                       mWorld->mSt = craftSlotSt[invYPosition*2 + invXPosition];
-
-                                       craftSlotId[invYPosition*2 + invXPosition] = -1;
-                                       craftSlotAm[invYPosition*2 + invXPosition] = -1;
-                                       craftSlotSt[invYPosition*2 + invXPosition] = 0;
-                                   }
-                                   if(craftSlotAm[invYPosition*2 + invXPosition] > 1)
-                                   {
-                                       mWorld->mId = craftSlotId[invYPosition*2 + invXPosition];
-                                       mWorld->mAm = ceilf((float)(craftSlotAm[invYPosition*2 + invXPosition]/2.0f));
-                                       mWorld->mSt = craftSlotSt[invYPosition*2 + invXPosition];
-
-                                       craftSlotAm[invYPosition*2 + invXPosition] = craftSlotAm[invYPosition*2 + invXPosition]-mWorld->mAm;
-                                   }
-                                }
-                            }
-                            CraftItem2x2();
-                        }
-
-                        ///CRAFT TABLE
-                        if (craft3xEn == 1)
-                        {
-                            if (craftSlotId3[invYPosition*3 + invXPosition] == mWorld->mId)
-                            {
-                                if(mWorld->mSt == true)
-                                {
-                                    if (craftSlotAm3[invYPosition*3 + invXPosition] != 64)
-                                    {
-                                        craftSlotAm3[invYPosition*3 + invXPosition] += 1;
-
-                                        mWorld->mAm -= 1;
-
-                                        if(mWorld->mAm == 0)
-                                        {
-                                            mWorld->mId = -1;
-                                            mWorld->mAm = -1;
-                                        }
-                                        CraftItem3x3();
-                                        return;
-                                    }
-                                }
-                            }
-
-                            if (mWorld->mId != -1)
-                            {
-                                if(mWorld->mSt == true)
-                                {
-                                   if (craftSlotId3[invYPosition*3 + invXPosition] == -1)
-                                   {
-                                       craftSlotId3[invYPosition*3 + invXPosition] = mWorld->mId;
-                                       craftSlotAm3[invYPosition*3 + invXPosition] = 1;
-                                       craftSlotSt3[invYPosition*3 + invXPosition] = 1;
-
-                                       mWorld->mAm -= 1;
-
-                                       if(mWorld->mAm == 0)
-                                       {
-                                            mWorld->mId = -1;
-                                            mWorld->mAm = -1;
-                                            mWorld->mSt = 0;
-                                       }
-                                       CraftItem3x3();
-                                       return;
-                                   }
-                                }
+                               UseChest->chestSlotId[invYPosition*9 + invXPosition] = -1;
+                               UseChest->chestSlotAm[invYPosition*9 + invXPosition] = -1;
+                               UseChest->chestSlotSt[invYPosition*9 + invXPosition] = 0;
                            }
-                            else
-                            {
-                               if (craftSlotId3[invYPosition*3 + invXPosition] != -1 && craftSlotSt3[invYPosition*3 + invXPosition] == 1)
-                               {
-                                   if(craftSlotAm3[invYPosition*3 + invXPosition] == 1)
-                                   {
-                                       mWorld->mId = craftSlotId3[invYPosition*3 + invXPosition];
-                                       mWorld->mAm = 1;
-                                       mWorld->mSt = craftSlotSt3[invYPosition*3 + invXPosition];
+                           if(UseChest->chestSlotAm[invYPosition*9 + invXPosition] > 1)
+                           {
+                               mWorld->mId = UseChest->chestSlotId[invYPosition*9 + invXPosition];
+                               mWorld->mAm = ceilf((float)(UseChest->chestSlotAm[invYPosition*9 + invXPosition]/2.0f));
+                               mWorld->mSt = UseChest->chestSlotSt[invYPosition*9 + invXPosition];
 
-                                       craftSlotId3[invYPosition*3 + invXPosition] = -1;
-                                       craftSlotAm3[invYPosition*3 + invXPosition] = -1;
-                                       craftSlotSt3[invYPosition*3 + invXPosition] = 0;
-                                   }
-                                   if(craftSlotAm3[invYPosition*3 + invXPosition] > 1)
-                                   {
-                                       mWorld->mId = craftSlotId3[invYPosition*3 + invXPosition];
-                                       mWorld->mAm = ceilf((float)(craftSlotAm3[invYPosition*3 + invXPosition]/2.0f));
-                                       mWorld->mSt = craftSlotSt3[invYPosition*3 + invXPosition];
-
-                                       craftSlotAm3[invYPosition*3 + invXPosition] = craftSlotAm3[invYPosition*3 + invXPosition]-mWorld->mAm;
-                                   }
-                                }
-                            }
-                           CraftItem3x3();
-                        }
-
-                        ///CHEST
-                        if (chestEn == 1)
-                        {
-                            if (UseChest->chestSlotId[invYPosition*9 + invXPosition] == mWorld->mId)
-                            {
-                                if(mWorld->mSt == true)
-                                {
-                                    if (UseChest->chestSlotAm[invYPosition*9 + invXPosition] != 64)
-                                    {
-                                        UseChest->chestSlotAm[invYPosition*9 + invXPosition] += 1;
-
-                                        mWorld->mAm -= 1;
-                                        if(mWorld->mAm == 0)
-                                        {
-                                            mWorld->mId = -1;
-                                            mWorld->mAm = -1;
-                                        }
-                                        return;
-                                    }
-                                }
-                            }
-
-                            if (mWorld->mId != -1)
-                            {
-                                if(mWorld->mSt == true)
-                                {
-                                    if (UseChest->chestSlotId[invYPosition*9 + invXPosition] == -1)
-                                    {
-                                        UseChest->chestSlotId[invYPosition*9 + invXPosition] = mWorld->mId;
-                                        UseChest->chestSlotAm[invYPosition*9 + invXPosition] = 1;
-                                        UseChest->chestSlotSt[invYPosition*9 + invXPosition] = 1;
-
-                                        mWorld->mAm -= 1;
-
-                                        if(mWorld->mAm == 0)
-                                        {
-                                            mWorld->mId = -1;
-                                            mWorld->mAm = -1;
-                                            mWorld->mSt = 0;
-                                        }
-                                        return;
-                                    }
-                                }
-                            }
-                            else
-                            {
-                               if (UseChest->chestSlotId[invYPosition*9 + invXPosition] != -1 && UseChest->chestSlotSt[invYPosition*9 + invXPosition] == 1)
-                               {
-                                   if(UseChest->chestSlotAm[invYPosition*9 + invXPosition] == 1)
-                                   {
-                                       mWorld->mId = UseChest->chestSlotId[invYPosition*9 + invXPosition];
-                                       mWorld->mAm = 1;
-                                       mWorld->mSt = UseChest->chestSlotSt[invYPosition*9 + invXPosition];
-
-                                       UseChest->chestSlotId[invYPosition*9 + invXPosition] = -1;
-                                       UseChest->chestSlotAm[invYPosition*9 + invXPosition] = -1;
-                                       UseChest->chestSlotSt[invYPosition*9 + invXPosition] = 0;
-                                   }
-                                   if(UseChest->chestSlotAm[invYPosition*9 + invXPosition] > 1)
-                                   {
-                                       mWorld->mId = UseChest->chestSlotId[invYPosition*9 + invXPosition];
-                                       mWorld->mAm = ceilf((float)(UseChest->chestSlotAm[invYPosition*9 + invXPosition]/2.0f));
-                                       mWorld->mSt = UseChest->chestSlotSt[invYPosition*9 + invXPosition];
-
-                                       UseChest->chestSlotAm[invYPosition*9 + invXPosition] = UseChest->chestSlotAm[invYPosition*9 + invXPosition]-mWorld->mAm;
-                                   }
-                                }
-                            }
-                        }
-                        ///FURNACE
-                        if (furnaceEn == 1)
-                        {
-                            if (UseFurnace->furnaceSlotId[invYPosition] == mWorld->mId)
-                            {
-                                if(mWorld->mSt == true)
-                                {
-                                    if (UseFurnace->furnaceSlotAm[invYPosition] != 64)
-                                    {
-                                        UseFurnace->furnaceSlotAm[invYPosition] += 1;
-
-                                        mWorld->mAm -= 1;
-                                        if(mWorld->mAm == 0)
-                                        {
-                                            mWorld->mId = -1;
-                                            mWorld->mAm = -1;
-                                        }
-                                        CheckForFurnFuel(UseFurnace);
-                                        CheckForFurnWorking(UseFurnace);
-                                        return;
-                                    }
-                                }
-                            }
-
-                            if (mWorld->mId != -1)
-                            {
-                                if(mWorld->mSt == true)
-                                {
-                                    if (UseFurnace->furnaceSlotId[invYPosition] == -1)
-                                    {
-                                        UseFurnace->furnaceSlotId[invYPosition] = mWorld->mId;
-                                        UseFurnace->furnaceSlotAm[invYPosition] = 1;
-                                        UseFurnace->furnaceSlotSt[invYPosition] = 1;
-
-                                        mWorld->mAm -= 1;
-
-                                        if(mWorld->mAm == 0)
-                                        {
-                                            mWorld->mId = -1;
-                                            mWorld->mAm = -1;
-                                            mWorld->mSt = 0;
-                                        }
-                                        CheckForFurnFuel(UseFurnace);
-                                        CheckForFurnWorking(UseFurnace);
-                                        return;
-                                    }
-                                }
-                            }
-                            else
-                            {
-                               if (UseFurnace->furnaceSlotId[invYPosition] != -1 && UseFurnace->furnaceSlotSt[invYPosition] == 1)
-                               {
-                                   if(UseFurnace->furnaceSlotAm[invYPosition] == 1)
-                                   {
-                                       mWorld->mId = UseFurnace->furnaceSlotId[invYPosition];
-                                       mWorld->mAm = 1;
-                                       mWorld->mSt = UseFurnace->furnaceSlotSt[invYPosition];
-
-                                       UseFurnace->furnaceSlotId[invYPosition] = -1;
-                                       UseFurnace->furnaceSlotAm[invYPosition] = -1;
-                                       UseFurnace->furnaceSlotSt[invYPosition] = 0;
-                                   }
-                                   if(UseFurnace->furnaceSlotAm[invYPosition] > 1)
-                                   {
-                                       mWorld->mId = UseFurnace->furnaceSlotId[invYPosition];
-                                       mWorld->mAm = ceilf((float)(UseFurnace->furnaceSlotAm[invYPosition]/2.0f));
-                                       mWorld->mSt = UseFurnace->furnaceSlotSt[invYPosition];
-
-                                       UseFurnace->furnaceSlotAm[invYPosition] = UseFurnace->furnaceSlotAm[invYPosition]-mWorld->mAm;
-                                   }
-                                }
-                            }
-                            CheckForFurnFuel(UseFurnace);
-                            CheckForFurnWorking(UseFurnace);
+                               UseChest->chestSlotAm[invYPosition*9 + invXPosition] = UseChest->chestSlotAm[invYPosition*9 + invXPosition]-mWorld->mAm;
+                           }
                         }
                     }
                 }
+                ///FURNACE
+                if (furnaceEn == 1)
+                {
+                    if (UseFurnace->furnaceSlotId[invYPosition] == mWorld->mId)
+                    {
+                        if(mWorld->mSt == true)
+                        {
+                            if (UseFurnace->furnaceSlotAm[invYPosition] != 64)
+                            {
+                                UseFurnace->furnaceSlotAm[invYPosition] += 1;
+
+                                mWorld->mAm -= 1;
+                                if(mWorld->mAm == 0)
+                                {
+                                    mWorld->mId = -1;
+                                    mWorld->mAm = -1;
+                                }
+                                CheckForFurnFuel(UseFurnace);
+                                CheckForFurnWorking(UseFurnace);
+                                return;
+                            }
+                        }
+                    }
+
+                    if (mWorld->mId != -1)
+                    {
+                        if(mWorld->mSt == true)
+                        {
+                            if (UseFurnace->furnaceSlotId[invYPosition] == -1)
+                            {
+                                UseFurnace->furnaceSlotId[invYPosition] = mWorld->mId;
+                                UseFurnace->furnaceSlotAm[invYPosition] = 1;
+                                UseFurnace->furnaceSlotSt[invYPosition] = 1;
+
+                                mWorld->mAm -= 1;
+
+                                if(mWorld->mAm == 0)
+                                {
+                                    mWorld->mId = -1;
+                                    mWorld->mAm = -1;
+                                    mWorld->mSt = 0;
+                                }
+                                CheckForFurnFuel(UseFurnace);
+                                CheckForFurnWorking(UseFurnace);
+                                return;
+                            }
+                        }
+                    }
+                    else
+                    {
+                       if (UseFurnace->furnaceSlotId[invYPosition] != -1 && UseFurnace->furnaceSlotSt[invYPosition] == 1)
+                       {
+                           if(UseFurnace->furnaceSlotAm[invYPosition] == 1)
+                           {
+                               mWorld->mId = UseFurnace->furnaceSlotId[invYPosition];
+                               mWorld->mAm = 1;
+                               mWorld->mSt = UseFurnace->furnaceSlotSt[invYPosition];
+
+                               UseFurnace->furnaceSlotId[invYPosition] = -1;
+                               UseFurnace->furnaceSlotAm[invYPosition] = -1;
+                               UseFurnace->furnaceSlotSt[invYPosition] = 0;
+                           }
+                           if(UseFurnace->furnaceSlotAm[invYPosition] > 1)
+                           {
+                               mWorld->mId = UseFurnace->furnaceSlotId[invYPosition];
+                               mWorld->mAm = ceilf((float)(UseFurnace->furnaceSlotAm[invYPosition]/2.0f));
+                               mWorld->mSt = UseFurnace->furnaceSlotSt[invYPosition];
+
+                               UseFurnace->furnaceSlotAm[invYPosition] = UseFurnace->furnaceSlotAm[invYPosition]-mWorld->mAm;
+                           }
+                        }
+                    }
+                    CheckForFurnFuel(UseFurnace);
+                    CheckForFurnWorking(UseFurnace);
+                }
             }
+
         }
-        else if(menuState == 1) //menu state
+    }
+    }
+    else if(menuState == 1) //menu state
+    {
+        //turn off menu with the same key
+        if(keyPressed(InputHelper::Instance()->getButtonToAction(15)))
         {
-            //turn off menu with the same key
-            if(keyPressed(InputHelper::Instance()->getButtonToAction(15)))
-            {
-                menuState = 0;
-                menuOptions = false;
-                optionsMenuPos = 0;
-                selectPos = 0;
-            }
-
-            //menu keys
-            if(menuOptions)
-            {
-                //up, down
-                if(mSystemMgr->KeyPressed(PSP_CTRL_UP))
-                {
-                    if(optionsMenuPos == 8 || optionsMenuPos == 0)
-                    {
-                        return;
-                    }
-                    optionsMenuPos--;
-                    mSoundMgr->PlayMenuSound();
-                }
-
-                if(mSystemMgr->KeyPressed(PSP_CTRL_DOWN))
-                {
-                    if(optionsMenuPos == 7 || optionsMenuPos == 15)
-                    {
-                        return;
-                    }
-                    optionsMenuPos++;
-                    mSoundMgr->PlayMenuSound();
-                }
-
-                if(mSystemMgr->KeyPressed(PSP_CTRL_RTRIGGER))
-                {
-                    if(optionsMenuPos + 8 > 15)
-                    {
-                        return;
-                    }
-                    optionsMenuPos += 8;
-                    mSoundMgr->PlayMenuSound();
-                }
-
-                if(mSystemMgr->KeyPressed(PSP_CTRL_LTRIGGER))
-                {
-                    if(optionsMenuPos - 8 < 0)
-                    {
-                        return;
-                    }
-                    optionsMenuPos -= 8;
-                    mSoundMgr->PlayMenuSound();
-                }
-
-                if(mSystemMgr->KeyPressed(PSP_CTRL_RIGHT))
-                {
-                    if(optionsMenuPos == 0)
-                    {
-                        if (mWorld->mainOptions.fov <= 95)
-                        {
-                            mWorld->mainOptions.fov += 5;
-                            mSoundMgr->PlayMenuSound();
-                            mRender->fovv = mWorld->mainOptions.fov;
-                            RenderManager::InstancePtr()->SetPerspective(0, 480.0f / 272.0f, 0.18f, 1000.f);
-                            skyLight->UpdateLightSource(mWorld->skyTime);
-                            skyMoonLight->UpdateLightSource(mWorld->skyTime);
-                        }
-                    }
-                    if(optionsMenuPos == 1)
-                    {
-                        if (mWorld->mainOptions.horizontalViewDistance != 4)
-                        {
-                            mWorld->mainOptions.horizontalViewDistance += 1;
-                            mSoundMgr->PlayMenuSound();
-                            mWorld->playerZoneSize = Vector3(CHUNK_SIZE*mWorld->mainOptions.horizontalViewDistance,CHUNK_SIZE*mWorld->mainOptions.verticalViewDistance,CHUNK_SIZE*mWorld->mainOptions.horizontalViewDistance);
-                            mWorld->UpdatePlayerZoneBB(fppCam->m_vPosition);
-                            fppCam->needUpdate = true;
-                        }
-                    }
-                    if(optionsMenuPos == 8)
-                    {
-                        if (mWorld->mainOptions.verticalViewDistance != 2)
-                        {
-                            mWorld->mainOptions.verticalViewDistance += 1;
-                            mSoundMgr->PlayMenuSound();
-                            mWorld->playerZoneSize = Vector3(CHUNK_SIZE*mWorld->mainOptions.horizontalViewDistance,CHUNK_SIZE*mWorld->mainOptions.verticalViewDistance,CHUNK_SIZE*mWorld->mainOptions.horizontalViewDistance);
-                            mWorld->UpdatePlayerZoneBB(fppCam->m_vPosition);
-                            fppCam->needUpdate = true;
-                        }
-                    }
-                    if(optionsMenuPos == 9)
-                    {
-                        mWorld->mainOptions.difficult += 1;
-                        mSoundMgr->PlayMenuSound();
-
-                        if(mWorld->mainOptions.difficult > 3)
-                        {
-                            mWorld->mainOptions.difficult = 3;
-                        }
-                    }
-                }
-
-                if(mSystemMgr->KeyPressed(PSP_CTRL_LEFT))
-                {
-                    if(optionsMenuPos == 0)
-                    {
-                        if (mWorld->mainOptions.fov >= 45)
-                        {
-                            mWorld->mainOptions.fov -= 5;
-                            mSoundMgr->PlayMenuSound();
-                            mRender->fovv = mWorld->mainOptions.fov;
-                            RenderManager::InstancePtr()->SetPerspective(0, 480.0f / 272.0f, 0.18f, 1000.f);
-                            skyLight->UpdateLightSource(mWorld->skyTime);
-                            skyMoonLight->UpdateLightSource(mWorld->skyTime);
-                        }
-                    }
-                    if(optionsMenuPos == 1)
-                    {
-                        if (mWorld->mainOptions.horizontalViewDistance != 1)
-                        {
-                            mWorld->mainOptions.horizontalViewDistance -= 1;
-                            mSoundMgr->PlayMenuSound();
-                            mWorld->playerZoneSize = Vector3(CHUNK_SIZE*mWorld->mainOptions.horizontalViewDistance,CHUNK_SIZE*mWorld->mainOptions.verticalViewDistance,CHUNK_SIZE*mWorld->mainOptions.horizontalViewDistance);
-                            fppCam->needUpdate = true;
-                        }
-                    }
-                    if(optionsMenuPos == 8)
-                    {
-                        if (mWorld->mainOptions.verticalViewDistance != 1)
-                        {
-                            mWorld->mainOptions.verticalViewDistance -= 1;
-                            mSoundMgr->PlayMenuSound();
-                            mWorld->playerZoneSize = Vector3(CHUNK_SIZE*mWorld->mainOptions.horizontalViewDistance,CHUNK_SIZE*mWorld->mainOptions.verticalViewDistance,CHUNK_SIZE*mWorld->mainOptions.horizontalViewDistance);
-                            fppCam->needUpdate = true;
-                        }
-                    }
-                    if(optionsMenuPos == 9)
-                    {
-                        mWorld->mainOptions.difficult -= 1;
-                        mSoundMgr->PlayMenuSound();
-
-                        if(mWorld->mainOptions.difficult < 0)
-                        {
-                            mWorld->mainOptions.difficult = 0;
-                        }
-                    }
-                }
-
-                //back
-                if(mSystemMgr->KeyPressed(PSP_CTRL_CIRCLE))
-                {
-                    if (mWorld->mainOptions.difficult == 0)
-                    {
-                        mWorld->DestroyAllZombies();
-                        mWorld->DestroyAllCreepers();
-                    }
-                    selectPos = 1;
-                    menuOptions = false;
-                }
-
-                if(mSystemMgr->KeyPressed(PSP_CTRL_CROSS))
-                {
-                    //fog rendering
-                    if(optionsMenuPos == 2)
-                    {
-                         mWorld->mainOptions.fogRendering = !mWorld->mainOptions.fogRendering;
-                         mSoundMgr->PlayMenuSound();
-                    }
-
-                    //clouds rendering
-                    if(optionsMenuPos == 3)
-                    {
-                         mWorld->mainOptions.detailedSky = !mWorld->mainOptions.detailedSky;
-                         mSoundMgr->PlayMenuSound();
-                    }
-
-                    //fast rendering
-                    if(optionsMenuPos == 4)
-                    {
-                        mWorld->mainOptions.mipMapTexturing = !mWorld->mainOptions.mipMapTexturing;
-                        mSoundMgr->PlayMenuSound();
-
-                        //mWorld->RebuildVisibleChunks();
-                    }
-
-                    //smooth lighting
-                    if(optionsMenuPos == 5)
-                    {
-                        mWorld->mainOptions.smoothLighting = !mWorld->mainOptions.smoothLighting;
-                        mSoundMgr->PlayMenuSound();
-
-                        mWorld->RebuildVisibleChunks();
-                    }
-
-                    //block animation
-                    if(optionsMenuPos == 6)
-                    {
-                        mWorld->mainOptions.worldBlockAnimation = !mWorld->mainOptions.worldBlockAnimation;
-                        mSoundMgr->PlayMenuSound();
-                    }
-
-                    //auto jump
-                    if(optionsMenuPos == 7)
-                    {
-                        mWorld->mainOptions.autoJump = !mWorld->mainOptions.autoJump;
-                        bobCycle = 0.0f;
-                        mSoundMgr->PlayMenuSound();
-                    }
-
-                    if(optionsMenuPos == 10)
-                    {
-                        mSoundMgr->PlayMenuSound();
-                    }
-
-                    if(optionsMenuPos == 11)
-                    {
-                        mWorld->mainOptions.guiDrawing = !mWorld->mainOptions.guiDrawing;
-                        mSoundMgr->PlayMenuSound();
-                    }
-
-                    if(optionsMenuPos == 12)
-                    {
-                        mWorld->mainOptions.sounds = !mWorld->mainOptions.sounds;
-                        mSoundMgr->PlayMenuSound();
-                        mSoundMgr->playerSounds = mWorld->mainOptions.sounds;
-                    }
-
-                    //music
-                    if(optionsMenuPos == 13)
-                    {
-                        mWorld->mainOptions.music = !mWorld->mainOptions.music;
-                        mSoundMgr->PlayMenuSound();
-                        mSoundMgr->StopAmbient();
-                    }
-
-
-                    //take screen
-                    if(optionsMenuPos == 14)
-                    {
-                        makeScreen = true;
-                        /*unsigned short test[128];
-                        unsigned short opis[10] = {'W','o','r','l','d',' ','n','a','m','e'};
-                        if(mSystemMgr->ShowOSK(opis,test,128) != -1)
-                        {
-                            std::string newWorldName = "";
-                            for(int j = 0; test[j]; j++)
-                            {
-                                unsigned c = test[j];
-
-                                if(32 <= c && c <= 127) // print ascii only
-                                    newWorldName += c;
-                            }
-
-                            sprintf(mWorld->worldName,"%s",newWorldName.c_str());
-                        }*/
-                    }
-
-                    if(optionsMenuPos == 15)
-                    {
-                        devMode = !devMode;
-                    }
-                }
-            }
-            else
-            {
-                //up, down
-                if(mSystemMgr->KeyPressed(PSP_CTRL_UP))
-                {
-                    selectPos--;
-                    if(selectPos < 0)
-                        selectPos = 5;
-
-                    mSoundMgr->PlayMenuSound();
-                }
-
-                if(mSystemMgr->KeyPressed(PSP_CTRL_DOWN))
-                {
-                    selectPos++;
-                    if(selectPos > 5)
-                        selectPos = 0;
-
-                    mSoundMgr->PlayMenuSound();
-                }
-
-                if(mSystemMgr->KeyPressed(PSP_CTRL_CIRCLE))
-                {
-                    menuState = 0;
-                    selectPos = 0;
-                    optionsMenuPos = 0;
-                    menuOptions = false;
-                }
-
-                if(mSystemMgr->KeyPressed(PSP_CTRL_CROSS))
-                {
-                    if(selectPos == 0)//resume
-                    {
-                        menuState = 0;
-                    }
-                    if(selectPos == 1)//options
-                    {
-                        optionsMenuPos = 0;
-                        menuOptions = true;
-                    }
-                    if(selectPos == 2)//stats
-                    {
-                        menuState = 3;
-                        selectPos = 0;
-                    }
-                    if(selectPos == 3)//save
-                    {
-                        mWorld->SaveCompressedWorld(saveFileName.c_str());
-                        menuState = 0;
-                    }
-                    if(selectPos == 4)//save end exit
-                    {
-
-                        mSoundMgr->StopAmbient();
-                        mSoundMgr->StopDiskTrack();
-                        mWorld->SaveCompressedWorld(saveFileName.c_str());
-                        sManager->PopState();
-                    }
-                    if(selectPos == 5)//exit
-                    {
-
-                        mSoundMgr->StopAmbient();
-                        mSoundMgr->StopDiskTrack();
-                        sManager->PopState();
-                    }
-                }
-            }
+            menuState = 0;
+            menuOptions = false;
+            optionsMenuPos = 0;
+            selectPos = 0;
         }
-        if (menuState == 3)
+
+        //menu keys
+        if(menuOptions)
         {
-            if(mSystemMgr->KeyPressed(PSP_CTRL_CIRCLE))
+            //up, down
+            if(mSystemMgr->KeyPressed(PSP_CTRL_UP))
             {
-                selectPos = 2;
-                menuState = 1;
+                if(optionsMenuPos == 8 || optionsMenuPos == 0)
+                {
+                    return;
+                }
+                optionsMenuPos--;
+                mSoundMgr->PlayMenuSound();
             }
+
+            if(mSystemMgr->KeyPressed(PSP_CTRL_DOWN))
+            {
+                if(optionsMenuPos == 7 || optionsMenuPos == 15)
+                {
+                    return;
+                }
+                optionsMenuPos++;
+                mSoundMgr->PlayMenuSound();
+            }
+
             if(mSystemMgr->KeyPressed(PSP_CTRL_RTRIGGER))
             {
-                statisticsPage += 1;
-                if(statisticsPage == 2)
+                if(optionsMenuPos + 8 > 15)
                 {
-                    statisticsPage = 0;
+                    return;
                 }
+                optionsMenuPos += 8;
+                mSoundMgr->PlayMenuSound();
             }
+
             if(mSystemMgr->KeyPressed(PSP_CTRL_LTRIGGER))
             {
-                statisticsPage -= 1;
-                if(statisticsPage == -1)
+                if(optionsMenuPos - 8 < 0)
                 {
-                    statisticsPage = 1;
+                    return;
+                }
+                optionsMenuPos -= 8;
+                mSoundMgr->PlayMenuSound();
+            }
+
+            if(mSystemMgr->KeyPressed(PSP_CTRL_RIGHT))
+            {
+                if(optionsMenuPos == 0)
+                {
+                    if (mWorld->mainOptions.fov <= 95)
+                    {
+                        mWorld->mainOptions.fov += 5;
+                        mSoundMgr->PlayMenuSound();
+                        mRender->fovv = mWorld->mainOptions.fov;
+                        RenderManager::InstancePtr()->SetPerspective(0, 480.0f / 272.0f, 0.18f, 1000.f);
+                        skyLight->UpdateLightSource(mWorld->skyTime);
+                        skyMoonLight->UpdateLightSource(mWorld->skyTime);
+                    }
+                }
+                if(optionsMenuPos == 1)
+                {
+                    if (mWorld->mainOptions.horizontalViewDistance != 4)
+                    {
+                        mWorld->mainOptions.horizontalViewDistance += 1;
+                        mSoundMgr->PlayMenuSound();
+                        mWorld->playerZoneSize = Vector3(CHUNK_SIZE*mWorld->mainOptions.horizontalViewDistance,CHUNK_SIZE*mWorld->mainOptions.verticalViewDistance,CHUNK_SIZE*mWorld->mainOptions.horizontalViewDistance);
+                        mWorld->UpdatePlayerZoneBB(fppCam->m_vPosition);
+                        fppCam->needUpdate = true;
+                    }
+                }
+                if(optionsMenuPos == 8)
+                {
+                    if (mWorld->mainOptions.verticalViewDistance != 2)
+                    {
+                        mWorld->mainOptions.verticalViewDistance += 1;
+                        mSoundMgr->PlayMenuSound();
+                        mWorld->playerZoneSize = Vector3(CHUNK_SIZE*mWorld->mainOptions.horizontalViewDistance,CHUNK_SIZE*mWorld->mainOptions.verticalViewDistance,CHUNK_SIZE*mWorld->mainOptions.horizontalViewDistance);
+                        mWorld->UpdatePlayerZoneBB(fppCam->m_vPosition);
+                        fppCam->needUpdate = true;
+                    }
+                }
+                if(optionsMenuPos == 9)
+                {
+                    mWorld->mainOptions.difficult += 1;
+                    mSoundMgr->PlayMenuSound();
+
+                    if(mWorld->mainOptions.difficult > 3)
+                    {
+                        mWorld->mainOptions.difficult = 3;
+                    }
+                }
+            }
+
+            if(mSystemMgr->KeyPressed(PSP_CTRL_LEFT))
+            {
+                if(optionsMenuPos == 0)
+                {
+                    if (mWorld->mainOptions.fov >= 45)
+                    {
+                        mWorld->mainOptions.fov -= 5;
+                        mSoundMgr->PlayMenuSound();
+                        mRender->fovv = mWorld->mainOptions.fov;
+                        RenderManager::InstancePtr()->SetPerspective(0, 480.0f / 272.0f, 0.18f, 1000.f);
+                        skyLight->UpdateLightSource(mWorld->skyTime);
+                        skyMoonLight->UpdateLightSource(mWorld->skyTime);
+                    }
+                }
+                if(optionsMenuPos == 1)
+                {
+                    if (mWorld->mainOptions.horizontalViewDistance != 1)
+                    {
+                        mWorld->mainOptions.horizontalViewDistance -= 1;
+                        mSoundMgr->PlayMenuSound();
+                        mWorld->playerZoneSize = Vector3(CHUNK_SIZE*mWorld->mainOptions.horizontalViewDistance,CHUNK_SIZE*mWorld->mainOptions.verticalViewDistance,CHUNK_SIZE*mWorld->mainOptions.horizontalViewDistance);
+                        fppCam->needUpdate = true;
+                    }
+                }
+                if(optionsMenuPos == 8)
+                {
+                    if (mWorld->mainOptions.verticalViewDistance != 1)
+                    {
+                        mWorld->mainOptions.verticalViewDistance -= 1;
+                        mSoundMgr->PlayMenuSound();
+                        mWorld->playerZoneSize = Vector3(CHUNK_SIZE*mWorld->mainOptions.horizontalViewDistance,CHUNK_SIZE*mWorld->mainOptions.verticalViewDistance,CHUNK_SIZE*mWorld->mainOptions.horizontalViewDistance);
+                        fppCam->needUpdate = true;
+                    }
+                }
+                if(optionsMenuPos == 9)
+                {
+                    mWorld->mainOptions.difficult -= 1;
+                    mSoundMgr->PlayMenuSound();
+
+                    if(mWorld->mainOptions.difficult < 0)
+                    {
+                        mWorld->mainOptions.difficult = 0;
+                    }
+                }
+            }
+
+            //back
+            if(mSystemMgr->KeyPressed(PSP_CTRL_CIRCLE))
+            {
+                if (mWorld->mainOptions.difficult == 0)
+                {
+                    mWorld->DestroyAllZombies();
+                }
+                selectPos = 1;
+                menuOptions = false;
+            }
+
+            if(mSystemMgr->KeyPressed(PSP_CTRL_CROSS))
+            {
+                //fog rendering
+                if(optionsMenuPos == 2)
+                {
+                     mWorld->mainOptions.fogRendering = !mWorld->mainOptions.fogRendering;
+                     mSoundMgr->PlayMenuSound();
+                }
+
+                //clouds rendering
+                if(optionsMenuPos == 3)
+                {
+                     mWorld->mainOptions.detailedSky = !mWorld->mainOptions.detailedSky;
+                     mSoundMgr->PlayMenuSound();
+                }
+
+                //fast rendering
+                if(optionsMenuPos == 4)
+                {
+                    mWorld->mainOptions.mipMapTexturing = !mWorld->mainOptions.mipMapTexturing;
+                    mSoundMgr->PlayMenuSound();
+
+                    //mWorld->RebuildVisibleChunks();
+                }
+
+                //smooth lighting
+                if(optionsMenuPos == 5)
+                {
+                    mWorld->mainOptions.smoothLighting = !mWorld->mainOptions.smoothLighting;
+                    mSoundMgr->PlayMenuSound();
+
+                    mWorld->RebuildVisibleChunks();
+                }
+
+                //block animation
+                if(optionsMenuPos == 6)
+                {
+                    mWorld->mainOptions.worldBlockAnimation = !mWorld->mainOptions.worldBlockAnimation;
+                    mSoundMgr->PlayMenuSound();
+                }
+
+                //auto jump
+                if(optionsMenuPos == 7)
+                {
+                    mWorld->mainOptions.autoJump = !mWorld->mainOptions.autoJump;
+                    bobCycle = 0.0f;
+                    mSoundMgr->PlayMenuSound();
+                }
+
+                if(optionsMenuPos == 10)
+                {
+                     mWorld->mainOptions.freezeDayTime = !mWorld->mainOptions.freezeDayTime;
+                     mSoundMgr->PlayMenuSound();
+                }
+
+                if(optionsMenuPos == 11)
+                {
+                     mWorld->mainOptions.guiDrawing = !mWorld->mainOptions.guiDrawing;
+                     mSoundMgr->PlayMenuSound();
+                }
+
+                if(optionsMenuPos == 12)
+                {
+                     mWorld->mainOptions.sounds = !mWorld->mainOptions.sounds;
+                     mSoundMgr->PlayMenuSound();
+                     mSoundMgr->playerSounds = mWorld->mainOptions.sounds;
+                }
+
+                //music
+                if(optionsMenuPos == 13)
+                {
+                    mWorld->mainOptions.music = !mWorld->mainOptions.music;
+                    mSoundMgr->PlayMenuSound();
+                    mSoundMgr->StopAmbient();
+                }
+
+
+                //take screen
+                if(optionsMenuPos == 14)
+                {
+                    makeScreen = true;
+                    /*
+                    unsigned short test[128];
+                    unsigned short opis[10] = {'W','o','r','l','d',' ','n','a','m','e'};
+                    if(mSystemMgr->ShowOSK(opis,test,128) != -1)
+                    {
+                        std::string newWorldName = "";
+                        for(int j = 0; test[j]; j++)
+                        {
+                            unsigned c = test[j];
+
+                            if(32 <= c && c <= 127) // print ascii only
+                                newWorldName += c;
+                        }
+
+                        sprintf(mWorld->worldName,"%s",newWorldName.c_str());
+                    }
+                    */
+                }
+
+                if(optionsMenuPos == 15)
+                {
+                    devMode = !devMode;
+                }
+            }
+        }
+        else
+        {
+            //up, down
+            if(mSystemMgr->KeyPressed(PSP_CTRL_UP))
+            {
+                selectPos--;
+                if(selectPos < 0)
+                    selectPos = 5;
+
+                mSoundMgr->PlayMenuSound();
+            }
+
+            if(mSystemMgr->KeyPressed(PSP_CTRL_DOWN))
+            {
+                selectPos++;
+                if(selectPos > 5)
+                    selectPos = 0;
+
+                mSoundMgr->PlayMenuSound();
+            }
+
+            if(mSystemMgr->KeyPressed(PSP_CTRL_CIRCLE))
+            {
+                menuState = 0;
+                selectPos = 0;
+                optionsMenuPos = 0;
+                menuOptions = false;
+            }
+
+            if(mSystemMgr->KeyPressed(PSP_CTRL_CROSS))
+            {
+                if(selectPos == 0)//resume
+                {
+                    menuState = 0;
+                }
+                if(selectPos == 1)//options
+                {
+                    optionsMenuPos = 0;
+                    menuOptions = true;
+                }
+                if(selectPos == 2)//options
+                {
+                    menuState = 3;
+                    selectPos = 0;
+                }
+                if(selectPos == 3)//save
+                {
+                    //mWorld->sunTime = sunTime;
+                    mWorld->SaveCompressedWorld(saveFileName.c_str());
+                    menuState = 0;
+                }
+                if(selectPos == 4)//save end exit
+                {
+                    mSoundMgr->StopAmbient();
+                    mSoundMgr->StopDiskTrack();
+                    mWorld->SaveCompressedWorld(saveFileName.c_str());
+                    sManager->PopState();
+                }
+                if(selectPos == 5)//exit
+                {
+                    mSoundMgr->StopAmbient();
+                    mSoundMgr->StopDiskTrack();
+                    sManager->PopState();
                 }
             }
         }
     }
-    if(mWorld->HP <= 0)
+    if (menuState == 3)
     {
-        mWorld->playerGrowth = 0.65f;
-        if(dieFactor == 1) // drop your loot
+        if(mSystemMgr->KeyPressed(PSP_CTRL_CIRCLE))
         {
-            for(int i = 0; i < 36; i++)
-            {
-                if(i <= 3) // drop armor items
-                {
-                    if(mWorld->armorId[i] != 324 + i)
-                    {
-                        Vector3 dropVelocity = Vector3(0,0,0);
-
-                        dropVelocity.x = (-15+rand()%30)*0.1f;
-                        dropVelocity.y = 3.0f;
-                        dropVelocity.z = (-15+rand()%30)*0.1f;
-
-                        mWorld->DropThisNoAlign(mWorld->armorId[i],mWorld->armorAm[i],mWorld->armorSt[i],Vector3(fppCam->m_vPosition.x,fppCam->m_vPosition.y-0.25f,fppCam->m_vPosition.z),dropVelocity);
-
-                        mWorld->armorAm[i] = -1;
-                        mWorld->armorSt[i] = 0;
-                        mWorld->armorId[i] = -1;
-                    }
-                }
-                if(mWorld->invId[i] > 0)
-                {
-                    Vector3 dropVelocity = Vector3(0,0,0);
-
-                    dropVelocity.x = (-15+rand()%30)*0.1f;
-                    dropVelocity.y = 3.0f;
-                    dropVelocity.z = (-15+rand()%30)*0.1f;
-
-                    if(mWorld->invAm[i] > 0)
-                    {
-                        mWorld->DropThisNoAlign(mWorld->invId[i],mWorld->invAm[i],mWorld->invSt[i],Vector3(fppCam->m_vPosition.x,fppCam->m_vPosition.y-0.25f,fppCam->m_vPosition.z),dropVelocity);
-
-                        mWorld->invAm[i] = -1;
-                        mWorld->invSt[i] = 0;
-                        mWorld->invId[i] = -1;
-                    }
-                }
-            }
-
-            mWorld->mainStatistics.dies += 1;
-            dieFactor = 0;
+            selectPos = 2;
+            menuState = 1;
         }
-        if(mSystemMgr->KeyPressed(PSP_CTRL_CROSS))
+        if(mSystemMgr->KeyPressed(PSP_CTRL_RTRIGGER))
         {
-            if(mWorld->gameModeWorld == 2)
+            statisticsPage += 1;
+            if(statisticsPage == 2)
             {
-                mWorld->gameLocked = true;
-                mWorld->SaveCompressedWorld(saveFileName.c_str());
-
-                std::string fileName = saveFileName;
-                remove(fileName.c_str());
-                fileName = fileName + "c";
-                remove(fileName.c_str());
-
-                sManager->PopState();
+                statisticsPage = 0;
             }
-            else
+        }
+        if(mSystemMgr->KeyPressed(PSP_CTRL_LTRIGGER))
+        {
+            statisticsPage -= 1;
+            if(statisticsPage == -1)
             {
-                mWorld->playerGrowth = 1.65f;
-
-                Vector3 newPosition = mWorld->playerSpawnPointPosition;
-                if(mWorld->BlockSolid(newPosition.x,newPosition.y-1.2f,newPosition.z) || mWorld->BlockSolid(newPosition.x,newPosition.y,newPosition.z))
-                {
-                    newPosition.y = mWorld->groundHeight(newPosition.x,newPosition.z)+mWorld->playerGrowth-0.05f+1;
-                }
-
-                playerPosition.x = newPosition.x;
-                playerPosition.y = newPosition.y;
-                playerPosition.z = newPosition.z;
-
-                mWorld->UpdatePlayerZoneBB(playerPosition);	//Move player back to original spawn point
-                fppCam->PositionCamera(playerPosition.x,playerPosition.y,playerPosition.z, playerPosition.x,playerPosition.y,playerPosition.z-5.0f, 0.0f,1.0f,0.0f);
-                fppCam->RotateView(0,0,90,0);
-                fppCam->upDownAngle = 0;
-                fppCam->horAngle = 270;
-                mWorld->HP = 20;
-                mWorld->HG = 20;
-                mWorld->OS = 10;
-
-                invEn = false;
-                craft3xEn = false;
-                furnaceEn = false;
-                chestEn = false;
-                upEn = false;
-                furnaceEn = false;
-                chestId = -1;
-                armorEn = false;
-
-                UseChest = NULL;
-                UseFurnace = NULL;
-
-                int chunkTarget = mWorld->getChunkId(playerPosition-Vector3(0, -1.75, 0));
-
-                //Rebuild the world around
-                mWorld->RebuildFullMeshChunk(chunkTarget);
-                mWorld->rebuildNearestChunks(chunkTarget,playerPosition);
-                //mWorld->rebuildVisibleChunks();
-               // mWorld->rebuildVisibleTransperentChunks();
-
-                dieFactor = 1;
+                statisticsPage = 1;
             }
         }
     }
 }
 
 
-void StatePlay::Update(StateManager* sManager)
+void StatePlayCreative::Update(StateManager* sManager)
 {
-    if(mWorld->armorAm[0] <= 0)
-    {
-        mWorld->armorId[0] = 324;
-        mWorld->armorAm[0] = -1;
-        mWorld->armorSt[0] = false;
-    }
-    if(mWorld->armorAm[1] <= 0)
-    {
-        mWorld->armorId[1] = 325;
-        mWorld->armorAm[1] = -1;
-        mWorld->armorSt[1] = false;
-    }
-    if(mWorld->armorAm[2] <= 0)
-    {
-        mWorld->armorId[2] = 326;
-        mWorld->armorAm[2] = -1;
-        mWorld->armorSt[2] = false;
-    }
-    if(mWorld->armorAm[3] <= 0)
-    {
-        mWorld->armorId[3] = 327;
-        mWorld->armorAm[3] = -1;
-        mWorld->armorSt[3] = false;
-    }
-    mWorld->AP = mWorld->FetchArmorPoints(mWorld->armorId[3],mWorld->armorId[2],mWorld->armorId[1],mWorld->armorId[0]);
-
     if(menuState == 0)//game state
     {
-        cubeLight = mWorld->BlockFinalLight(playerPosition.x,playerPosition.y-1,playerPosition.z) * 1.2f;
-        if(cubeLight > 1.0f)
-        {
-            cubeLight = 1.0f;
-        }
-
         furnaceTimes += dt;
         if(furnaceTimes >= 0.5f)
         {
@@ -9068,94 +8115,6 @@ void StatePlay::Update(StateManager* sManager)
             furnaceTimes -= 0.5f;
         }
 
-        if(mWorld->mMonsterSpawners.size() > 0)
-        {
-            BoundingBox playerBox = BoundingBox(Vector3(playerPosition.x - 0.15f,playerPosition.y - 1.60f,playerPosition.z - 0.15f),Vector3(playerPosition.x + 0.15f,playerPosition.y + 0.2f,playerPosition.z + 0.15f));
-
-            vector<MonsterSpawnerEntity*>::iterator it;
-            for(it = mWorld->mMonsterSpawners.begin(); it != mWorld->mMonsterSpawners.end(); ++it)
-            {
-                if(playerBox.intersect((*it)->actArea))
-                {
-                    (*it)->Update(dt);
-
-                    if((*it)->particleDelay1 <= 0)
-                    {
-                         (*it)->particleDelay1 = 0.5f+(rand() % 500)/1000.0f;
-
-                         for(int i = 0; i < 4; i++)
-                         {
-                            float particle_x = (*it)->GetX()+(rand()%(11)/10.0f);
-                            float particle_y = (*it)->GetY()+(rand()%(11)/10.0f);
-                            float particle_z = (*it)->GetZ()+(rand()%(11)/10.0f);
-
-                            Particle* Smoke = new Particle(mWorld, "black smoke",Vector3(particle_x,particle_y,particle_z));
-                            Particle* Flame = new Particle(mWorld, "flame",Vector3(particle_x,particle_y,particle_z));
-                            mParticles.push_back(Smoke);
-                            mParticles.push_back(Flame);
-                         }
-                    }
-                    if((*it)->particleDelay2 <= 0)
-                    {
-                         (*it)->particleDelay2 = 0.5f+(rand() % 500)/1000.0f;
-
-                         for(int i = 0; i < 6; i++)
-                         {
-                            float particle_x = (*it)->GetX()+(rand()%(11)/10.0f);
-                            float particle_y = (*it)->GetY()+(rand()%(11)/10.0f);
-                            float particle_z = (*it)->GetZ()+(rand()%(11)/10.0f);
-
-                            Particle* Smoke = new Particle(mWorld, "black smoke",Vector3(particle_x,particle_y,particle_z));
-                            Particle* Flame = new Particle(mWorld, "flame",Vector3(particle_x,particle_y,particle_z));
-                            mParticles.push_back(Smoke);
-                            mParticles.push_back(Flame);
-                         }
-                    }
-
-                    if((*it)->ItIsTimeToSpawn() && mWorld->BlockFinalLight((*it)->GetX(),(*it)->GetY()+1,(*it)->GetZ()) < 0.6f && mWorld->mainOptions.difficult != 0)
-                    {
-                        (*it)->forceSpawn = false;
-                        int nearbyEntityAmount = 0;
-
-                        if((*it)->MobToSpawn() == "zombie")
-                        {
-                            if(mWorld->mZombies.empty() == false)
-                            {
-                                for(int i = 0; i < mWorld->mZombies.size(); i++)
-                                {
-                                    if(nearbyEntityAmount == 4)
-                                    {
-                                        break;
-                                    }
-                                    Zombie* TestMob = mWorld->mZombies[i];
-                                    if(TestMob->bBox.intersect((*it)->actArea))
-                                    {
-                                        nearbyEntityAmount ++;
-                                    }
-                                }
-                            }
-
-                            if(nearbyEntityAmount < 4)
-                            {
-                                int count0 = (*it)->MobCountToSpawn();
-                                for(int i = 0; i < count0; i++)
-                                {
-                                    float spawn_x = (*it)->GetX()-2+(rand()%2)*4;
-                                    float spawn_z = (*it)->GetZ()-2+(rand()%2)*4;
-                                    spawn_x += 0.5f;
-                                    spawn_z += 0.5f;
-
-                                    float spawn_y = mWorld->groundHeight(spawn_x+0.5f,(*it)->GetY()+1,spawn_z+0.5f)+1.2f;
-
-                                    mWorld->SpawnZombie((*it)->GetX()-1+rand()%3,(*it)->GetY()+1,(*it)->GetZ()-1+rand()%3);
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
         if(sleepTime > 0.0f)
         {
             sleepTime -= dt;
@@ -9179,55 +8138,57 @@ void StatePlay::Update(StateManager* sManager)
             mWorld->SetWolrdTime(6);
             mWorld->brightFactor = 0.0f;
             mWorld->mainStatistics.daysInGame++;
-            mWorld->RebuildVisibleChunks();
         }
 
-        if (mWorld->skyTime >= 100 && mWorld->skyTime <= 150) // morning
+        if(mWorld->mainOptions.freezeDayTime == false)
         {
-            mWorld->brightFactor = (mWorld->skyTime - 100.0f)/50.0f;
-        }
-        if (mWorld->skyTime >= 146 && mWorld->skyTime <= 249) // noon
-        {
-            mWorld->brightFactor = 1.0f;
-        }
-        if (mWorld->skyTime >= 250 && mWorld->skyTime <= 300) // sunset
-        {
-            mWorld->brightFactor = (300.0f - mWorld->skyTime)/50.0f;
-        }
-        if (mWorld->skyTime >= 300 && mWorld->skyTime <= 460) // night
-        {
-            mWorld->brightFactor = 0.0f;
-        }
+            if (mWorld->skyTime >= 100 && mWorld->skyTime <= 150) // morning
+            {
+                mWorld->brightFactor = (mWorld->skyTime - 100.0f)/50.0f;
+            }
+            if (mWorld->skyTime >= 146 && mWorld->skyTime <= 249) // noon
+            {
+                mWorld->brightFactor = 1.0f;
+            }
+            if (mWorld->skyTime >= 250 && mWorld->skyTime <= 300) // sunset
+            {
+                mWorld->brightFactor = (300.0f - mWorld->skyTime)/50.0f;
+            }
+            if (mWorld->skyTime >= 300 && mWorld->skyTime <= 460) // night
+            {
+                mWorld->brightFactor = 0.0f;
+            }
 
-        if (mWorld->skyTime >= 101 && mWorld->skyTime <= 116)
-        {
-            mWorld->dawnSunsetFactor = (mWorld->skyTime - 101)/18.0f;
-        }
-        if (mWorld->skyTime >= 125 && mWorld->skyTime <= 139)
-        {
-            mWorld->dawnSunsetFactor = (139 - mWorld->skyTime)/18.0f;
-        }
-        if (mWorld->skyTime > 134 && mWorld->skyTime < 240)
-        {
-            mWorld->dawnSunsetFactor = 0.0f;
-        }
+            if (mWorld->skyTime >= 101 && mWorld->skyTime <= 116)
+            {
+                mWorld->dawnSunsetFactor = (mWorld->skyTime - 101)/18.0f;
+            }
+            if (mWorld->skyTime >= 125 && mWorld->skyTime <= 139)
+            {
+                mWorld->dawnSunsetFactor = (139 - mWorld->skyTime)/18.0f;
+            }
+            if (mWorld->skyTime > 134 && mWorld->skyTime < 240)
+            {
+                mWorld->dawnSunsetFactor = 0.0f;
+            }
 
-        if (mWorld->skyTime >= 265 && mWorld->skyTime <= 288)
-        {
-            mWorld->dawnSunsetFactor = (mWorld->skyTime - 265)/18.0f;
-        }
-        if (mWorld->skyTime >= 291 && mWorld->skyTime <= 306)
-        {
-            mWorld->dawnSunsetFactor = (306 - mWorld->skyTime)/18.0f;
-        }
-        if (mWorld->skyTime > 306)
-        {
-            mWorld->dawnSunsetFactor = 0.0f;
-        }
+            if (mWorld->skyTime >= 265 && mWorld->skyTime <= 288)
+            {
+                mWorld->dawnSunsetFactor = (mWorld->skyTime - 265)/18.0f;
+            }
+            if (mWorld->skyTime >= 291 && mWorld->skyTime <= 306)
+            {
+                mWorld->dawnSunsetFactor = (306 - mWorld->skyTime)/18.0f;
+            }
+            if (mWorld->skyTime > 306)
+            {
+                mWorld->dawnSunsetFactor = 0.0f;
+            }
 
-        if(mWorld->dawnSunsetFactor > 1.0f)
-        {
-            mWorld->dawnSunsetFactor = 1.0f;
+            if(mWorld->dawnSunsetFactor > 1.0f)
+            {
+                mWorld->dawnSunsetFactor = 1.0f;
+            }
         }
 
         if (anim[0] == 1)
@@ -9257,11 +8218,6 @@ void StatePlay::Update(StateManager* sManager)
             }
         }
 
-        if(playerVelocity.y != 0.0f)
-        {
-            fppCam->needUpdate = true;
-        }
-
         if(fppCam->needUpdate)
         {
             showCube = false;
@@ -9278,7 +8234,7 @@ void StatePlay::Update(StateManager* sManager)
             BoundingBox testBox = BoundingBox(testPos.x+collider.min.x, testPos.y+collider.min.y, testPos.z+collider.min.z, testPos.x+collider.max.x, testPos.y+collider.max.y, testPos.z+collider.max.z);
 
             //moving slowly to the target
-            for(float i = 0; i < 5.25f; i+=0.1f)
+            for(float i = 0; i < 5.25f; i+=0.15f)
             {
                 testPos = fppCam->m_vPosition + (rayDir * i);
 
@@ -9301,17 +8257,15 @@ void StatePlay::Update(StateManager* sManager)
 
         int soundBlockType = -1;
 
-        //RenderManager::InstancePtr()
 
         //update player position
         if(dt < 0.1f)
         {
-            /// player timers
             musicTime -= dt;
             if (musicTime < 0.0f)
             {
                 musicTime = 300.0f;
-                if(mWorld->mainOptions.music == true)
+                if(mWorld->mainOptions.music)
                 {
                     musicTime = mSoundMgr->PlayRandomAmbient();
                 }
@@ -9323,101 +8277,14 @@ void StatePlay::Update(StateManager* sManager)
                 cloudsOffset -= 2.0f;
             }
 
-            { // nearest chunk update
+            {
                 tickChunk += dt;
-
                 if (tickChunk >= 10.0f)
                 {
                     chunkId = mWorld->getChunkId(playerPosition);
                     mWorld->UpdateChunkBlocks(chunkId);
-
                     mWorld->RebuildFullMeshChunk(chunkId);
                     tickChunk -= 10.0f;
-                }
-            }
-
-            {
-                tickHunger += dt;
-                if(tickHunger >= 75)
-                {
-                    HungerTime();
-                    tickHunger -= 75;
-                }
-
-                tickHealth += dt;
-                if(tickHealth >= 5.0f)
-                {
-                    HealthTime();
-                    tickHealth -= 5.0f;
-                }
-
-                tickLavaDamage += dt;
-                if(tickLavaDamage >= 0.5f)
-                {
-                    if(headInLava || footInLava)
-                    {
-                        HurtPlayer(4.0f);
-                        if(mWorld->armorId[0] != 324)
-                        {
-                            mWorld->armorAm[0] -= 8+rand()%8;
-                        }
-                        if(mWorld->armorId[1] != 325)
-                        {
-                            mWorld->armorAm[1] -= 8+rand()%8;
-                        }
-                        if(mWorld->armorId[2] != 326)
-                        {
-                            mWorld->armorAm[2] -= 8+rand()%8;
-                        }
-                        if(mWorld->armorId[3] != 327)
-                        {
-                            mWorld->armorAm[3] -= 8+rand()%8;
-                        }
-                    }
-                    tickLavaDamage -= 0.5f;
-                }
-
-                if(touchingCactus)
-                {
-                    tickCactusDamage += dt;
-                }
-                else
-                {
-                    tickCactusDamage = 0.4f;
-                }
-                if(tickCactusDamage >= 0.5f)
-                {
-                    HurtPlayer(1);
-
-                    tickCactusDamage -= 0.5f;
-                }
-
-                if (hurt_time > 0)
-                {
-                    hurt_time -= dt;
-                }
-                if (hurt_time <= 0)
-                {
-                    hurt = false;
-                }
-
-                if(tickOS >= 1.0f && headInWater == 1)
-                {
-                    OxygenTime();
-                    tickOS = 0;
-                }
-
-                if (headInWater == 0)
-                {
-                    if (mWorld->OS != 10)
-                    {
-                        mWorld->OS = 10;
-                    }
-                    tickOS = 0;
-                }
-                else
-                {
-                    tickOS += dt;
                 }
             }
 
@@ -9439,7 +8306,6 @@ void StatePlay::Update(StateManager* sManager)
                         mSoundMgr->PlaySplashSound();
                         footInWater = true;
                     }
-
                 }
                 else
                 {
@@ -9461,7 +8327,7 @@ void StatePlay::Update(StateManager* sManager)
                     /*if(headInWater == false)
                     {
                         mSoundMgr->PlaySplashSound();
-                        headInWater = true;
+
                     }*/
                     headInWater = true;
                 }
@@ -9501,12 +8367,6 @@ void StatePlay::Update(StateManager* sManager)
                     playerVelocity.y = -CLIMBVELOCITY;
                 }
 
-                touchingCactus = false;
-                if(mWorld->PlayerCollisionWithCactus(playerPosition) || mWorld->PlayerCollisionWithCactus(Vector3(playerPosition.x,playerPosition.y-1.5f,playerPosition.z)))
-                {
-                    touchingCactus = true;
-                }
-
                 //check if we will stand on ground
                 Vector3 futureFootPosition = Vector3(footPosition.x,footPosition.y+playerVelocity.y*dt,footPosition.z);
                 if(mWorld->SolidAtPointForPlayer(futureFootPosition))
@@ -9519,11 +8379,6 @@ void StatePlay::Update(StateManager* sManager)
                     if (mWorld->SolidAtPointForPlayer(futureFootPosition))
                     {
                         int blockOn = (int)(futureFootPosition.y);
-
-                        if(mWorld->GetBlock(futureFootPosition.x,futureFootPosition.y,futureFootPosition.z) == CactusBlock::getID())
-                        {
-                            touchingCactus = true;
-                        }
 
                         if(mWorld->PlayerOnHalfBlock(futureFootPosition))
                         {
@@ -9575,14 +8430,6 @@ void StatePlay::Update(StateManager* sManager)
                             if(playerVelocity.y < -12.8 && playerVelocity.y > -19)
                             {
                                 mSoundMgr->PlayFallSound(playerVelocity.y);
-                                if(mWorld->GetBlock(futureFootPosition.x, futureFootPosition.y-0.25f, futureFootPosition.z) == HayBale::getID())
-                                {
-                                    HurtPlayer((playerVelocity.y*-1 - 11) / 1.4 * 0.3f);
-                                }
-                                else
-                                {
-                                    HurtPlayer((playerVelocity.y*-1 - 11) / 1.4);
-                                }
 
                                 if(mWorld->HG > 0.2)
                                 {
@@ -9598,14 +8445,6 @@ void StatePlay::Update(StateManager* sManager)
                             if(playerVelocity.y < -19)
                             {
                                 mSoundMgr->PlayFallSound(playerVelocity.y);
-                                if(mWorld->GetBlock(futureFootPosition.x, futureFootPosition.y-0.25f, futureFootPosition.z) == HayBale::getID())
-                                {
-                                    HurtPlayer((playerVelocity.y*-1 - 11) * 1.3f * 0.3f);
-                                }
-                                else
-                                {
-                                    HurtPlayer((playerVelocity.y*-1 - 11) * 1.3f);
-                                }
 
                                 if(mWorld->HG > 0.3)
                                 {
@@ -9652,92 +8491,6 @@ void StatePlay::Update(StateManager* sManager)
                 }
             }
 
-            if(mWorld->kickedStart)
-            {
-                if(mWorld->kickedBy == 1) // if you damaged by zombie
-                {
-                    walkingOnGround = false;
-                    playerVelocity.y = 0.9f * JUMPVELOCITY;
-                    mWorld->kickedTimer = 0.5f;
-                    fppCam->needUpdate = true;
-
-                    switch(mWorld->mainOptions.difficult)
-                    {
-                    case 0: // peaceful
-                        HurtPlayerConsiderArmor(0);
-                    break;
-                    case 1: // easy
-                        HurtPlayerConsiderArmor(mWorld->kickedDamage-1);
-                    break;
-                    case 2: // normal
-                        HurtPlayerConsiderArmor(mWorld->kickedDamage);
-                    break;
-                    case 3: // hard
-                        HurtPlayerConsiderArmor(mWorld->kickedDamage+1);
-                    break;
-                    }
-                    if(mWorld->armorId[0] != 324)
-                    {
-                        mWorld->armorAm[0] -= 1+rand()%3;
-                    }
-                    if(mWorld->armorId[1] != 325)
-                    {
-                        mWorld->armorAm[1] -= 1+rand()%4;
-                    }
-                    if(mWorld->armorId[2] != 326)
-                    {
-                        mWorld->armorAm[2] -= 1+rand()%3;
-                    }
-                    if(mWorld->armorId[3] != 327)
-                    {
-                        mWorld->armorAm[3] -= rand()%3;
-                    }
-                }
-                if(mWorld->kickedBy == 2) // creeper or TNT
-                {
-                    walkingOnGround = false;
-                    playerVelocity.y = 1.2f * JUMPVELOCITY;
-                    mWorld->kickedTimer = 0.6f;
-                    fppCam->needUpdate = true;
-
-                    switch(mWorld->mainOptions.difficult)
-                    {
-                    case 0: // peaceful
-                        HurtPlayerConsiderArmor(mWorld->kickedDamage*0.5f);
-                    break;
-                    case 1: // easy
-                        HurtPlayerConsiderArmor(mWorld->kickedDamage*0.66f);
-                    break;
-                    case 2: // normal
-                        HurtPlayerConsiderArmor(mWorld->kickedDamage);
-                    break;
-                    case 3: // hard
-                        HurtPlayerConsiderArmor(mWorld->kickedDamage*1.33f);
-                    break;
-                    }
-
-                    if(mWorld->armorId[0] != 324)
-                    {
-                        mWorld->armorAm[0] -= (mWorld->kickedDamage/2.0f)+rand()%6;
-                    }
-                    if(mWorld->armorId[1] != 325)
-                    {
-                        mWorld->armorAm[1] -= (mWorld->kickedDamage/1.5f)+rand()%6;
-                    }
-                    if(mWorld->armorId[2] != 326)
-                    {
-                        mWorld->armorAm[2] -= (mWorld->kickedDamage/2.0f)+rand()%4;
-                    }
-                    if(mWorld->armorId[3] != 327)
-                    {
-                        mWorld->armorAm[3] -= (mWorld->kickedDamage/2.0f)+rand()%3;
-                    }
-                }
-                mWorld->kickedStart = false;
-                mWorld->kickedBy = 0;
-                mWorld->kickedDamage = 0;
-            }
-
             //update position
             if(sleepTime <= 0.0f)
             {
@@ -9758,47 +8511,68 @@ void StatePlay::Update(StateManager* sManager)
             jumping = false;
             if(moveVector.x != 0.0f || moveVector.z != 0.0f)
             {
-                if(TryToMove(Vector3(0,0,moveVector.z),dt))
+                if(!canFly)
                 {
-                    isWalking = true;
-                }
-                else
-                {
-                    if(mWorld->mainOptions.autoJump)
+                    if(TryToMove(Vector3(0,0,moveVector.z),dt))
                     {
-                        if(jumping == false)
+                        isWalking = true;
+                    }
+                    else
+                    {
+                        if(mWorld->mainOptions.autoJump)
                         {
-                            jumping = true;
+                            if(jumping == false)
+                            {
+                                jumping = true;
+                            }
+                        }
+                    }
+                    if(TryToMove(Vector3(moveVector.x,0,0),dt))
+                    {
+                        isWalking = true;
+                    }
+                    else
+                    {
+                        if(mWorld->mainOptions.autoJump)
+                        {
+                            if(jumping == false)
+                            {
+                                jumping = true;
+                            }
                         }
                     }
                 }
-                if(TryToMove(Vector3(moveVector.x,0,0),dt))
-                {
-                    isWalking = true;
-                }
                 else
                 {
-                    if(mWorld->mainOptions.autoJump)
+                    if(TryToMove(Vector3(0,moveVector.y,moveVector.z),dt))
                     {
-                        if(jumping == false)
+                        isWalking = true;
+                    }
+                    else
+                    {
+                        if(mWorld->mainOptions.autoJump)
                         {
-                            jumping = true;
+                            if(jumping == false)
+                            {
+                                jumping = true;
+                            }
+                        }
+                    }
+                    if(TryToMove(Vector3(moveVector.x,moveVector.y,0),dt))
+                    {
+                        isWalking = true;
+                    }
+                    else
+                    {
+                        if(mWorld->mainOptions.autoJump)
+                        {
+                            if(jumping == false)
+                            {
+                                jumping = true;
+                            }
                         }
                     }
                 }
-            }
-
-            if(mWorld->kickedTimer > 0.0f)
-            {
-                mWorld->kickedTimer -= dt;
-                TryToMove(Vector3(sinf(mWorld->kickedAngle+PI)*0.1,0,cosf(mWorld->kickedAngle+PI)*0.1),dt);
-            }
-            else
-            {
-                mWorld->kickedTimer = 0.0f;
-                mWorld->kickedAngle = 0.0f;
-
-                fppCam->needUpdate = true;
             }
 
             //update camera
@@ -9808,9 +8582,19 @@ void StatePlay::Update(StateManager* sManager)
             fppCam->m_vVelocity = Vector3(0,0,0);
             fppCam->needUpdate = true;
 
-            mWorld->UpdateWorldTime(dt);
-            skyLight->UpdateLightSource(mWorld->skyTime);
+            // world timers
+            if(mWorld->mainOptions.freezeDayTime == false)
+            {
+                mWorld->UpdateWorldTime(dt);
+                skyLight->UpdateLightSource(mWorld->skyTime);
+            }
             mWorld->UpdateWorldProcesses(dt);
+
+            cubeLight = mWorld->BlockFinalLight(playerPosition.x,playerPosition.y-1,playerPosition.z) * 1.2f;
+            if(cubeLight > 1.0f)
+            {
+                cubeLight = 1.0f;
+            }
         }
 
         if(fppCam->needUpdate)
@@ -9871,8 +8655,8 @@ void StatePlay::Update(StateManager* sManager)
                 }
             }
 
-            //float bobSine = sinf(bobCycle/2.0f -PI/2.0f);
-            //float bobCose = cosf(bobCycle - (PI/2.0f) + PI)/3.0f;
+            float bobSine = sinf(bobCycle/2.0f -PI/2.0f);
+            float bobCose = cosf(bobCycle - (PI/2.0f) + PI)/3.0f;
 
             //fppCam->m_vOffset = Vector3(0.0f,0.06f*bobSine+0.03f,0.0f);
 		}
@@ -9887,7 +8671,7 @@ void StatePlay::Update(StateManager* sManager)
             {
                 bobCycle += ((PI/2.0f) - bobCycle)/3.0f;
             }
-            fppCam->m_vOffset = Vector3(0.0f,0.0,0.0f);
+            fppCam->m_vOffset = Vector3(0.0f,0.0f,0.0f);
 		}
 
         if(invEn == true || craft3xEn == true || chestEn == true || furnaceEn == true)
@@ -9896,7 +8680,7 @@ void StatePlay::Update(StateManager* sManager)
         }
         else
         {
-            if(mWorld->haveCompass) // only if you have compass in bar slots, compass texture should be updated
+            if(mWorld->haveCompass) // only if you have compass in bar slots, compass twxture should update
             {
                 mWorld->UpdateCompassTexture((fppCam->horAngle/180.0f)*PI);
             }
@@ -9905,7 +8689,7 @@ void StatePlay::Update(StateManager* sManager)
 }
 
 
-void StatePlay::Draw(StateManager* sManager)
+void StatePlayCreative::Draw(StateManager* sManager)
 {
     mWorld->startSkyColor = mWorld->startClearSkyColor*(1.0-mWorld->rainyColorAlpha)+mWorld->startRainySkyColor*mWorld->rainyColorAlpha;
     mWorld->endSkyColor = mWorld->endClearSkyColor*(1.0-mWorld->rainyColorAlpha)+mWorld->endRainySkyColor*mWorld->rainyColorAlpha;
@@ -9933,11 +8717,11 @@ void StatePlay::Draw(StateManager* sManager)
     }
     else
     {
-        if(fppCam->horAngle < 180 && fppCam->horAngle >= 60)
+        if(fppCam->horAngle <= 180 && fppCam->horAngle >= 60)
         {
             angleFactor = (fppCam->horAngle - 60)/120.0f;
         }
-        else if(fppCam->horAngle >= 180 && fppCam->horAngle <= 300)
+        else if(fppCam->horAngle > 180 && fppCam->horAngle <= 300)
         {
             angleFactor = (300 - fppCam->horAngle)/120.0f;
         }
@@ -9982,20 +8766,6 @@ void StatePlay::Draw(StateManager* sManager)
         sceGuShadeModel(GU_FLAT);
     }
 
-    /* /// Stars renderingsceGuDisable(GU_DEPTH_TEST);
-    if(mWorld->brightFactor < 0.6f)
-	{
-	    MatrixColor(0xFFFFFFFF);
-
-        MatrixPush();
-		MatrixTranslation(Vector3(fppCam->m_vPosition.x,fppCam->m_vPosition.y,fppCam->m_vPosition.z));
-
-		TextureManager::Instance()->SetTextureModeulate(stars);
-
-        starsBox->Update(1.0f-(mWorld->brightFactor*2));
-		starsBox->Render();
-		MatrixPop();
-	}*/
     if(mWorld->mainOptions.detailedSky == 1)
     {
         if(playerPosition.y <= 48)
@@ -10179,7 +8949,12 @@ void StatePlay::Draw(StateManager* sManager)
         sceGuEnable(GU_FOG);	// Enable fog
     }
 
-    /// Draw world
+    DrawSetDepthTest(true);
+    DrawSetAlphaTest(true);
+    DrawSetBlend(true);
+    DrawSetDepthMask(false);
+
+    /// DRAW WORLD
     {
         sceGuEnable(GU_TEXTURE_2D);
         if(mWorld->mainOptions.mipMapTexturing)
@@ -10197,12 +8972,12 @@ void StatePlay::Draw(StateManager* sManager)
         sceGuDisable(GU_TEXTURE_2D);
     }
 
-    /// DROP
+    /// Drop rendering
     if(mWorld->mDrops.empty() == false)
     {
         for(int d = 0; d < mWorld->mDrops.size(); d++)
         {
-            if(d < mWorld->mDrops.size() && mWorld->mDrops.empty() == false)
+            if(d < mWorld->mDrops.size())
             {
                 Drop* TestDrop = mWorld->mDrops[d];
 
@@ -10231,21 +9006,17 @@ void StatePlay::Draw(StateManager* sManager)
 
                 if(TestDrop->getMe == true)
                 {
-                    mWorld->PutInInventory(TestDrop->GetId(),TestDrop->GetAmount(),TestDrop->GetStackable(), slotForChangeScale);
+                    mWorld->PutInInventory(TestDrop->GetId(),TestDrop->GetAmount(),TestDrop->GetStackable());
                     mSoundMgr->PlayPlopSound();
                     mWorld->DestroyDrop(d);
                     d -= 1;
-
-                    if(slotForChangeScale != -1)
-                    {
-                        changeScale = 1.0f;
-                    }
-                    continue;
                 }
             }
         }
     }
 
+
+    /// TNT entity rendering
     if(mWorld->mTNTs.empty() == false)
     {
         TextureManager::Instance()->SetTextureModeulate(texture);
@@ -10328,310 +9099,142 @@ void StatePlay::Draw(StateManager* sManager)
         }
     }
 
-    /// ZOMBIE
-    if(mWorld->mZombies.empty() == false)
+    /*
+    /// TNT entity rendering
+    if(mWorld->mTNTs.empty() == false)
     {
-        for(int d = 0; d < mWorld->mZombies.size(); d++)
+        std::vector<TNT*>::size_type i = 0;
+        while (i < mWorld->mTNTs.size())
         {
-            if(d < mWorld->mZombies.size() && mWorld->mZombies.empty() == false)
+            if(mWorld->mTNTs.empty() == true)
             {
-                Zombie* TestZombie = mWorld->mZombies[d];
-
-                if(menuState == 0)//game state
-                {
-                    TestZombie->Update(mWorld, playerPosition, dt);
-                }
-                TestZombie->Render(fppCam->mFrustum, dt);
-
-                if(TestZombie->playHurtSound)
-                {
-                    mSoundMgr->PlayZombieHurtSound(TestZombie->FastDistanceToPlayer());
-                    TestZombie->playHurtSound = false;
-                }
-
-                if(TestZombie->playSaySound)
-                {
-                    mSoundMgr->PlayZombieSaySound(TestZombie->FastDistanceToPlayer());
-                    TestZombie->playSaySound = false;
-                }
-
-                if(TestZombie->killed == true)
-                {
-                    if(TestZombie->playDieSound)
-                    {
-                        mSoundMgr->PlayZombieDieSound(TestZombie->FastDistanceToPlayer());
-                        TestZombie->playDieSound = false;
-                    }
-                }
-
-                if(TestZombie->toDestroy == true || (TestZombie->killed == true && TestZombie->deathTimer <= 0.0f))
-                {
-                    if(TestZombie->killed == true)
-                    {
-                        if(TestZombie->lastKickType != 2) // kicked by player or other death
-                        {
-                            int rfAmount = rand() % 3;
-                            if(rfAmount != 0)
-                            {
-                                mWorld->DropThis(RottenFlesh::getID(),rfAmount,true,Vector3(TestZombie->position.x,TestZombie->position.y+0.3f,TestZombie->position.z));
-                            }
-
-                            // rare drop
-                            if(rand() % 100 <= 2)
-                            {
-                                mWorld->DropThis(IronBar::getID(),1,true,Vector3(TestZombie->position.x,TestZombie->position.y+0.3f,TestZombie->position.z));
-                            }
-                            if(rand() % 100 <= 3)
-                            {
-                                mWorld->DropThis(Potato::getID(),1,true,Vector3(TestZombie->position.x,TestZombie->position.y+0.3f,TestZombie->position.z));
-                            }
-                            if(rand() % 100 <= 3)
-                            {
-                                mWorld->DropThis(Carrot::getID(),1,true,Vector3(TestZombie->position.x,TestZombie->position.y+0.3f,TestZombie->position.z));
-                            }
-                            // end
-
-                            if(TestZombie->helmetId != -1 && rand() % 4 <= 2)
-                            {
-                                mWorld->DropThis(TestZombie->helmetId,30+rand()%20,false,Vector3(TestZombie->position.x,TestZombie->position.y+0.3f,TestZombie->position.z));
-                            }
-                            if(TestZombie->chestplateId != -1 && rand() % 4 <= 2)
-                            {
-                                mWorld->DropThis(TestZombie->chestplateId,30+rand()%20,false,Vector3(TestZombie->position.x,TestZombie->position.y+0.3f,TestZombie->position.z));
-                            }
-                            if(TestZombie->leggingsId != -1 && rand() % 4 <= 2)
-                            {
-                                mWorld->DropThis(TestZombie->leggingsId,30+rand()%20,false,Vector3(TestZombie->position.x,TestZombie->position.y+0.3f,TestZombie->position.z));
-                            }
-                            if(TestZombie->bootsId != -1 && rand() % 4 <= 2)
-                            {
-                                mWorld->DropThis(TestZombie->bootsId,30+rand()%20,false,Vector3(TestZombie->position.x,TestZombie->position.y+0.3f,TestZombie->position.z));
-                            }
-                        }
-                        else // killed by explosion
-                        {
-                            mWorld->DropThis(Bone::getID(),1,true,Vector3(TestZombie->position.x,TestZombie->position.y+0.3f,TestZombie->position.z));
-                            mWorld->DropThis(Bone::getID(),1,true,Vector3(TestZombie->position.x,TestZombie->position.y+0.3f,TestZombie->position.z));
-                            if(rand()%3 == 0)
-                            {
-                                mWorld->DropThis(Bone::getID(),1,true,Vector3(TestZombie->position.x,TestZombie->position.y+0.3f,TestZombie->position.z));
-                            }
-                        }
-                    }
-
-                    for(int k = 0; k <= 7; k++)
-                    {
-                        Particle* Smoke = new Particle(mWorld, "smoke",Vector3(TestZombie->position.x-0.4+(rand()%9/10.0f),TestZombie->position.y+0.2f+(rand()%7/5.0f),TestZombie->position.z-0.4+(rand()%9/10.0f)));
-                        mParticles.push_back(Smoke);
-                    }
-
-
-                    mWorld->DestroyZombie(d);
-                    d --;
-                }
+                break;
             }
-        }
-    }
+            TNT* TestTNT = mWorld->mTNTs[i];
 
-    /// COWS
-    if(mWorld->mCows.empty() == false)
-    {
-        for(int d = 0; d < mWorld->mCows.size(); d++)
-        {
-            if(d < mWorld->mCows.size() && mWorld->mCows.empty() == false)
+            if(TestTNT->toDestroy == true)
             {
-                Cow* TestCow = mWorld->mCows[d];
-
-                if(menuState == 0)//game state
+                for(float verAngle = 0.0f; verAngle <= PI; verAngle += PI/4.0f)
                 {
-                    TestCow->handItemId = mWorld->invId[27+barPosition];
-                    TestCow->Update(mWorld, playerPosition, dt);
-                }
-                TestCow->Render(fppCam->mFrustum, dt);
-
-                if(TestCow->playHurtSound)
-                {
-                    mSoundMgr->PlayCowHurtSound(TestCow->FastDistanceToPlayer());
-                    TestCow->playHurtSound = false;
-                }
-
-                if(TestCow->playSaySound)
-                {
-                    mSoundMgr->PlayCowSaySound(TestCow->FastDistanceToPlayer());
-                    TestCow->playSaySound = false;
-                }
-
-                if(TestCow->toDestroy == true || (TestCow->killed == true && TestCow->deathTimer < 0.0f))
-                {
-                    if(TestCow->killed == true)
+                    for(float horAngle = 0.0f; horAngle <= PI*2; horAngle += PI/2.0f)
                     {
-                        mWorld->DropThis(RawBeef::getID(),1+rand()%2,true,Vector3(TestCow->position.x,TestCow->position.y+0.3f,TestCow->position.z));
-                        mWorld->DropThis(Leather::getID(),1+rand()%2,true,Vector3(TestCow->position.x,TestCow->position.y+0.3f,TestCow->position.z));
-                    }
+                        if(mParticles.size() > 52)
+                        {
+                            break;
+                        }
+                        float radius = 4.5f + (rand() % 100)/10.0f;
 
-                    for(int k = 0; k <= 7; k++)
-                    {
-                        Particle* Smoke = new Particle(mWorld, "smoke",Vector3(TestCow->position.x-0.5+(rand()%11/10.0f),TestCow->position.y+0.2+(rand()%4/5.0f),TestCow->position.z-0.5+(rand()%11/10.0f)));
-                        k % 2 == 0 ? Smoke->SetVelocity(Vector3(-3*rand()%2,0,-3*rand()%2)) : Smoke->SetVelocity(Vector3(3*rand()%2,0,3*rand()%2));
+                        Particle* Smoke = new Particle(mWorld,"smoke",Vector3(TestTNT->position.x,TestTNT->position.y,TestTNT->position.z));
+                        Smoke->SetVelocity(Vector3(mWorld->LengthDirX(horAngle,verAngle)*radius,mWorld->LengthDirY(horAngle,verAngle)*radius,mWorld->LengthDirZ(horAngle,verAngle)*radius));
+                        Smoke->SetScale(0.3f+(rand()%25)/100.0f);
+                        Smoke->friction = 4.25f;
+
                         mParticles.push_back(Smoke);
                     }
-
-                    mWorld->DestroyCow(d);
-                    d --;
                 }
-            }
-        }
-    }
-
-    /// SHEEP
-    if(mWorld->mSheeps.empty() == false)
-    {
-        for(int d = 0; d < mWorld->mSheeps.size(); d++)
-        {
-            if(d < mWorld->mSheeps.size() && mWorld->mSheeps.empty() == false)
-            {
-                Sheep* TestSheep = mWorld->mSheeps[d];
-
-                if(menuState == 0)//game state
+                if(mParticles.size() < 64)
                 {
-                    TestSheep->handItemId = mWorld->invId[27+barPosition];
-                    TestSheep->Update(mWorld, playerPosition, dt);
-                }
-                TestSheep->Render(fppCam->mFrustum, dt);
-
-                if(TestSheep->playHurtSound)
-                {
-                    mSoundMgr->PlaySheepHurtSound(TestSheep->FastDistanceToPlayer());
-                    TestSheep->playHurtSound = false;
+                    Particle* Explosion = new Particle(mWorld,"explosion",Vector3(TestTNT->position.x-1.2f,TestTNT->position.y-1.2f,TestTNT->position.z));
+                    Particle* Explosion2 = new Particle(mWorld,"explosion",Vector3(TestTNT->position.x+1.2f,TestTNT->position.y+1.2f,TestTNT->position.z));
+                    Particle* Explosion3 = new Particle(mWorld,"explosion",Vector3(TestTNT->position.x,TestTNT->position.y-1.2f,TestTNT->position.z-1.2f));
+                    Particle* Explosion4 = new Particle(mWorld,"explosion",Vector3(TestTNT->position.x,TestTNT->position.y+1.2f,TestTNT->position.z+1.2f));
+                    Particle* Explosion5 = new Particle(mWorld,"explosion",Vector3(TestTNT->position.x,TestTNT->position.y,TestTNT->position.z));
+                    mParticles.push_back(Explosion);
+                    mParticles.push_back(Explosion2);
+                    mParticles.push_back(Explosion3);
+                    mParticles.push_back(Explosion4);
+                    mParticles.push_back(Explosion5);
                 }
 
-                if(TestSheep->playSaySound)
+                mWorld->DestroyTNTentity(i);
+                if(mWorld->mTNTs.size() <= 10)
                 {
-                    mSoundMgr->PlaySheepHurtSound(TestSheep->FastDistanceToPlayer());
-                    TestSheep->playSaySound = false;
-                }
-
-                if(TestSheep->toDestroy == true || (TestSheep->killed == true && TestSheep->deathTimer < 0.0f))
-                {
-                    if(TestSheep->killed == true && TestSheep->sheared == false)
-                    {
-                        mWorld->DropThis(BlackWoolBlock::getID()+TestSheep->GetFurColor(),1,true,Vector3(TestSheep->position.x,TestSheep->position.y+0.3f,TestSheep->position.z));
-                    }
-
-                    for(int k = 0; k <= 7; k++)
-                    {
-                        Particle* Smoke = new Particle(mWorld, "smoke",Vector3(TestSheep->position.x-0.5+(rand()%11/10.0f),TestSheep->position.y+0.2+(rand()%4/5.0f),TestSheep->position.z-0.5+(rand()%11/10.0f)));
-                        k % 2 == 0 ? Smoke->SetVelocity(Vector3(-3*rand()%2,0,-3*rand()%2)) : Smoke->SetVelocity(Vector3(3*rand()%2,0,3*rand()%2));
-                        mParticles.push_back(Smoke);
-                    }
-
-                    mWorld->DestroySheep(d);
-                    d --;
-                }
-            }
-        }
-    }
-
-    /// CREEPER
-    if(mWorld->mCreepers.empty() == false)
-    {
-        for(int d = 0; d < mWorld->mCreepers.size(); d++)
-        {
-            if(d < mWorld->mCreepers.size() && mWorld->mCreepers.empty() == false)
-            {
-                Creeper* TestCreeper = mWorld->mCreepers[d];
-
-                if(menuState == 0)//game state
-                {
-                    TestCreeper->Update(mWorld, playerPosition, dt);
-                }
-                TestCreeper->Render(fppCam->mFrustum, dt);
-
-                if(TestCreeper->playHurtSound)
-                {
-                    mSoundMgr->PlayCreeperHurtSound(TestCreeper->DistanceToPlayer());
-                    TestCreeper->playHurtSound = false;
-                }
-
-                if(TestCreeper->playFuseSound)
-                {
-                    mSoundMgr->PlayFuseSound();
-                    TestCreeper->playFuseSound = false;
-                }
-
-                if(TestCreeper->toDestroy == true || (TestCreeper->killed == true && TestCreeper->deathTimer < 0.0f))
-                {
-                    if(TestCreeper->killed == true)
-                    {
-                        if(TestCreeper->lastKickType != 2) // killed by player or other death
-                        {
-                            mWorld->DropThis(Gunpowder::getID(),1,true,Vector3(TestCreeper->position.x,TestCreeper->position.y+0.3f,TestCreeper->position.z));
-                            mWorld->DropThis(Gunpowder::getID(),rand()%3,true,Vector3(TestCreeper->position.x,TestCreeper->position.y+0.3f,TestCreeper->position.z));
-                        }
-                        else
-                        {
-                            int drop_id = 1;
-                            int disk_number = rand()%12;
-                            if(disk_number <= 2)
-                            {
-                                drop_id = Disk1::getID() + disk_number;
-                            }
-                            else
-                            {
-                                drop_id = Disk4::getID() + disk_number-3;
-                            }
-                            mWorld->DropThis(drop_id,1,false,Vector3(TestCreeper->position.x,TestCreeper->position.y+0.3f,TestCreeper->position.z));
-                        }
-                    }
-
-                    for(int k = 0; k <= 7; k++)
-                    {
-                        Particle* Smoke = new Particle(mWorld, "smoke",Vector3(TestCreeper->position.x-0.5+(rand()%11/10.0f),TestCreeper->position.y+0.2+(rand()%4/5.0f),TestCreeper->position.z-0.5+(rand()%11/10.0f)));
-                        k % 2 == 0 ? Smoke->SetVelocity(Vector3(-3*rand()%2,0,-3*rand()%2)) : Smoke->SetVelocity(Vector3(3*rand()%2,0,3*rand()%2));
-                        mParticles.push_back(Smoke);
-                    }
-
-                    mWorld->DestroyCreeper(d);
-                    d --;
-                }
-                if(TestCreeper->exploded == true)
-                {
-                    for(float verAngle = 0.0f; verAngle <= PI; verAngle += PI/4.0f)
-                    {
-                        for(float horAngle = 0.0f; horAngle <= PI*2; horAngle += PI/2.0f)
-                        {
-                            if(mParticles.size() > 52)
-                            {
-                                continue;
-                            }
-                            float radius = 4.5f + (rand() % 100)/10.0f;
-
-                            Particle* Smoke = new Particle(mWorld,"smoke",Vector3(TestCreeper->position.x,TestCreeper->position.y,TestCreeper->position.z));
-                            Smoke->SetVelocity(Vector3(mWorld->LengthDirX(horAngle,verAngle)*radius,mWorld->LengthDirY(horAngle,verAngle)*radius,mWorld->LengthDirZ(horAngle,verAngle)*radius));
-                            Smoke->SetScale(0.3f+(rand()%25)/100.0f);
-                            Smoke->friction = 4.25f;
-
-                            mParticles.push_back(Smoke);
-                        }
-                    }
-                    if(mParticles.size() < 64)
-                    {
-                        Particle* Explosion = new Particle(mWorld,"explosion",Vector3(TestCreeper->position.x-1.2f,TestCreeper->position.y-1.2f,TestCreeper->position.z));
-                        Particle* Explosion2 = new Particle(mWorld,"explosion",Vector3(TestCreeper->position.x+1.2f,TestCreeper->position.y+1.2f,TestCreeper->position.z));
-                        Particle* Explosion3 = new Particle(mWorld,"explosion",Vector3(TestCreeper->position.x,TestCreeper->position.y-1.2f,TestCreeper->position.z-1.2f));
-                        Particle* Explosion4 = new Particle(mWorld,"explosion",Vector3(TestCreeper->position.x,TestCreeper->position.y+1.2f,TestCreeper->position.z+1.2f));
-                        Particle* Explosion5 = new Particle(mWorld,"explosion",Vector3(TestCreeper->position.x,TestCreeper->position.y,TestCreeper->position.z));
-                        mParticles.push_back(Explosion);
-                        mParticles.push_back(Explosion2);
-                        mParticles.push_back(Explosion3);
-                        mParticles.push_back(Explosion4);
-                        mParticles.push_back(Explosion5);
-                    }
-
                     mSoundMgr->TNTSound();
+                }
+            }
+            else
+            {
+                if(menuState == 0)//game state
+                {
+                    TestTNT->Update(dt);
+                    int time = TestTNT->timeToExplode*100;
+                    if(time % 4 == 0 && rand()%10 <= 6 && time > 40 && TestTNT->ignitedByPlayer)
+                    {
 
-                    mWorld->DestroyCreeper(d);
-                    d --;
+                        Particle* Smoke = new Particle(mWorld,"smoke",Vector3(TestTNT->position.x+(-0.1f+(rand()%10)/100.0f),TestTNT->position.y+0.60f,TestTNT->position.z+(-0.1f+(rand()%10)/100.0f)));
+                        Smoke->SetVelocity(Vector3(0,1.5f+(rand()%10)/10.0f,0));
+                        Smoke->SetScale(0.1f+(rand()%10)/100.0f);
+                        Smoke->SetMaxLiveTime(1000);
+                        Smoke->SetLiveTime(500,1250);
+                        Smoke->SetBrightness(0.15,0.25);
+                        Smoke->friction = 4.0f;
+
+                        mParticles.push_back(Smoke);
+                    }
+                }
+
+                TestTNT->Render();
+                ++i;
+            }
+        }
+    }
+    */
+
+    /*
+    /// render particles
+    if (mParticles.empty() == false)
+    {
+        std::vector<Particle*>::size_type i = 0;
+        while (i < mParticles.size())
+        {
+            if(mParticles.empty() == true)
+            {
+                break;
+            }
+            Particle* TestParticle = mParticles[i];
+
+            if(TestParticle->toDestroy == true)
+            {
+                delete mParticles[i];
+                mParticles.erase(mParticles.begin()+i);
+            }
+            else
+            {
+                if(menuState == 0)//game state
+                {
+                    TestParticle->Update(mWorld, dt);
+                }
+
+                MatrixPush();
+                MatrixTranslation(Vector3(0,0,0));
+                TestParticle->Render();
+                MatrixPop();
+
+                ++i;
+            }
+        }
+    }*/
+
+    /// render particles
+    if (mParticles.empty() == false)
+    {
+        for(std::vector<Particle*>::size_type i = 0; i < mParticles.size(); i++)
+        {
+            if(i < mParticles.size() && mParticles.empty() == false)
+            {
+                Particle* TestParticle = mParticles[i];
+                if(menuState == 0)//game state
+                {
+                    TestParticle->Update(mWorld, dt);
+                }
+
+                TestParticle->Render(fppCam->mFrustum);
+
+                if(TestParticle->toDestroy == true)
+                {
+                    delete mParticles[i];
+                    mParticles.erase(mParticles.begin()+i);
+                    i --;
                 }
             }
         }
@@ -10684,31 +9287,6 @@ void StatePlay::Draw(StateManager* sManager)
         }
     }
 
-    /// render particles
-    if (mParticles.empty() == false)
-    {
-        for(unsigned int i = 0; i < mParticles.size(); i++)
-        {
-            if(i < mParticles.size() && mParticles.empty() == false)
-            {
-                Particle* TestParticle = mParticles[i];
-                if(menuState == 0)//game state
-                {
-                    TestParticle->Update(mWorld, dt);
-                }
-
-                TestParticle->Render(fppCam->mFrustum);
-
-                if(TestParticle->toDestroy == true)
-                {
-                    delete mParticles[i];
-                    mParticles.erase(mParticles.begin()+i);
-                    i --;
-                }
-            }
-        }
-    }
-
     /// render items in item frames
     if (mWorld->mItemFrames.empty() == false)
     {
@@ -10725,8 +9303,9 @@ void StatePlay::Draw(StateManager* sManager)
 
     if(mWorld->mainOptions.fogRendering == 1)
     {
-        sceGuDisable(GU_FOG); // disable fog
+        sceGuDisable(GU_FOG );	// disable fog
     }
+
 
     /// weather effects rendering
     if(menuState == 0 || makeScreen == true)
@@ -10772,8 +9351,10 @@ void StatePlay::Draw(StateManager* sManager)
         mWorld->worldWeather->Render(mWorld, fppCam->mFrustum, fppCam->upDownAngle, playerPosition, dt);
     }
 
-    /// render destroy model
-    if (((startDt == 1 && dStd >= 0 && dStd <= 9) || showCube == true) && makeScreen == false && sleepTime <= 0.0f)
+    TextureManager::Instance()->SetTextureModeulate(texture);
+
+    /// RENDER DESTROY MODEL
+    if (((startDt == 1 && dStd >= 0 && dStd <= 9) || showCube == true) && makeScreen == false)
 	{
 		MatrixPush();
 
@@ -10786,7 +9367,6 @@ void StatePlay::Draw(StateManager* sManager)
 		MatrixTranslation(Vector3(cubePos.x,cubePos.y,cubePos.z));
 		MatrixColor(0xFFFFFFFF);
 
-        sceGuTexFilter(GU_NEAREST,GU_NEAREST);
         TextureManager::Instance()->SetTextureModeulate(texture);
 
 		destroyer->Update(dStd, mWorld, mWorld->GetBlock(cubePos.x,cubePos.y,cubePos.z));
@@ -10800,18 +9380,21 @@ void StatePlay::Draw(StateManager* sManager)
 
 		MatrixPop();
 	}
+    ///
 
-	if(mWorld->mainOptions.guiDrawing == 1 && mWorld->HP > 0)
+    /// RENDER STEVE'S HAND
+    if(mWorld->mainOptions.guiDrawing == 1)
 	{
-        float cubeBob = sinf(bobCycle - (3.14/2) + 3.14)/16; // some animtaion vars
-        float cubeBob2 = cosf(bobCycle - (3.14/2) + 3.14)/18;
+	    //if(mWorld->invId[27+barPosition] != -1)
+        //{
+            float cubeBob = sinf(bobCycle - (3.14/2) + 3.14)/16;
+            float cubeBob2 = cosf(bobCycle - (3.14/2) + 3.14)/18;
 
-        sceGuColor(GU_COLOR(cubeLight,cubeLight,cubeLight,1)); // set color to drawing model
-        if(sleepTime <= 0.0f)
-        {
-            if(mWorld->invId[27+barPosition] == -1) // slot is empty so we need to draw steve's hand
+            sceGuColor(GU_COLOR(cubeLight,cubeLight,cubeLight,1));
+
+            if(mWorld->invId[27+barPosition] == -1)
             {
-                TextureManager::Instance()->SetTextureModeulate(invPlayerTex);
+                TextureManager::Instance()->SetTextureModeulate(TextureHelper::Instance()->GetTexture(TextureHelper::Steve));
                 sceGumPushMatrix();
 
                 //set view matrix to identity
@@ -10896,50 +9479,14 @@ void StatePlay::Draw(StateManager* sManager)
                 sceGumMatrixMode(GU_MODEL);
                 sceGumPopMatrix();
             }
-        }
-        MatrixColor(0xFFFFFFFF);
+            sceGuColor(0xFFFFFFFF);
+        //}
 	}
-	MatrixColor(0xFFFFFFFF);
+	sceGuColor(0xFFFFFFFF);
+	///
 
-	/// GUI
+	/// DRAW MASKS
 	mRender->SetOrtho(0,0,0,0,0,0);
-
-    if(mWorld->HP <= 0)
-	{
-        DrawSetDepthTest(false);
-        DrawSetDepthMask(true);
-        DrawSetBlend(true);
-        DrawPlaceTexture(true);
-
-		MatrixColor(GU_COLOR(1,1,1,0.5f));
-
-		TextureManager::Instance()->SetTextureModeulate(red);
-		advancedBlit(0,0,SCR_WIDTH,SCR_HEIGHT,0,0,32);
-
-        DrawPlaceTexture(false);
-        DrawSetBlend(false);
-        DrawSetDepthMask(false);
-        DrawSetDepthTest(true);
-	}
-
-    if(hurt == true)
-	{
-        DrawSetDepthTest(false);
-        DrawSetDepthMask(true);
-        DrawSetBlend(true);
-        DrawPlaceTexture(true);
-
-        MatrixColor(GU_COLOR(1,1,1,hurt_time));
-
-		TextureManager::Instance()->SetTextureModeulate(red);
-		advancedBlit(0,0,SCR_WIDTH,SCR_HEIGHT,0,0,32);
-
-        DrawPlaceTexture(false);
-        DrawSetBlend(false);
-        DrawSetDepthMask(false);
-        DrawSetDepthTest(true);
-	}
-
 	if(headInLava == 1 || footInLava == 1)
 	{
         DrawSetDepthTest(false);
@@ -10957,7 +9504,7 @@ void StatePlay::Draw(StateManager* sManager)
         DrawSetDepthMask(false);
         DrawSetDepthTest(true);
 	}
-	// draw dark mask
+
     if((invEn == 1 || craft3xEn == 1 || chestEn == 1 || menuState != 0 || furnaceEn == 1) && makeScreen == false)
     {
         DrawSetDepthTest(false);
@@ -10976,23 +9523,6 @@ void StatePlay::Draw(StateManager* sManager)
         DrawSetDepthTest(true);
     }
 
-    /*if(mWorld->rainyColorAlpha != 0.0f) // dark mask again
-    {
-        DrawSetDepthTest(false);
-        DrawSetDepthMask(true);
-        DrawSetBlend(true);
-        DrawPlaceTexture(true);
-
-        MatrixColor(GU_COLOR(1,1,1,mWorld->rainyColorAlpha/9.0f));
-
-        TextureManager::Instance()->SetTextureModeulate(black);
-        advancedBlit(0,0,SCR_WIDTH,SCR_HEIGHT,0,0,32);
-
-        DrawPlaceTexture(false);
-        DrawSetBlend(false);
-        DrawSetDepthMask(false);
-        DrawSetDepthTest(true);
-    }*/
 
     if(sleepTime > 0.0f) // dark mask again
     {
@@ -11001,7 +9531,7 @@ void StatePlay::Draw(StateManager* sManager)
         DrawSetBlend(true);
         DrawPlaceTexture(true);
 
-        MatrixColor(GU_COLOR(1,1,1,(4.7-sleepTime)/4.8f));
+        MatrixColor(GU_COLOR(1,1,1,(3.1-sleepTime)/3.2f));
 
         TextureManager::Instance()->SetTextureModeulate(black);
         advancedBlit(0,0,SCR_WIDTH,SCR_HEIGHT,0,0,32);
@@ -11012,7 +9542,8 @@ void StatePlay::Draw(StateManager* sManager)
         DrawSetDepthTest(true);
     }
 
-    /*if(mWorld->BlockSolid(playerPosition.x,playerPosition.y,playerPosition.z))  // dark mask again
+
+    if(mWorld->BlockSolid(playerPosition.x,playerPosition.y,playerPosition.z))
     {
         DrawSetDepthTest(false);
         DrawSetDepthMask(true);
@@ -11028,9 +9559,8 @@ void StatePlay::Draw(StateManager* sManager)
         DrawSetBlend(false);
         DrawSetDepthMask(false);
         DrawSetDepthTest(true);
-    }*/
+    }
 
-    // draw water mask
 	if(headInWater)
 	{
         if (GRAVITY != -4.0f)
@@ -11059,176 +9589,22 @@ void StatePlay::Draw(StateManager* sManager)
             GRAVITY = -6.8f;
         }
     }
-    // draw pumpkin mask
-    if(mWorld->armorId[0] == Pumpkin3::getID())
-    {
-        DrawSetDepthTest(false);
-        DrawSetDepthMask(true);
-        DrawSetBlend(true);
-        DrawPlaceTexture(true);
-     //   sceGuTexFilter( GU_LINEAR, GU_LINEAR );
-
-        MatrixColor(GU_COLOR(1,1,1,1));
-
-		pumpkinMask->Draw();
-
-       // sceGuTexFilter( GU_NEAREST, GU_NEAREST );
-        DrawPlaceTexture(false);
-        DrawSetBlend(false);
-        DrawSetDepthMask(false);
-        DrawSetDepthTest(true);
-    }
+    ///
 
 	/// GUI
-	DrawSetDepthTest(false);
-	DrawSetDepthMask(true);
+	sceGuDisable(GU_DEPTH_TEST);
+	sceGuDepthMask(1);
+	sceGuEnable(GU_BLEND);
+	sceGuColor(GU_COLOR(1,1,1,1.0f));
 
-	DrawSetBlend(true);
-	MatrixColor(GU_COLOR(1,1,1,1.0f));
-
-	if ((invEn == false && craft3xEn == false && chestEn == false && furnaceEn == false && menuState == 0 && mWorld->mainOptions.guiDrawing == 1) || (makeScreen == true && mWorld->mainOptions.guiDrawing == 1))
+	if ((invEn == false && craft3xEn == false && chestEn == false && furnaceEn == false && menuState == 0 && mWorld->mainOptions.guiDrawing == 1) || makeScreen == true)
     {
-        hpAnim += dt * 5.9 * PI;
-        if(hpAnim >= 10 * PI)
-        {
-            hpAnim = 0.0f;
-        }
         barSprite->Draw();
-        if (menuState != 1 || makeScreen == true)
+        if (menuState != 1)
         {
-            /// HP and HG RENDERING
-            // draw cells
-            hpCellSpriteW->SetPosition(84,12);
-            hpCellSprite->SetPosition(84,12);
-            hgCellSprite->SetPosition(398,12);
-            arCellSprite->SetPosition(84,32);
-            if(hurt == true && sinf(hpAnim) > 0)
-            {
-                hpCellSpriteW->Draw();
-            }
-            if(hurt == false || sinf(hpAnim) <= 0)
-            {
-                hpCellSprite->Draw();
-            }
-            hgCellSprite->Draw();
-            if(mWorld->AP > 0)
-            {
-                arCellSprite->Draw();
-            }
-
-            for(int i = 1; i <= 10; i++)
-            {
-                hpSprite->SetPosition(-4+i*16,12);
-                hpSpriteW->SetPosition(-4+i*16,12);
-                hpHalfSprite->SetPosition(-4+i*16,12);
-                hpHalfSpriteW->SetPosition(-4+i*16,12);
-
-                hpHardSprite->SetPosition(-4+i*16,12);
-                hpHardHalfSprite->SetPosition(-4+i*16,12);
-                hpHardSpriteW->SetPosition(-4+i*16,12);
-                hpHardHalfSpriteW->SetPosition(-4+i*16,12);
-
-                if(hurt == true && sinf(hpAnim) > 0)
-                {
-                    if(last_HP > mWorld->HP)
-                    {
-                        if(i*2 >= floorf(mWorld->HP/2.0f)*2)
-                        {
-                            if(i * 2 <= ceilf(last_HP))
-                            {
-                                if(mWorld->gameModeWorld == 2) // hardcore mode
-                                {
-                                    hpHardSpriteW->Draw();
-                                }
-                                else
-                                {
-                                    hpSpriteW->Draw();
-                                }
-                            }
-                            if(i * 2 - ceilf(last_HP) == 1)
-                            {
-                                if(mWorld->gameModeWorld == 2) // hardcore mode
-                                {
-                                    hpHardHalfSpriteW->Draw();
-                                }
-                                else
-                                {
-                                    hpHalfSpriteW->Draw();
-                                }
-                            }
-                        }
-                    }
-                }
-
-                if(i * 2 <= ceilf(mWorld->HP) && mWorld->HP >= 0)
-                {
-                    if(mWorld->gameModeWorld == 2) // hardcore mode
-                    {
-                        hpHardSprite->Draw();
-                    }
-                    else
-                    {
-                        hpSprite->Draw();
-                    }
-                }
-                if(i * 2 - ceilf(mWorld->HP) == 1 && mWorld->HP >= 0)
-                {
-                    if(mWorld->gameModeWorld == 2) // hardcore mode
-                    {
-                        hpHardHalfSprite->Draw();
-                    }
-                    else
-                    {
-                        hpHalfSprite->Draw();
-                    }
-                }
-
-
-
-                hgSprite->SetPosition(486-i*16,12);
-                hgHalfSprite->SetPosition(486-i*16,12);
-
-                if(i * 2 <= ceilf(mWorld->HG))
-                {
-                    hgSprite->Draw();
-                }
-                if(i * 2 - ceilf(mWorld->HG) == 1)
-                {
-                    hgHalfSprite->Draw();
-                }
-
-                arSprite->SetPosition(-4+i*16,32);
-                arHalfSprite->SetPosition(-4+i*16,32);
-
-                if(mWorld->AP > 0)
-                {
-                    if(i * 2 <= ceilf(mWorld->AP))
-                    {
-                        arSprite->Draw();
-                    }
-                    if(i * 2 - ceilf(mWorld->AP) == 1)
-                    {
-                        arHalfSprite->Draw();
-                    }
-                }
-
-                if(headInWater)
-                {
-                    bubbleSprite->SetPosition(486-i*16,32);
-                    if(i <= mWorld->OS)
-                    {
-                        bubbleSprite->Draw();
-                    }
-                }
-            }
-
-            if(mWorld->HP > 0)
-            {
-                DrawSetInverseColors();
-                crossSprite->Draw();
-                DrawSetDefaultColors();
-            }
-
+            sceGuBlendFunc(GU_ABS, GU_ONE_MINUS_SRC_ALPHA, GU_SRC_ALPHA, 0, 0);
+            crossSprite->Draw();
+            sceGuBlendFunc(GU_ADD, GU_SRC_ALPHA, GU_ONE_MINUS_SRC_ALPHA, 0, 0);
             selectSprite->Draw();
         }
     }
@@ -11293,76 +9669,30 @@ void StatePlay::Draw(StateManager* sManager)
             }
         }
     }
-	DrawSetBlend(false);
+	sceGuDisable(GU_BLEND);
 
     /// 3D BLOCKS AND ITEMS ON 2D PANEL
-    if ((invEn == false && craft3xEn == false && chestEn == false && menuState == 0 && mWorld->mainOptions.guiDrawing == 1 && furnaceEn == false) || (makeScreen == true && mWorld->mainOptions.guiDrawing == 1))
+    if ((invEn == false && craft3xEn == false && chestEn == false && menuState == 0 && mWorld->mainOptions.guiDrawing == 1 && furnaceEn == false) || makeScreen == true)
     {
         for(int k = 0; k <= 8; k++)
         {
             if(mWorld->invId[27+k] != -1)
             {
                 MatrixPush();
+                MatrixTranslation(Vector3(80+k*40,250,0));
 
                 if(mWorld->invId[27+k] < 250)
                 {
-                    MatrixTranslation(Vector3(80+k*40,250,0));
                     TextureManager::Instance()->SetTextureModeulate(texture);
 
-                    sceGuDisable(GU_DEPTH_TEST);
-                    DrawSetDepthMask(true);
-
-                    if(k == slotForChangeScale)
-                    {
-                        MatrixScale(Vector3(18-changeScale*5,18+changeScale*10,18-changeScale*5));
-
-                        changeScale -= dt*3.4f;
-                        if(changeScale < 0.0f)
-                        {
-                            changeScale = 0.0f;
-                            slotForChangeScale = -1;
-                        }
-                    }
-                    else
-                    {
-                        MatrixScale(Vector3(18,18,18));
-                    }
-
-                    MatrixAngle(Vector3(150,44.6f,0));
-
-                    DrawSetCulling(true);
-                    mWorld->drawCubes(mWorld->invId[27+k],1.0f);
-                    DrawSetCulling(false);
-
-                    DrawSetDepthMask(false);
-                    sceGuEnable(GU_DEPTH_TEST);
+                    mWorld->drawHudCubes(mWorld->invId[27+k]);
                 }
 
                 if(mWorld->invId[27+k] >= 250)
                 {
-                    MatrixTranslation(Vector3(80+k*40,250,0));
                     mWorld->ItemHaveTerrainTexture(mWorld->invId[27+k]) ? TextureManager::Instance()->SetTextureModeulate(texture) : TextureManager::Instance()->SetTextureModeulate(barItems);
 
-                    MatrixAngle(Vector3(0,0,0));
-                    if(k == slotForChangeScale)
-                    {
-                        MatrixScale(Vector3(32-changeScale*5,32+changeScale*10,32-changeScale*5));
-
-                        changeScale -= dt*3.4f;
-                        if(changeScale < 0.0f)
-                        {
-                            changeScale = 0.0f;
-                            slotForChangeScale = -1;
-                        }
-                    }
-                    else
-                    {
-                        MatrixScale(Vector3(32,32,32));
-                    }
-
-                    DrawSetCulling(true);
-                    mWorld->drawItems(mWorld->invId[27+k]);
-                    DrawSetCulling(false);
+                    mWorld->drawHudItems(mWorld->invId[27+k]);
                 }
                 MatrixPop();
             }
@@ -11372,118 +9702,39 @@ void StatePlay::Draw(StateManager* sManager)
     /// INVENTORY CRAFT MENU
     if(invEn == true)
     {
-        for(int i = 0; i <= 1; i++)
+        for(int i = 0; i <= 5; i++)
         {
-            for(int j = 0; j <= 1; j++)
+            for(int j = 0; j <= 8; j++)
             {
-                if(craftSlotId[i*2+j] != -1)
+                if(creativePage*27 + i*9 + j < inventoryItems.size())
                 {
-                    MatrixPush();
-
-                    MatrixTranslation(Vector3(276+j*36,46+i*36,0.0f));
-
-                    if(craftSlotId[i*2+j] < 250)
+                    if(inventoryItems[creativePage*27 + i*9 + j] != -1)
                     {
-                        TextureManager::Instance()->SetTextureModeulate(texture);
+                        sceGumPushMatrix();
 
-                        mWorld->drawHudCubes(craftSlotId[i*2+j]);
+                        ScePspFVector3 loc = {80+j*36,28+i*36,0.0f};
+                        sceGumTranslate(&loc);
+
+                        if(inventoryItems[creativePage*27 + i*9 + j] < 250)
+                        {
+                            TextureManager::Instance()->SetTextureModeulate(texture);
+
+                            mWorld->drawHudCubes(inventoryItems[creativePage*27 + i*9 + j]);
+                        }
+
+                        if(inventoryItems[creativePage*27 + i*9 + j] >= 250)
+                        {
+                            mWorld->ItemHaveTerrainTexture(inventoryItems[creativePage*27+i*9+j]) ? TextureManager::Instance()->SetTextureModeulate(texture) : TextureManager::Instance()->SetTextureModeulate(barItems);
+
+                            mWorld->drawHudItems(inventoryItems[creativePage*27 + i*9 + j]);
+                        }
+                        sceGumPopMatrix();
                     }
-
-                    if(craftSlotId[i*2+j] >= 250)
-                    {
-                        mWorld->ItemHaveTerrainTexture(craftSlotId[i*2+j]) ? TextureManager::Instance()->SetTextureModeulate(texture) : TextureManager::Instance()->SetTextureModeulate(barItems);
-
-                        mWorld->drawHudItems(craftSlotId[i*2+j]);
-                    }
-                    MatrixPop();
                 }
             }
         }
-
-        for(int i = 0; i <= 1; i++)
-        {
-            for(int j = 0; j <= 1; j++)
-            {
-                if(mWorld->armorId[i*2+j] != -1)
-                {
-                    MatrixPush();
-
-                    MatrixTranslation(Vector3(96+j*108,26+i*72,0.0f));
-
-                    if(mWorld->armorId[i*2+j] < 250)
-                    {
-                        TextureManager::Instance()->SetTextureModeulate(texture);
-
-                        mWorld->drawHudCubes(mWorld->armorId[i*2+j]);
-                    }
-
-                    if(mWorld->armorId[i*2+j] >= 250)
-                    {
-                        mWorld->ItemHaveTerrainTexture(mWorld->armorId[i*2+j]) ? TextureManager::Instance()->SetTextureModeulate(texture) : TextureManager::Instance()->SetTextureModeulate(barItems);
-
-                        mWorld->drawHudItems(mWorld->armorId[i*2+j]);
-                    }
-                    MatrixPop();
-                }
-            }
-        }
-
-        //End
-
-        //Item which we are crafting
-        if (craftItemId != -1)
-        {
-            MatrixPush();
-
-            MatrixTranslation(Vector3(384,66,0.0f));
-
-            if(craftItemId < 250)
-            {
-                TextureManager::Instance()->SetTextureModeulate(texture);
-
-                mWorld->drawHudCubes(craftItemId);
-            }
-
-            if(craftItemId >= 250)
-            {
-                mWorld->ItemHaveTerrainTexture(craftItemId) ? TextureManager::Instance()->SetTextureModeulate(texture) : TextureManager::Instance()->SetTextureModeulate(barItems);
-
-                mWorld->drawHudItems(craftItemId);
-            }
-            MatrixPop();
-        }
-
-        if(upEn == false)
-        {
-            if(invSteveAngle < invXPosition/8.0f*48)
-            {
-                invSteveAngle += (invXPosition/8.0f*48-invSteveAngle)*0.05;
-            }
-            if(invSteveAngle > invXPosition/8.0f*48)
-            {
-                invSteveAngle -= (invSteveAngle-invXPosition/8.0f*48)*0.05;
-            }
-        }
-
-        MatrixPush();
-
-        MatrixTranslation(Vector3(151,56,-14));
-        MatrixScale(Vector3(45,45,45));
-        MatrixAngle(Vector3(-14,invSteveAngle,180));// 24
-
-        TextureManager::Instance()->SetTextureModeulate(invPlayerTex);
-
-        invPlayer->mainAngle = 0.45f;
-
-        DrawSetDepthMask(false);
-        DrawSetCulling(true);
-        invPlayer->Render(mWorld, dt, invSteveAngle, invPlayerTex, mWorld->invId[27+barPosition]);
-        DrawSetCulling(false);
-        DrawSetDepthMask(true);
-
-        MatrixPop();
     }
-
+    ///
 
     ///CRAFTING TABLE
     if(craft3xEn == true)
@@ -11507,7 +9758,7 @@ void StatePlay::Draw(StateManager* sManager)
 
                     if(craftSlotId3[i*3+j] >= 250)
                     {
-                        mWorld->ItemHaveTerrainTexture(craftSlotId3[i*3+j] ) ? TextureManager::Instance()->SetTextureModeulate(texture) : TextureManager::Instance()->SetTextureModeulate(barItems);
+                        mWorld->ItemHaveTerrainTexture(craftSlotId3[i*3+j]) ? TextureManager::Instance()->SetTextureModeulate(texture) : TextureManager::Instance()->SetTextureModeulate(barItems);
 
                         mWorld->drawHudItems(craftSlotId3[i*3+j]);
                     }
@@ -11515,9 +9766,9 @@ void StatePlay::Draw(StateManager* sManager)
                 }
             }
         }
-        //End
+        ///
 
-        //Item which we are crafting 3x
+        ///Item which we are crafting 3x
         if (craftItemId3 != -1)
         {
             MatrixPush();
@@ -11533,7 +9784,7 @@ void StatePlay::Draw(StateManager* sManager)
 
             if(craftItemId3 >= 250)
             {
-                mWorld->ItemHaveTerrainTexture(craftItemId3) ? TextureManager::Instance()->SetTextureModeulate(texture) : TextureManager::Instance()->SetTextureModeulate(barItems);
+                TextureManager::Instance()->SetTextureModeulate(barItems);
 
                 mWorld->drawHudItems(craftItemId3);
             }
@@ -11572,6 +9823,7 @@ void StatePlay::Draw(StateManager* sManager)
             }
         }
     }
+    ///
 
     ///FURNACE
     if(furnaceEn == true)
@@ -11642,50 +9894,93 @@ void StatePlay::Draw(StateManager* sManager)
             sceGumPopMatrix();
         }
     }
+    ///
 
     if (invEn == true || craft3xEn == true || chestEn == true || furnaceEn == true)
     {
-        for(int i = 0; i <= 3; i++)
+        for(int k = 0; k <= 8; k++)
         {
-            for(int j = 0; j <= 8; j++)
+            if(mWorld->invId[27+k] != -1)
             {
-                if(mWorld->invId[i*9+j] != -1)
+                sceGumPushMatrix();
+
+                if(invEn == true)
                 {
-                    MatrixPush();
-                    MatrixTranslation(Vector3(96+j*36,138+i*36,0.0f));
+                    ScePspFVector3 loc = {80+k*36,244,0.0f};
+                    sceGumTranslate(&loc);
+                }
+                else
+                {
+                    ScePspFVector3 loc = {96+k*36,244,0.0f};
+                    sceGumTranslate(&loc);
+                }
 
-                    if(mWorld->invId[i*9+j] < 250)
+
+                if(mWorld->invId[27+k] < 250)
+                {
+                    TextureManager::Instance()->SetTextureModeulate(texture);
+
+                    mWorld->drawHudCubes(mWorld->invId[27+k]);
+                }
+
+                if(mWorld->invId[27+k] >= 250)
+                {
+                    mWorld->ItemHaveTerrainTexture(mWorld->invId[27+k]) ? TextureManager::Instance()->SetTextureModeulate(texture) : TextureManager::Instance()->SetTextureModeulate(barItems);
+
+                    mWorld->drawHudItems(mWorld->invId[27+k]);
+                }
+
+                sceGumPopMatrix();
+            }
+        }
+
+        if(invEn == false)
+        {
+            for(int i = 0; i <= 2; i++)
+            {
+                for(int j = 0; j <= 8; j++)
+                {
+                    if(mWorld->invId[i*9+j] != -1)
                     {
-                        TextureManager::Instance()->SetTextureModeulate(texture);
+                        sceGumPushMatrix();
 
-                        mWorld->drawHudCubes(mWorld->invId[i*9+j]);
+                        ScePspFVector3 loc = {96+j*36,138+i*36,0.0f};
+                        sceGumTranslate(&loc);
+
+                        if(mWorld->invId[i*9+j] < 250)
+                        {
+                            TextureManager::Instance()->SetTextureModeulate(texture);
+
+                            mWorld->drawHudCubes(mWorld->invId[i*9+j]);
+                        }
+
+                        if(mWorld->invId[i*9+j] >= 250)
+                        {
+                            mWorld->ItemHaveTerrainTexture(mWorld->invId[i*9+j]) ? TextureManager::Instance()->SetTextureModeulate(texture) : TextureManager::Instance()->SetTextureModeulate(barItems);
+
+                            mWorld->drawHudItems(mWorld->invId[i*9+j]);
+                        }
+                        sceGumPopMatrix();
                     }
-
-                    if(mWorld->invId[i*9+j] >= 250)
-                    {
-                        mWorld->ItemHaveTerrainTexture(mWorld->invId[i*9+j]) ? TextureManager::Instance()->SetTextureModeulate(texture) : TextureManager::Instance()->SetTextureModeulate(barItems);
-
-                        mWorld->drawHudItems(mWorld->invId[i*9+j]);
-                    }
-                    MatrixPop();
                 }
             }
         }
 
+        DrawSetDepthTest(false);
+        DrawSetDepthMask(true);
         DrawSetBlend(true);
 
-        invCellSprite->SetPosition(selectInvSprite->GetPositionX(),selectInvSprite->GetPositionY());
-        invCellSprite->Draw();
+        if(!usingSlider)
+        {
+            invCellSprite->SetPosition(selectInvSprite->GetPositionX(),selectInvSprite->GetPositionY());
+            invCellSprite->Draw();
+        }
 
         if (mWorld->mId != -1) //MOUSE ITEM
         {
-            MatrixPush();
+            sceGumPushMatrix();
             if (upEn == 1)
             {
-                if (invEn == 1)
-                {
-                    MatrixTranslation(Vector3(276+invXPosition*36,38+invYPosition*36,0.0f));
-                }
                 if (craft3xEn == 1)
                 {
                     MatrixTranslation(Vector3(204+invXPosition*36,18+invYPosition*36,0.0f));
@@ -11696,18 +9991,29 @@ void StatePlay::Draw(StateManager* sManager)
                 }
                 if (furnaceEn == 1)
                 {
-                    MatrixTranslation(Vector3(204,18+(invYPosition * 72),0.0f));
+                    ScePspFVector3 loc = {204,18+(invYPosition * 72),0.0f};
+                    sceGumTranslate(&loc);
                 }
             }
             else
             {
-                if(armorEn == false)
+                if(invEn == false)
                 {
-                    MatrixTranslation(Vector3(96 + (invXPosition * 36),130+(invYPosition * 36),0.0f)); // 8 upper
+                    ScePspFVector3 loc = {96 + (invXPosition * 36),130+(invYPosition*36),0.0f};
+                    sceGumTranslate(&loc);
                 }
                 else
                 {
-                    MatrixTranslation(Vector3(96 + (invXPosition * 108),18+(invYPosition * 72),0.0f)); // 8 upper
+                    if(onDestroySlot)
+                    {
+                        ScePspFVector3 loc = {82 + (9 * 36),20+(6*36),0.0f};
+                        sceGumTranslate(&loc);
+                    }
+                    else
+                    {
+                        ScePspFVector3 loc = {80 + (invXPosition * 36),20+(invYPosition*36),0.0f};
+                        sceGumTranslate(&loc);
+                    }
                 }
             }
 
@@ -11724,7 +10030,7 @@ void StatePlay::Draw(StateManager* sManager)
 
                 mWorld->drawHudItems(mWorld->mId);
             }
-            MatrixPop();
+            sceGumPopMatrix();
         }
     }
 
@@ -11733,7 +10039,7 @@ void StatePlay::Draw(StateManager* sManager)
 	DrawSetBlend(true);
 	MatrixColor(GU_COLOR(1,1,1,1.0f));
     // durability strip drawing
-    if ((invEn == false && craft3xEn == false && chestEn == false && furnaceEn == false && menuState == 0 && mWorld->mainOptions.guiDrawing == 1) || (makeScreen == true && mWorld->mainOptions.guiDrawing == 1))
+    if ((invEn == false && craft3xEn == false && chestEn == false && furnaceEn == false && menuState == 0 && mWorld->mainOptions.guiDrawing == 1) || makeScreen == true)
     {
         for(int k = 0; k <= 8; k++)
         {
@@ -11746,43 +10052,6 @@ void StatePlay::Draw(StateManager* sManager)
                         unsigned int toolPointStd = roundf((float)(mWorld->invAm[27+k]) / (float)(mWorld->DurabilityPointsItem(mWorld->invId[27+k])) * 13);
 
                         toolPointSprite[toolPointStd]->SetPosition(68+k*40,260);
-                        toolPointSprite[toolPointStd]->Draw();
-                    }
-                }
-            }
-        }
-    }
-
-    if(invEn == true)
-    {
-        for(int i = 0; i <= 1; i++)
-        {
-            for(int j = 0; j <= 1; j++)
-            {
-                if(craftSlotId[i*2+j] >= 250 && mWorld->DurabilityPointsItem(craftSlotId[i*2+j]) != -1)
-                {
-                    if(craftSlotAm[i*2+j] != mWorld->DurabilityPointsItem(craftSlotId[i*2+j])) // checking durability
-                    {
-                        unsigned int toolPointStd = roundf((float)(craftSlotAm[i*2+j]) / (float)(mWorld->DurabilityPointsItem(craftSlotId[i*2+j])) * 13);
-
-                        toolPointSprite[toolPointStd]->SetPosition(264+j*36,56+i*36);
-                        toolPointSprite[toolPointStd]->Draw();
-                    }
-                }
-            }
-        }
-
-        for(int i = 0; i <= 1; i++)
-        {
-            for(int j = 0; j <= 1; j++)
-            {
-                if(mWorld->armorId[i*2+j] >= 250 && mWorld->DurabilityPointsItem(mWorld->armorId[i*2+j]) != -1)
-                {
-                    if(mWorld->armorAm[i*2+j] != mWorld->DurabilityPointsItem(mWorld->armorId[i*2+j])) // checking durability
-                    {
-                        unsigned int toolPointStd = roundf((float)(mWorld->armorAm[i*2+j]) / (float)(mWorld->DurabilityPointsItem(mWorld->armorId[i*2+j])) * 13);
-
-                        toolPointSprite[toolPointStd]->SetPosition(84+j*108,36+i*72);
                         toolPointSprite[toolPointStd]->Draw();
                     }
                 }
@@ -11857,24 +10126,54 @@ void StatePlay::Draw(StateManager* sManager)
 
     if (invEn == true || craft3xEn == true || chestEn == true || furnaceEn == true)
     {
-        for(int i = 0; i <= 3; i++)
+        if(invEn == false)
         {
-            for(int j = 0; j <= 8; j++)
+            for(int i = 0; i <= 3; i++)
             {
-                if(mWorld->invId[i*9+j] >= 250)
+                for(int j = 0; j <= 8; j++)
                 {
-                    if(mWorld->DurabilityPointsItem(mWorld->invId[i*9+j]) != -1) // if it is tool
+                    if(mWorld->invId[i*9+j] >= 250)
                     {
-                        if(mWorld->invAm[i*9+j] != mWorld->DurabilityPointsItem(mWorld->invId[i*9+j])) // checking durability
+                        if(mWorld->DurabilityPointsItem(mWorld->invId[i*9+j]) != -1) // if it is tool
                         {
-                            unsigned int toolPointStd = roundf((float)(mWorld->invAm[i*9+j]) / (float)(mWorld->DurabilityPointsItem(mWorld->invId[i*9+j])) * 13);
+                            if(mWorld->invAm[i*9+j] != mWorld->DurabilityPointsItem(mWorld->invId[i*9+j])) // checking durability
+                            {
+                                unsigned int toolPointStd = roundf((float)(mWorld->invAm[i*9+j]) / (float)(mWorld->DurabilityPointsItem(mWorld->invId[i*9+j])) * 13);
 
-                            toolPointSprite[toolPointStd]->SetPosition(84+j*36,148+i*36);
+                                toolPointSprite[toolPointStd]->SetPosition(84+j*36,148+i*36);
+                                toolPointSprite[toolPointStd]->Draw();
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        else
+        {
+            for(int k = 0; k <= 8; k++)
+            {
+                if(mWorld->invId[27+k] >= 250)
+                {
+                    if(mWorld->DurabilityPointsItem(mWorld->invId[27+k]) != -1) // if it is tool
+                    {
+                        if(mWorld->invAm[27+k] != mWorld->DurabilityPointsItem(mWorld->invId[27+k])) // checking durability
+                        {
+                            unsigned int toolPointStd = roundf((float)(mWorld->invAm[27+k]) / (float)(mWorld->DurabilityPointsItem(mWorld->invId[27+k])) * 13);
+
+                            toolPointSprite[toolPointStd]->SetPosition(68+k*36,254);
                             toolPointSprite[toolPointStd]->Draw();
                         }
                     }
                 }
             }
+            /*
+            mRender->SetFont(ENGLISH);
+            RenderManager::InstancePtr()->SetFontStyle(default_size,GU_COLOR(1,1,1,1),0,0x00004000|0x00000000);
+            RenderManager::InstancePtr()->DebugPrint(20,20,"%i/3",creativePage+1);
+            RenderManager::InstancePtr()->DebugPrint(420,20,"R");
+            RenderManager::InstancePtr()->DebugPrint(420,40,"L");
+            mRender->SetDefaultFont();
+            */
         }
 
         if (mWorld->mId >= 250 && mWorld->DurabilityPointsItem(mWorld->mId) != -1)
@@ -11904,13 +10203,20 @@ void StatePlay::Draw(StateManager* sManager)
                 }
                 else
                 {
-                    if(armorEn == false)
+                    if(invEn == false)
                     {
                         toolPointSprite[toolPointStd]->SetPosition(84+invXPosition*36,140+invYPosition*36);
                     }
                     else
                     {
-                        toolPointSprite[toolPointStd]->SetPosition(84+invXPosition*108,28+invYPosition*72);
+                        if(onDestroySlot)
+                        {
+                            toolPointSprite[toolPointStd]->SetPosition(70+9*36,30+6*36);
+                        }
+                        else
+                        {
+                            toolPointSprite[toolPointStd]->SetPosition(68+invXPosition*36,30+invYPosition*36);
+                        }
                     }
                 }
                 toolPointSprite[toolPointStd]->Draw();
@@ -11921,148 +10227,51 @@ void StatePlay::Draw(StateManager* sManager)
     DrawSetBlend(false);
 
 
-	sceGuEnable(GU_DEPTH_TEST);
-	sceGuDepthMask(0);
-
-    //text
-    if(mWorld->HP <= 0)
-    {
-        sceGuDisable(GU_DEPTH_TEST);
-        sceGuEnable(GU_BLEND);
-        sceGuColor(GU_COLOR(1,1,1,1.0f));
-
-        if(mRender->GetFontLanguage() == ENGLISH)
-        {
-            if(mWorld->gameModeWorld == 2)
-            {
-                mRender->SetFontStyle(default_big_size,GU_COLOR(0.25f,0.25f,0.25f,1),0,0x00000200);
-
-                mRender->DebugPrint(242,52,"Game over!");
-                mRender->DebugPrint(242,152,"Press X to delete your world!");
-
-                mRender->SetFontStyle(default_big_size,GU_COLOR(1,0,0,1),0,0x00000200);
-
-                mRender->DebugPrint(240,50,"Game over!");
-                mRender->DebugPrint(240,150,"Press X to delete your world!");
-            }
-            else
-            {
-                mRender->SetFontStyle(default_big_size,GU_COLOR(0.25f,0.25f,0.25f,1),0,0x00000200);
-
-                mRender->DebugPrint(242,52,"You died!");
-                mRender->DebugPrint(242,152,"Press X to respawn!");
-
-                mRender->SetFontStyle(default_big_size,GU_COLOR(1,0,0,1),0,0x00000200);
-
-                mRender->DebugPrint(240,50,"You died!");
-                mRender->DebugPrint(240,150,"Press X to respawn!");
-            }
-        }
-        if(mRender->GetFontLanguage() == RUSSIAN)
-        {
-            if(mWorld->gameModeWorld == 2)
-            {
-                mRender->SetFontStyle(default_big_size,GU_COLOR(0.25f,0.25f,0.25f,1),0,0x00000200);
-
-                mRender->DebugPrint(242,52,"Igra okonyena!");
-                mRender->DebugPrint(242,152,"Najmite H, ytob@ udalit$ vaw mir!");
-
-                mRender->SetFontStyle(default_big_size,GU_COLOR(1,0,0,1),0,0x00000200);
-
-                mRender->DebugPrint(240,50,"Igra okonyena!");
-                mRender->DebugPrint(240,150,"Najmite H, ytob@ udalit$ vaw mir!");
-            }
-            else
-            {
-                mRender->SetFontStyle(default_big_size,GU_COLOR(0.25f,0.25f,0.25f,1),0,0x00000200);
-
-                mRender->DebugPrint(242,52,"V@ pogibli!");
-                mRender->DebugPrint(242,152,"Najmite H, ytob@ vozrodit$s^!");
-
-                mRender->SetFontStyle(default_big_size,GU_COLOR(1,0,0,1),0,0x00000200);
-
-                mRender->DebugPrint(240,50,"V@ pogibli!");
-                mRender->DebugPrint(240,150,"Najmite H, ytob@ vozrodit$s^!");
-            }
-        }
-    }
-
-    if(sleepMessageTime > 0.0f)
-    {
-        sceGuDisable(GU_DEPTH_TEST);
-        sceGuEnable(GU_BLEND);
-        sceGuColor(GU_COLOR(1,1,1,1.0f));
-
-        if(sleepMessageType == 1)
-        {
-            if(mRender->GetFontLanguage() == ENGLISH)
-            {
-                mRender->SetFontStyle(default_size,GU_COLOR(1,1,1,1),0,0x00000200);
-                mRender->DebugPrint(242,158,"You can only sleep at night!");
-            }
-            if(mRender->GetFontLanguage() == RUSSIAN)
-            {
-                mRender->SetFontStyle(default_size,GU_COLOR(1,1,1,1),0,0x00000200);
-                mRender->DebugPrint(242,158,"Spat$ mojno tol$ko noy$#!");
-            }
-        }
-        else
-        {
-            if(mRender->GetFontLanguage() == ENGLISH)
-            {
-                mRender->SetFontStyle(default_size,GU_COLOR(1,1,1,1),0,0x00000200);
-                mRender->DebugPrint(242,158,"You can’t sleep yet, there are monsters nearby");
-            }
-            if(mRender->GetFontLanguage() == RUSSIAN)
-            {
-                mRender->SetFontStyle(default_size,GU_COLOR(1,1,1,1),0,0x00000200);
-                mRender->DebugPrint(242,158,"V@ ne mojete spat$, poka monstr@ r^dom");
-            }
-        }
-    }
-
-    sleepMessageTime -= dt;
-    if(sleepMessageTime < 0.1f && sleepMessageTime > 0.0f)
-    {
-        sleepMessageTime = 0.0f;
-    }
-
-    mRender->SetFontStyle(default_size,0xFFFFFFFF,0,0x00000200);
-
-    if((freeMemory/1024)/1024 <= 3 && mWorld->mainStatistics.minutesPlayed > 2)
-    {
-        sceGuDisable(GU_DEPTH_TEST);
-        sceGuEnable(GU_BLEND);
-        sceGuColor(GU_COLOR(1,1,1,1.0f));
-        mRender->SetFontStyle(default_size,GU_COLOR(1,0,0,1),0,0x00000000);
-        //mRender->DebugPrint(5,15,"You have few free ram! Please, reduce the settings or restart the game!");
-        mRender->SetFontStyle(default_size,0xFFFFFFFF,0,0x00000200);
-    }
-
-    mRender->SetFontStyle(default_size,0xFFFFFFFF,0xFF000000,0x00000200);
-
     if(invEn == true || craft3xEn == true || chestEn == true || furnaceEn == true)
     {
         sceGuDisable(GU_DEPTH_TEST);
         sceGuEnable(GU_BLEND);
         sceGuColor(GU_COLOR(1,1,1,1.0f));
 
-        for(int i = 0; i <= 3; i++)
+        if(invEn == false)
         {
-            for(int j = 0; j <= 8; j++)
+            for(int i = 0; i <= 3; i++)
             {
-                if(mWorld->invId[i*9+j] != -1 && mWorld->invAm[i*9+j] > 1)
+                for(int j = 0; j <= 8; j++)
                 {
-                    if(mWorld->invId[i*9+j] >= 250)
+                    if(mWorld->invId[i*9+j] != -1 && mWorld->invAm[i*9+j] > 1)
                     {
-                        if(mWorld->DurabilityPointsItem(mWorld->invId[i*9+j]) == -1)
+                        if(mWorld->invId[i*9+j] >= 250)
+                        {
+                            if(mWorld->DurabilityPointsItem(mWorld->invId[i*9+j]) == -1)
+                            {
+                                DrawAmount(106+j*36,164+i*36,mWorld->invAm[i*9+j]);
+                            }
+                        }
+                        else
                         {
                             DrawAmount(106+j*36,164+i*36,mWorld->invAm[i*9+j]);
                         }
                     }
+                }
+            }
+        }
+        else
+        {
+            for(int k = 0; k <= 8; k++)
+            {
+                if (mWorld->invId[27+k] != -1 && mWorld->invAm[27+k] > 1)
+                {
+                    if(mWorld->invId[27+k] >= 250)
+                    {
+                        if(mWorld->DurabilityPointsItem(mWorld->invId[27+k]) == -1)
+                        {
+                            DrawAmount(90+k*36,270,mWorld->invAm[27+k]);
+                        }
+                    }
                     else
                     {
-                        DrawAmount(106+j*36,164+i*36,mWorld->invAm[i*9+j]);
+                        DrawAmount(90+k*36,270,mWorld->invAm[27+k]);
                     }
                 }
             }
@@ -12088,21 +10297,24 @@ void StatePlay::Draw(StateManager* sManager)
             {
                 if (upEn == 0)
                 {
-                    if(armorEn == false)
+                    if(invEn == 1)
                     {
-                        DrawAmount(106+(invXPosition * 36),156+(invYPosition * 36),mWorld->mAm);
+                        if(onDestroySlot)
+                        {
+                            DrawAmount(92+(9 * 36),46+(6 * 36),mWorld->mAm);
+                        }
+                        else
+                        {
+                            DrawAmount(90+(invXPosition * 36),46+(invYPosition * 36),mWorld->mAm);
+                        }
                     }
                     else
                     {
-                        DrawAmount(106+(invXPosition * 108),44+(invYPosition * 72),mWorld->mAm);
+                        DrawAmount(106+(invXPosition * 36),156+(invYPosition * 36),mWorld->mAm);
                     }
                 }
                 else
                 {
-                    if(invEn == 1)
-                    {
-                        DrawAmount(286+(invXPosition * 36),64+(invYPosition * 36),mWorld->mAm);
-                    }
                     if(craft3xEn == 1)
                     {
                         DrawAmount(214+(invXPosition * 36),44+(invYPosition * 36),mWorld->mAm);
@@ -12119,11 +10331,37 @@ void StatePlay::Draw(StateManager* sManager)
             }
         }
 
+        DrawSetDepthTest(false);
+        DrawSetDepthMask(true);
+        DrawSetBlend(true);
+
+        int slide_y = 26+((float)creativePage/(float)creativePageMax)*182;
+        sliderSprite->SetPosition(406,slide_y);
+        sliderLightedSprite->SetPosition(406,slide_y);
+
+        if(invEn)
+        {
+            if(usingSlider)
+            {
+                sliderLightedSprite->Draw();
+            }
+            else
+            {
+                selectInvSprite->Draw();
+                sliderSprite->Draw();
+            }
+        }
+        else
+        {
+            selectInvSprite->Draw();
+        }
+
+        sceGuDisable(GU_DEPTH_TEST);
         sceGuEnable(GU_BLEND);
-        selectInvSprite->Draw();
+        sceGuColor(GU_COLOR(1,1,1,1.0f));
     }
 
-    if((invEn == false && craft3xEn == false && chestEn == false && furnaceEn == false && menuState == 0 && mWorld->mainOptions.guiDrawing == 1) || (makeScreen == true && mWorld->mainOptions.guiDrawing == 1))
+    if((invEn == false && craft3xEn == false && chestEn == false && furnaceEn == false && menuState == 0 && mWorld->mainOptions.guiDrawing == 1) || makeScreen == true)
     {
         for(int k = 0; k <= 8; k++)
         {
@@ -12140,45 +10378,6 @@ void StatePlay::Draw(StateManager* sManager)
                 {
                     DrawAmount(90+k*40,276,mWorld->invAm[27+k]);
                 }
-            }
-        }
-    }
-
-    if(invEn == true)
-    {
-        for(int i = 0; i <= 1; i++)
-        {
-            for(int j = 0; j <= 1; j++)
-            {
-                if(craftSlotId[i*2+j] != -1 && craftSlotAm[i*2+j] > 1)
-                {
-                    if(craftSlotId[i*2+j] >= 250)
-                    {
-                        if(mWorld->DurabilityPointsItem(craftSlotId[i*2+j]) == -1)
-                        {
-                            DrawAmount(286+j*36,72+i*36,craftSlotAm[i*2+j]);
-                        }
-                    }
-                    else
-                    {
-                        DrawAmount(286+j*36,72+i*36,craftSlotAm[i*2+j]);
-                    }
-                }
-            }
-        }
-
-        if(craftItemId != -1)
-        {
-            if(craftItemId >= 250)
-            {
-                if(mWorld->DurabilityPointsItem(craftItemId) == -1)
-                {
-                    DrawAmount(394,92,craftItemAm);
-                }
-            }
-            else
-            {
-                DrawAmount(394,92,craftItemAm);
             }
         }
     }
@@ -12281,6 +10480,19 @@ void StatePlay::Draw(StateManager* sManager)
             DrawAmount(322,88,UseFurnace->furnaceSlotAm[2]);
         }
     }
+
+
+   // RenderManager::InstancePtr()->SetFontStyle(default_size+0.005f,GU_COLOR(1,1,1,1),GU_COLOR(1,1,1,1),0x00004000|0x00000000);
+
+   /* if(invEn == true || craft3xEn == true || chestEn == true || furnaceEn == true)
+    {
+        if(showSlotName == true && slotId != -1 && (slotId < 324 || slotId > 327))
+        {
+            std::string slotName = mWorld->NameBlock(slotId);
+            mRender->DebugPrint(selectInvSprite->GetPositionX()+18,selectInvSprite->GetPositionY()-4,"%s",slotName.c_str());
+        }
+    }*/
+
     sceGuDisable(GU_BLEND);
     sceGuEnable(GU_DEPTH_TEST);
 
@@ -12294,11 +10506,30 @@ void StatePlay::Draw(StateManager* sManager)
 	}
 
     int language = mRender->GetFontLanguage();
-    mRender->SetFontStyle(0.345f,0xFFFFFFFF,0,0x00000200);
-
+    mRender->SetFontStyle(default_size,GU_COLOR(1,1,1,1),GU_COLOR(0.0f,0.0f,0.0f,1),0x00000200);
 
     if(invEn == false && craft3xEn == false && chestEn == false && furnaceEn == false && menuState == 0)
     {
+        if(tickShowFlymodeMessage > 0.0f)
+        {
+            if(tickShowFlymodeMessage > 1.0f)
+            {
+                mRender->SetFontStyle(0.5f,GU_COLOR(1,1,1,1),GU_COLOR(0.15f,0.15f,0.15f,1),0x00000200);
+            }
+            else
+            {
+                mRender->SetFontStyle(0.5f,GU_COLOR(1,1,1,tickShowFlymodeMessage),GU_COLOR(0.15f,0.15f,0.15f,tickShowSlotName),0x00000200);
+            }
+            if(language == ENGLISH)
+            {
+                canFly == true ? mRender->DebugPrint(240,30,"Fly mode : on") : mRender->DebugPrint(240,30,"Fly mode : off");
+            }
+            if(language == RUSSIAN)
+            {
+                canFly == true ? mRender->DebugPrint(240,30,"Rejim poleta : vkl") : mRender->DebugPrint(240,30,"Rejim poleta : v@kl");
+            }
+        }
+
         if(tickShowSlotName > 0.0f)
         {
             if(tickShowSlotName > 1.0f)
@@ -12359,40 +10590,30 @@ void StatePlay::Draw(StateManager* sManager)
             mRender->DebugPrint(240,50,"%s",inputDiskName.c_str());
             mRender->SetDefaultFont();
         }
+    }
 
-        if(tutorialTimer > -1.0f)
-        {
-            tutorialTimer -= dt;
-        }
-        if(tutorialTimer > 0.0f)
-        {
-            if(tutorialTimer > 9.0f && tutorialTimer <= 10.0f)
-            {
-                mRender->SetFontStyle(0.5f,GU_COLOR(1,1,1,10.0f-tutorialTimer),GU_COLOR(1,1,1,10.0f-tutorialTimer),0x00000000);
-            }
-            if(tutorialTimer > 1.0f && tutorialTimer <= 9.0f)
-            {
-                mRender->SetFontStyle(0.5f,GU_COLOR(1,1,1,1),GU_COLOR(1,1,1,1),0x00000000);
-            }
-            if(tutorialTimer <= 1.0f)
-            {
-                mRender->SetFontStyle(0.5f,GU_COLOR(1,1,1,tutorialTimer),GU_COLOR(1,1,1,tutorialTimer),0x00000000);
-            }
+    if(sleepMessageTime > 0.0f)
+    {
+        sceGuDisable(GU_DEPTH_TEST);
+        sceGuEnable(GU_BLEND);
+        sceGuColor(GU_COLOR(1,1,1,1.0f));
 
-            if(language == ENGLISH)
-            {
-                mRender->DebugPrint(5,40,"Tutorial");
-                mRender->DebugPrint(5,57,"Press R+L to open inventory");
-                mRender->DebugPrint(5,74,"Press R+arrow up to drop item");
-            }
-            else
-            {
-                mRender->DebugPrint(5,40,"Tutorial");
-                mRender->DebugPrint(5,57,"Najmite R+L ytob@ otkr@t$ inventar$");
-                mRender->DebugPrint(5,74,"Najmite R+vverh ytob@ v@brosit$ predmet");
-            }
+        if(mRender->GetFontLanguage() == ENGLISH)
+        {
+            mRender->SetFontStyle(default_size,GU_COLOR(1,1,1,1),0,0x00000200);
+            mRender->DebugPrint(242,158,"You can only sleep at night!");
         }
-        mRender->SetFontStyle(0.345f,0xFFFFFFFF,0,0x00000000);
+        if(mRender->GetFontLanguage() == RUSSIAN)
+        {
+            mRender->SetFontStyle(default_size,GU_COLOR(1,1,1,1),0,0x00000200);
+            mRender->DebugPrint(242,158,"Spat$ mojno tol$ko noy$#!");
+        }
+    }
+
+    sleepMessageTime -= dt;
+    if(sleepMessageTime < 0.1f && sleepMessageTime > 0.0f)
+    {
+        sleepMessageTime = 0.0f;
     }
 
     //menu buttons
@@ -12461,7 +10682,6 @@ void StatePlay::Draw(StateManager* sManager)
                 sbuttonSprite->SetPosition(370,((optionsMenuPos-8) * 30) + 40);
             }
             sbuttonSprite->Draw();
-
 
             if(mWorld->mainOptions.fov == 40)
             {
@@ -12583,7 +10803,7 @@ void StatePlay::Draw(StateManager* sManager)
                 mWorld->mainOptions.autoJump == true ? mRender->DebugPrint(110,259,"Auto-jump: ON"): mRender->DebugPrint(110,259,"Auto-jump: OFF");
 
                 optionsMenuPos == 10 ? RenderManager::InstancePtr()->SetFontStyle(default_size,GU_COLOR(1,1,0,1),0,0x00004000|0x00000200) : RenderManager::InstancePtr()->SetFontStyle(default_size,GU_COLOR(1,1,1,1),0,0x00004000|0x00000200);
-                mRender->DebugPrint(370,109,"Super Secret Settings");
+                mWorld->mainOptions.freezeDayTime == true ? mRender->DebugPrint(370,109,"Freeze Day Time: ON"): mRender->DebugPrint(370,109,"Freeze Day Time: OFF");
 
                 optionsMenuPos == 11 ? RenderManager::InstancePtr()->SetFontStyle(default_size,GU_COLOR(1,1,0,1),0,0x00004000|0x00000200) : RenderManager::InstancePtr()->SetFontStyle(default_size,GU_COLOR(1,1,1,1),0,0x00004000|0x00000200);
                 mWorld->mainOptions.guiDrawing == true ? mRender->DebugPrint(370,139,"GUI Rendering: ON"): mRender->DebugPrint(370,139,"GUI Rendering: OFF");
@@ -12679,7 +10899,7 @@ void StatePlay::Draw(StateManager* sManager)
                 mWorld->mainOptions.autoJump == true ? mRender->DebugPrint(110,259,"Avto-pr@jok: Vkl"): mRender->DebugPrint(110,259,"Avto-pr@jok: V@kl");
 
                 optionsMenuPos == 10 ? RenderManager::InstancePtr()->SetFontStyle(default_size,GU_COLOR(1,1,0,1),0,0x00004000|0x00000200) : RenderManager::InstancePtr()->SetFontStyle(default_size,GU_COLOR(1,1,1,1),0,0x00004000|0x00000200);
-                mRender->DebugPrint(370,109,"Sekretn@e nastro~ki");
+                mWorld->mainOptions.freezeDayTime == true ? mRender->DebugPrint(370,109,"Zamorozit$ vrem^ : Vkl"): mRender->DebugPrint(370,109,"Zamorozit$ vrem^ : V@kl");
 
                 optionsMenuPos == 11 ? RenderManager::InstancePtr()->SetFontStyle(default_size,GU_COLOR(1,1,0,1),0,0x00004000|0x00000200) : RenderManager::InstancePtr()->SetFontStyle(default_size,GU_COLOR(1,1,1,1),0,0x00004000|0x00000200);
                 mWorld->mainOptions.guiDrawing == true ? mRender->DebugPrint(370,139,"Interfe~s: Vkl"): mRender->DebugPrint(370,139,"Interfe~s: V@kl");
@@ -12763,7 +10983,7 @@ void StatePlay::Draw(StateManager* sManager)
             }
             if(language == RUSSIAN)
             {
-                //mRender->DebugPrint(2,15,"Sid mira: %i",mWorld->worldSeed);
+               //mRender->DebugPrint(2,15,"Sid mira: %i",mWorld->worldSeed);
 
                 selectPos == 0 ? DrawText(240,59,GU_COLOR(1,1,0,1),default_size,"Vernut$s^ k igre") : DrawText(240,59,GU_COLOR(1,1,1,1),default_size,"Vernut$s^ k igre");
                 selectPos == 1 ? DrawText(240,89,GU_COLOR(1,1,0,1),default_size,"Nastro~ki...") : DrawText(240,89,GU_COLOR(1,1,1,1),default_size,"Nastro~ki...");
@@ -12891,14 +11111,6 @@ void StatePlay::Draw(StateManager* sManager)
     {
         mRender->SetFontStyle(default_size,0xFFFFFFFF,0,0x00000000);
 
-       /* mRender->DebugPrint(240,34,"world iron ore %i",mWorld->mainWorldVariables.worldIronOre);
-        mRender->DebugPrint(240,44,"world coal ore %i",mWorld->mainWorldVariables.worldCoalOre);
-        mRender->DebugPrint(240,54,"world golden ore %i",mWorld->mainWorldVariables.worldGoldenOre);
-        mRender->DebugPrint(240,64,"world diamond ore %i",mWorld->mainWorldVariables.worldDiamondOre);
-        mRender->DebugPrint(240,74,"world redstone ore %i",mWorld->mainWorldVariables.worldRedstoneOre);
-        mRender->DebugPrint(240,84,"world lapis ore %i",mWorld->mainWorldVariables.worldLapisOre);
-        mRender->DebugPrint(240,94,"world clay %i",mWorld->mainWorldVariables.worldClay); */
-
         if(dt > 0.0f)
         {
             tick_fps += dt;
@@ -12918,6 +11130,7 @@ void StatePlay::Draw(StateManager* sManager)
             }
         }
         mRender->DebugPrint(20,24,"fps: %d",average_fps+1);
+
         mRender->DebugPrint(20,34,"cpu: %d%%",mRender->GetCpuUsage());
         mRender->DebugPrint(20,44,"gpu: %d%%",mRender->GetGpuUsage());
         mRender->DebugPrint(20,54,"free memory: %d kb (%d mb)",freeMemory/1024,(freeMemory/1024)/1024);
@@ -12930,30 +11143,28 @@ void StatePlay::Draw(StateManager* sManager)
         mRender->DebugPrint(20,114,"player.y: %f",playerPosition.y);
         mRender->DebugPrint(20,124,"player.z: %f",playerPosition.z);
 
-        mRender->DebugPrint(20,134,"walkingonground: %d",walkingOnGround);
+        mRender->DebugPrint(20,134,"walkingOnGround: %d",walkingOnGround);
         mRender->DebugPrint(20,144,"veloc.y: %f",playerVelocity.y);
-        //mRender->DebugPrint(20,154,"aim block id: %i",mWorld->GetBlock(cubePos.x,cubePos.y,cubePos.z));
+        mRender->DebugPrint(20,174,"updateChunkTimer: %f",mWorld->updateChunkTimer);
+        mRender->DebugPrint(20,184,"rainyColorAlpha: %f",mWorld->rainyColorAlpha);
 
-        mRender->DebugPrint(20,164,"skyTime: %f",mWorld->skyTime);
-
-       // mRender->DebugPrint(20,154,"Chunks in process : %d",mWorld->toUpdate.size());
-
-        if(mWorld->mZombies.size() > 0)
+        if(showCube == true)
         {
-            mRender->DebugPrint(20,184,"size of vector zombies : %d",mWorld->mZombies.size());
-        }
-        if(mWorld->mCows.size() > 0)
-        {
-            mRender->DebugPrint(20,194,"size of vector cows : %d",mWorld->mCows.size());
+             mRender->DebugPrint(20,154,"aim block id: %i",mWorld->GetBlock(cubePos.x,cubePos.y,cubePos.z));
+             mRender->DebugPrint(20,164,"aim block light: %i",mWorld->GetLightLevel(cubePos.x,cubePos.y,cubePos.z));
         }
 
-        if(mWorld->mDrops.size() > 0)
+        if(mSnowBalls.size() > 0)
         {
-            mRender->DebugPrint(20,204," size of vector Drops : %i", mWorld->mDrops.size());
+            mRender->DebugPrint(20,224," size of vector SnowBalls %i", mSnowBalls.size());
         }
-        if(mWorld->updatingChunks.size() > 0)
+        if(mWorld->mTNTs.size() > 0)
         {
-            mRender->DebugPrint(20,214," size of vector updatingChunks : %i", mWorld->updatingChunks.size());
+            mRender->DebugPrint(20,234," size of vector mTNTs %i", mWorld->mTNTs.size());
+        }
+        if(mParticles.size() > 0)
+        {
+            mRender->DebugPrint(20,214," size of vector mParticles %i",mParticles.size());
         }
 
         mRender->SetFontStyle(default_size,0xFFFFFFFF,0,0x00000200);
@@ -12964,7 +11175,7 @@ void StatePlay::Draw(StateManager* sManager)
 }
 
 //additional functions
-void StatePlay::advancedBlit(int sx, int sy, int sw, int sh, int dx, int dy, int slice)
+void StatePlayCreative::advancedBlit(int sx, int sy, int sw, int sh, int dx, int dy, int slice)
 {
     int start, end;
 
@@ -12991,7 +11202,7 @@ void StatePlay::advancedBlit(int sx, int sy, int sw, int sh, int dx, int dy, int
     }
 }
 
-bool StatePlay::TryToMove(Vector3 moveVector,float dt)
+bool StatePlayCreative::TryToMove(Vector3 moveVector,float dt)
 {
     // Build a "test vector" that is a little longer than the move vector.
     float moveLength = moveVector.magnitude();
@@ -13127,7 +11338,7 @@ bool StatePlay::TryToMove(Vector3 moveVector,float dt)
     return false;
 }
 
-bool StatePlay::keyPressed(int currentKey)
+bool StatePlayCreative::keyPressed(int currentKey)
 {
     //analog reset
     if(analogUp)
@@ -13228,7 +11439,7 @@ bool StatePlay::keyPressed(int currentKey)
     return false;
 }
 
-bool StatePlay::keyHold(int currentKey)
+bool StatePlayCreative::keyHold(int currentKey)
 {
     if(currentKey == 0)//cross
         return mSystemMgr->KeyHold(PSP_CTRL_UP);
@@ -13270,110 +11481,7 @@ bool StatePlay::keyHold(int currentKey)
     return false;
 }
 
-
-void StatePlay::HungerTime()
-{
-    if(mWorld->HG >= 16)
-    {
-        if (rand() % 4 == 0)
-        {
-            mWorld->HG -= 1;
-        }
-    }
-    else
-    {
-        mWorld->HG -= 1;
-    }
-    if(mWorld->HG < 0)
-    {
-        mWorld->HG = 0;
-    }
-}
-
-void StatePlay::HealthTime()
-{
-    if(mWorld->HG <= 0 && mWorld->HP > 0)
-    {
-        if(mWorld->mainOptions.difficult == 0)
-        {
-            if(mWorld->HP > 1)
-            {
-                if(mWorld->HP == 2)
-                {
-                    HurtPlayer(1);
-                }
-                else
-                {
-                    HurtPlayer(2);
-                }
-            }
-        }
-        else
-        {
-            HurtPlayer(2);
-        }
-    }
-
-    if(mWorld->HG >= 18)
-    {
-        if(mWorld->HP > 0)
-        {
-            mWorld->HP += 1;
-        }
-    }
-
-    if(mWorld->HP > 20)
-    {
-        mWorld->HP = 20;
-    }
-}
-
-void StatePlay::OxygenTime()
-{
-    if(mWorld->HP > 0)
-    {
-        if(mWorld->OS <= 0)
-        {
-            HurtPlayer(2);
-        }
-        if(mWorld->OS > 0)
-        {
-            mWorld->OS -= 1;
-        }
-    }
-}
-
-void StatePlay::HurtPlayer(float damage)
-{
-    mSoundMgr->PlayHitSound();
-    last_HP = mWorld->HP;
-    mWorld->HP -= damage;
-    mWorld->mainStatistics.damageRecieved += damage;
-
-    if(mWorld->HP > 0)
-    {
-        hurt = true;
-        hurt_time = 1.0f;
-        hpAnim = 0.0f;
-    }
-}
-
-void StatePlay::HurtPlayerConsiderArmor(float damage)
-{
-    mSoundMgr->PlayHitSound();
-    last_HP = mWorld->HP;
-    mWorld->HP -= damage*(1.0f-(mWorld->AP/25.0f));
-    mWorld->mainStatistics.damageRecieved += damage*(1.0f-(mWorld->AP/25.0f));
-
-    if(mWorld->HP > 0)
-    {
-        hurt = true;
-        hurt_time = 1.0f;
-        hpAnim = 0.0f;
-    }
-}
-
-void StatePlay::PutInInventory(int id, int num, bool st)
+void StatePlayCreative::PutInInventory(int id, int num, bool st)
 {
     bool ok;
     ok = false;
@@ -13441,19 +11549,19 @@ void StatePlay::PutInInventory(int id, int num, bool st)
     }
 }
 
-void StatePlay::DrawText(int x,int y, unsigned int color, float size, const char *message, ...)
+void StatePlayCreative::DrawText(int x,int y, unsigned int color, float size, const char *message, ...)
 {
     RenderManager::InstancePtr()->SetFontStyle(size,color,0,0x00000200|0x00000000);
     RenderManager::InstancePtr()->DebugPrint(x,y,message);
 }
 
-void StatePlay::DrawText2(int x,int y, unsigned int color, float size, const char *message, ...)
+void StatePlayCreative::DrawText2(int x,int y, unsigned int color, float size, const char *message, ...)
 {
     RenderManager::InstancePtr()->SetFontStyle(size,color,0,0x00004000|0x00000000);
     RenderManager::InstancePtr()->DebugPrint(x,y,message);
 }
 
-void StatePlay::DrawAmount(int x,int y, int amount)
+void StatePlayCreative::DrawAmount(int x,int y, int amount)
 {
     int dozens, units;
 
