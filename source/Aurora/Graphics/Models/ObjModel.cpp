@@ -255,7 +255,7 @@ namespace Aurora
 						char materialName[100];
 
 						//read material info
-						fscanf(fp,"%s %s", &text, &materialName);
+						fscanf(fp,"%s %s", text, materialName);
 
 						std::string pathmat(FileName);
 						size_t found = pathmat.find_last_of("/");
@@ -282,7 +282,7 @@ namespace Aurora
 					char name2[50];
 
 					//read material name
-					fscanf(fp,"%s %s", &name, &name2);
+					fscanf(fp,"%s %s", name, name2);
 
 					newMesh->mMaterial = 0;
 
