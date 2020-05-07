@@ -248,8 +248,7 @@ block_t SandBlock::getID(){ return 7;}
 
 WoodBlock::WoodBlock():BaseBlock()
 {
-    upPlane_x = 5;
-    upPlane_y = 1;
+    upPlane_x = 5;   upPlane_y = 1;
 
     downPlane_x = 5;
     downPlane_y = 1;
