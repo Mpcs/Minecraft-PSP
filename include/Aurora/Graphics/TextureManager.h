@@ -176,7 +176,7 @@ namespace Aurora
 			void LoadTexture(std::string fileName);
 			void LoadTexureVFS(std::string fileName);
 
-			void RemoveTexture(int number);
+			void RemoveTexture(unsigned int number);
 			void RemoveTextures();
 
 			Image* LoadPng(std::string fileName);

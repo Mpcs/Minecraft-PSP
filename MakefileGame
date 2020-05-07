@@ -28,7 +28,7 @@ source/Aurora/Utils/pge.o \
 source/Aurora/Utils/pgeDir.o \
 source/Aurora/System/SystemManager.o \
 source/Aurora/System/NetworkManager.o \
-LameCraft/BaseBlock.o \
+LameCraft/Blocks/BaseBlock.o \
 LameCraft/Blocks.o \
 LameCraft/BaseItem.o \
 LameCraft/Items.o \
@@ -80,7 +80,7 @@ LameCraft/sound_utils/mod.o \
 Lamecraft.o
 
 INCDIR = $(PSPPATH)/include
-INCDIR += ./include ./source ./3libs
+INCDIR += ./include ./source ./3libs ./LameCraft
 CFLAGS = -O3 -G0 -Wall -mpreferred-stack-boundary=4 #-enable-newlib-hw-fp -ffast-math
 CXXFLAGS = $(CFLAGS) -fno-exceptions -fno-rtti
 ASFLAGS = $(CFLAGS)
