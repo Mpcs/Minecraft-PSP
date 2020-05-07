@@ -154,7 +154,7 @@ namespace Aurora
 			if(ret < 0)
 				return false;
 
-			templ = sceHttpCreateTemplate("xxx-agent/0.0.1 libhttp/1.0.0", 1, 1);
+			templ = sceHttpCreateTemplate((char *)"xxx-agent/0.0.1 libhttp/1.0.0", 1, 1);
 
 			if(templ < 0)
 				return false;

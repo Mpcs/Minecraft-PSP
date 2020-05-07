@@ -41,44 +41,6 @@
 
 static int running = 1;
 
-static int pgeExitCallback(int arg1, int arg2, void *common)
-{
-	(void)arg1;
-	(void)arg2;
-	(void)common;
-
-	running = 0;
-
-	return 0;
-}
-
-static int pgeCallbackThread(SceSize args, void *argp)
-{
-	(void)args;
-	(void)argp;
-
-	int cbid;
-
-	cbid = sceKernelCreateCallback("PgeExitCallback", pgeExitCallback, NULL);
-	sceKernelRegisterExitCallback(cbid);
-
-	sceKernelSleepThreadCB();
-
-	return 0;
-}
-
-static int pgeCallbackSetup(void)
-{
-	int thid = 0;
-
-	thid = sceKernelCreateThread("PgeCallbackThread", pgeCallbackThread, 0x11, 0xFA0, PSP_THREAD_ATTR_USER, 0);
-
-	if(thid >= 0)
-		sceKernelStartThread(thid, 0, 0);
-
-	return thid;
-}
-
 void pgeExit(void)
 {
 	running = 0;

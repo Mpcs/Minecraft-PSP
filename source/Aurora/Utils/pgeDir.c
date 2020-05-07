@@ -33,11 +33,9 @@
 #include <Aurora/Utils/pgeDir.h>
 #include <Aurora/Utils/pge.h>
 
-
 int pgeDirMake(const char *name)
 {
 	int result = mkdir(name, 0777);
-
 	if(result == 0)
 		return 1;
 
