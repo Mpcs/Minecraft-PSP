@@ -1281,4 +1281,12 @@ public:
 	static item_t getID();
 };
 
+class Charcoal : public BaseItem {
+public:
+
+    Charcoal();
+
+    static item_t getID();
+};
+
 #endif

@@ -275,7 +275,7 @@ WoodBlock::WoodBlock():BaseBlock()
 	material = 1;
 	solid = true;
 
-	furnItem = 277;
+	furnItem = 392;
 
 	name = "Oak Wood";
 }
@@ -1022,6 +1022,8 @@ DarkWoodBlock::DarkWoodBlock():BaseBlock()
 	material = 1;
 	solid = true;
 
+    furnItem = 392;
+
 	name = "Spruce Wood";
 }
 block_t DarkWoodBlock::getID(){ return 30;}
@@ -1055,7 +1057,7 @@ WhiteWoodBlock::WhiteWoodBlock():BaseBlock()
 	material = 1;
 	solid = true;
 
-	furnItem = 277;
+	furnItem = 392;
 
 	name = "Birch Wood";
 }

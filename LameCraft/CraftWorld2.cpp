@@ -737,6 +737,7 @@ void CraftWorld::InitItemVector()
     itemTypes.push_back(Disk10());
     itemTypes.push_back(Disk11());
     itemTypes.push_back(Disk12());
+    itemTypes.push_back(Charcoal());
 }
 
 void CraftWorld::UpdateBlocksAndItemsName()

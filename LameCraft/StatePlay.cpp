@@ -575,8 +575,6 @@ void StatePlay::LoadTextures()
     invPlayer = new InventoryPlayer();
 }
 
-
-
 void StatePlay::SetDayTimeAfterLoad()
 {
 
@@ -1695,13 +1693,22 @@ void StatePlay::CraftItem2x2()
 
         // torch
         case 553:
-            if((craftSlotId[0] == 277 && craftSlotId[2] == 276) || (craftSlotId[1] == 277 && craftSlotId[3] == 276))
+            if(((craftSlotId[0] == 277 || craftSlotId[0] == 392) && craftSlotId[2] == 276) || ((craftSlotId[1] == 277 || craftSlotId[1] == 392)  && craftSlotId[3] == 276))
             {
                 craftItemId = 308;
                 craftItemSt = 1;
                 craftItemAm = 4;
             }
         break;
+
+            case 668:
+                if(((craftSlotId[0] == 277 || craftSlotId[0] == 392) && craftSlotId[2] == 276) || ((craftSlotId[1] == 277 || craftSlotId[1] == 392)  && craftSlotId[3] == 276))
+                {
+                    craftItemId = 308;
+                    craftItemSt = 1;
+                    craftItemAm = 4;
+                }
+                break;
 
         // jack o'lantern
         case 383:
