@@ -3947,7 +3947,7 @@ void StatePlay::HandleEvents(StateManager* sManager)
                 BoundingBox testBox = BoundingBox(testPos.x+collider.min.x, testPos.y+collider.min.y, testPos.z+collider.min.z, testPos.x+collider.max.x, testPos.y+collider.max.y, testPos.z+collider.max.z);
 
 
-                if(mWorld->invId[27+barPosition] == Scissors::getID() || (mWorld->ItemType(mWorld->invId[27+barPosition]) == 'Y' && mWorld->invId[27+barPosition] != BoneMeal::getID())) // shear sheep or dye it
+                if(mWorld->invId[27+barPosition] == Scissors::getID() || (mWorld->ItemType(mWorld->invId[27+barPosition]) == ItemType::dye && mWorld->invId[27+barPosition] != BoneMeal::getID())) // shear sheep or dye it
                 {
                     if(mWorld->mSheeps.empty() == false)
                     {
@@ -3961,7 +3961,7 @@ void StatePlay::HandleEvents(StateManager* sManager)
                                 {
                                     if(TestSheep->bBox.contains(testPos))
                                     {
-                                        if(mWorld->ItemType(mWorld->invId[27+barPosition]) == 'Y') // dye item
+                                        if(mWorld->ItemType(mWorld->invId[27+barPosition]) == ItemType::dye) // dye item
                                         {
                                             int newColor = 14;
                                             switch(mWorld->invId[27+barPosition])

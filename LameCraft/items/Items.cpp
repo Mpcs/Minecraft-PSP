@@ -12,7 +12,7 @@ WoodenPickaxe::WoodenPickaxe() : BaseItem() {
     name = "Wooden Pickaxe";
 }
 
-item_t WoodenPickaxe::getID() { return 250; }
+item_id WoodenPickaxe::getID() { return 250; }
 
 StonePickaxe::StonePickaxe() : BaseItem() {
     textureRow = 9;
@@ -24,7 +24,7 @@ StonePickaxe::StonePickaxe() : BaseItem() {
     name = "Stone Pickaxe";
 }
 
-item_t StonePickaxe::getID() { return 251; }
+item_id StonePickaxe::getID() { return 251; }
 
 IronPickaxe::IronPickaxe() : BaseItem() {
     textureRow = 9;
@@ -36,7 +36,7 @@ IronPickaxe::IronPickaxe() : BaseItem() {
     name = "Iron Pickaxe";
 }
 
-item_t IronPickaxe::getID() { return 252; }
+item_id IronPickaxe::getID() { return 252; }
 
 DiamondPickaxe::DiamondPickaxe() : BaseItem() {
     textureRow = 9;
@@ -48,7 +48,7 @@ DiamondPickaxe::DiamondPickaxe() : BaseItem() {
     name = "Diamond Pickaxe";
 }
 
-item_t DiamondPickaxe::getID() { return 253; }
+item_id DiamondPickaxe::getID() { return 253; }
 
 GoldenPickaxe::GoldenPickaxe() : BaseItem() {
     textureRow = 9;
@@ -60,7 +60,7 @@ GoldenPickaxe::GoldenPickaxe() : BaseItem() {
     name = "Golden Pickaxe";
 }
 
-item_t GoldenPickaxe::getID() { return 254; }
+item_id GoldenPickaxe::getID() { return 254; }
 
 WoodenSword::WoodenSword() : BaseItem() {
     textureRow = 11;
@@ -72,7 +72,7 @@ WoodenSword::WoodenSword() : BaseItem() {
     name = "Wooden Sword";
 }
 
-item_t WoodenSword::getID() { return 255; }
+item_id WoodenSword::getID() { return 255; }
 
 StoneSword::StoneSword() : BaseItem() {
     textureRow = 11;
@@ -84,7 +84,7 @@ StoneSword::StoneSword() : BaseItem() {
     name = "Stone Sword";
 }
 
-item_t StoneSword::getID() { return 256; }
+item_id StoneSword::getID() { return 256; }
 
 IronSword::IronSword() : BaseItem() {
     textureRow = 11;
@@ -96,7 +96,7 @@ IronSword::IronSword() : BaseItem() {
     name = "Iron Sword";
 }
 
-item_t IronSword::getID() { return 257; }
+item_id IronSword::getID() { return 257; }
 
 DiamondSword::DiamondSword() : BaseItem() {
     textureRow = 11;
@@ -108,7 +108,7 @@ DiamondSword::DiamondSword() : BaseItem() {
     name = "Diamond Sword";
 }
 
-item_t DiamondSword::getID() { return 258; }
+item_id DiamondSword::getID() { return 258; }
 
 GoldenSword::GoldenSword() : BaseItem() {
     textureRow = 11;
@@ -120,7 +120,7 @@ GoldenSword::GoldenSword() : BaseItem() {
     name = "Golden Sword";
 }
 
-item_t GoldenSword::getID() { return 259; }
+item_id GoldenSword::getID() { return 259; }
 
 WoodenShovel::WoodenShovel() : BaseItem() {
     textureRow = 10;
@@ -132,7 +132,7 @@ WoodenShovel::WoodenShovel() : BaseItem() {
     name = "Wooden Shovel";
 }
 
-item_t WoodenShovel::getID() { return 260; }
+item_id WoodenShovel::getID() { return 260; }
 
 StoneShovel::StoneShovel() : BaseItem() {
     textureRow = 10;
@@ -144,7 +144,7 @@ StoneShovel::StoneShovel() : BaseItem() {
     name = "Stone Shovel";
 }
 
-item_t StoneShovel::getID() { return 261; }
+item_id StoneShovel::getID() { return 261; }
 
 IronShovel::IronShovel() : BaseItem() {
     textureRow = 10;
@@ -156,7 +156,7 @@ IronShovel::IronShovel() : BaseItem() {
     name = "Iron Shovel";
 }
 
-item_t IronShovel::getID() { return 262; }
+item_id IronShovel::getID() { return 262; }
 
 DiamondShovel::DiamondShovel() : BaseItem() {
     textureRow = 10;
@@ -168,7 +168,7 @@ DiamondShovel::DiamondShovel() : BaseItem() {
     name = "Diamond Shovel";
 }
 
-item_t DiamondShovel::getID() { return 263; }
+item_id DiamondShovel::getID() { return 263; }
 
 GoldenShovel::GoldenShovel() : BaseItem() {
     textureRow = 10;
@@ -180,7 +180,7 @@ GoldenShovel::GoldenShovel() : BaseItem() {
     name = "Golden Shovel";
 }
 
-item_t GoldenShovel::getID() { return 264; }
+item_id GoldenShovel::getID() { return 264; }
 
 WoodenAxe::WoodenAxe() : BaseItem() {
     textureRow = 8;
@@ -192,7 +192,7 @@ WoodenAxe::WoodenAxe() : BaseItem() {
     name = "Wooden Axe";
 }
 
-item_t WoodenAxe::getID() { return 265; }
+item_id WoodenAxe::getID() { return 265; }
 
 StoneAxe::StoneAxe() : BaseItem() {
     textureRow = 8;
@@ -204,7 +204,7 @@ StoneAxe::StoneAxe() : BaseItem() {
     name = "Stone Axe";
 }
 
-item_t StoneAxe::getID() { return 266; }
+item_id StoneAxe::getID() { return 266; }
 
 IronAxe::IronAxe() : BaseItem() {
     textureRow = 8;
@@ -216,7 +216,7 @@ IronAxe::IronAxe() : BaseItem() {
     name = "Iron Axe";
 }
 
-item_t IronAxe::getID() { return 267; }
+item_id IronAxe::getID() { return 267; }
 
 DiamondAxe::DiamondAxe() : BaseItem() {
     textureRow = 8;
@@ -228,7 +228,7 @@ DiamondAxe::DiamondAxe() : BaseItem() {
     name = "Diamond Axe";
 }
 
-item_t DiamondAxe::getID() { return 268; }
+item_id DiamondAxe::getID() { return 268; }
 
 GoldenAxe::GoldenAxe() : BaseItem() {
     textureRow = 8;
@@ -240,7 +240,7 @@ GoldenAxe::GoldenAxe() : BaseItem() {
     name = "Golden Axe";
 }
 
-item_t GoldenAxe::getID() { return 269; }
+item_id GoldenAxe::getID() { return 269; }
 
 WoodenHoe::WoodenHoe() : BaseItem() {
     textureRow = 7;
@@ -252,7 +252,7 @@ WoodenHoe::WoodenHoe() : BaseItem() {
     name = "Wooden Hoe";
 }
 
-item_t WoodenHoe::getID() { return 270; }
+item_id WoodenHoe::getID() { return 270; }
 
 StoneHoe::StoneHoe() : BaseItem() {
     textureRow = 7;
@@ -264,7 +264,7 @@ StoneHoe::StoneHoe() : BaseItem() {
     name = "Stone Hoe";
 }
 
-item_t StoneHoe::getID() { return 271; }
+item_id StoneHoe::getID() { return 271; }
 
 IronHoe::IronHoe() : BaseItem() {
     textureRow = 7;
@@ -276,7 +276,7 @@ IronHoe::IronHoe() : BaseItem() {
     name = "Iron Hoe";
 }
 
-item_t IronHoe::getID() { return 272; }
+item_id IronHoe::getID() { return 272; }
 
 DiamondHoe::DiamondHoe() : BaseItem() {
     textureRow = 7;
@@ -288,7 +288,7 @@ DiamondHoe::DiamondHoe() : BaseItem() {
     name = "Diamond Hoe";
 }
 
-item_t DiamondHoe::getID() { return 273; }
+item_id DiamondHoe::getID() { return 273; }
 
 GoldenHoe::GoldenHoe() : BaseItem() {
     textureRow = 7;
@@ -300,7 +300,7 @@ GoldenHoe::GoldenHoe() : BaseItem() {
     name = "Golden Hoe";
 }
 
-item_t GoldenHoe::getID() { return 274; }
+item_id GoldenHoe::getID() { return 274; }
 
 Scissors::Scissors() : BaseItem() {
     textureRow = 10;
@@ -312,7 +312,7 @@ Scissors::Scissors() : BaseItem() {
     name = "Shears";
 }
 
-item_t Scissors::getID() { return 275; }
+item_id Scissors::getID() { return 275; }
 
 Stick::Stick() : BaseItem() {
     textureRow = 12;
@@ -322,7 +322,7 @@ Stick::Stick() : BaseItem() {
     name = "Stick";
 }
 
-item_t Stick::getID() { return 276; }
+item_id Stick::getID() { return 276; }
 
 Coal::Coal() : BaseItem() {
     textureRow = 15;
@@ -332,7 +332,7 @@ Coal::Coal() : BaseItem() {
     name = "Coal";
 }
 
-item_t Coal::getID() { return 277; }
+item_id Coal::getID() { return 277; }
 
 IronBar::IronBar() : BaseItem() {
     textureRow = 14;
@@ -342,7 +342,7 @@ IronBar::IronBar() : BaseItem() {
     name = "Iron Ingot";
 }
 
-item_t IronBar::getID() { return 278; }
+item_id IronBar::getID() { return 278; }
 
 DiamondItem::DiamondItem() : BaseItem() {
     textureRow = 12;
@@ -352,7 +352,7 @@ DiamondItem::DiamondItem() : BaseItem() {
     name = "Diamond";
 }
 
-item_t DiamondItem::getID() { return 279; }
+item_id DiamondItem::getID() { return 279; }
 
 GoldenBar::GoldenBar() : BaseItem() {
     textureRow = 13;
@@ -362,7 +362,7 @@ GoldenBar::GoldenBar() : BaseItem() {
     name = "Gold Ingot";
 }
 
-item_t GoldenBar::getID() { return 280; }
+item_id GoldenBar::getID() { return 280; }
 
 FireItem::FireItem() : BaseItem() {
     textureRow = 0;
@@ -370,7 +370,7 @@ FireItem::FireItem() : BaseItem() {
     plane = 0;
 }
 
-item_t FireItem::getID() { return 281; }
+item_id FireItem::getID() { return 281; }
 
 LigniteCoal::LigniteCoal() : BaseItem() {
     textureRow = 14;
@@ -378,7 +378,7 @@ LigniteCoal::LigniteCoal() : BaseItem() {
     plane = 9;
 }
 
-item_t LigniteCoal::getID() { return 282; }
+item_id LigniteCoal::getID() { return 282; }
 
 Clay::Clay() : BaseItem() {
     textureRow = 12;
@@ -390,7 +390,7 @@ Clay::Clay() : BaseItem() {
     name = "Clay";
 }
 
-item_t Clay::getID() { return 283; }
+item_id Clay::getID() { return 283; }
 
 
 Apple::Apple() : BaseItem() {
@@ -401,7 +401,7 @@ Apple::Apple() : BaseItem() {
     name = "Apple";
 }
 
-item_t Apple::getID() { return 284; }
+item_id Apple::getID() { return 284; }
 
 
 GoldenApple::GoldenApple() : BaseItem() {
@@ -412,7 +412,7 @@ GoldenApple::GoldenApple() : BaseItem() {
     name = "Golden Apple";
 }
 
-item_t GoldenApple::getID() { return 285; }
+item_id GoldenApple::getID() { return 285; }
 
 WheatSeeds::WheatSeeds() : BaseItem() {
     textureRow = 15;
@@ -422,7 +422,7 @@ WheatSeeds::WheatSeeds() : BaseItem() {
     name = "Seeds";
 }
 
-item_t WheatSeeds::getID() { return 286; }
+item_id WheatSeeds::getID() { return 286; }
 
 Wheat::Wheat() : BaseItem() {
     textureRow = 14;
@@ -432,7 +432,7 @@ Wheat::Wheat() : BaseItem() {
     name = "Wheat";
 }
 
-item_t Wheat::getID() { return 287; }
+item_id Wheat::getID() { return 287; }
 
 
 WhiteBread::WhiteBread() : BaseItem() {
@@ -443,7 +443,7 @@ WhiteBread::WhiteBread() : BaseItem() {
     name = "Bread";
 }
 
-item_t WhiteBread::getID() { return 288; }
+item_id WhiteBread::getID() { return 288; }
 
 Brick::Brick() : BaseItem() {
     textureRow = 14;
@@ -453,7 +453,7 @@ Brick::Brick() : BaseItem() {
     name = "Brick";
 }
 
-item_t Brick::getID() { return 289; }
+item_id Brick::getID() { return 289; }
 
 Busket::Busket() : BaseItem() {
     textureRow = 11;
@@ -464,7 +464,7 @@ Busket::Busket() : BaseItem() {
     name = "Bucket";
 }
 
-item_t Busket::getID() { return 290; }
+item_id Busket::getID() { return 290; }
 
 WaterBusket::WaterBusket() : BaseItem() {
     textureRow = 11;
@@ -475,7 +475,7 @@ WaterBusket::WaterBusket() : BaseItem() {
     name = "Water Bucket";
 }
 
-item_t WaterBusket::getID() { return 291; }
+item_id WaterBusket::getID() { return 291; }
 
 LavaBusket::LavaBusket() : BaseItem() {
     textureRow = 11;
@@ -486,7 +486,7 @@ LavaBusket::LavaBusket() : BaseItem() {
     name = "Lava Bucket";
 }
 
-item_t LavaBusket::getID() { return 292; }
+item_id LavaBusket::getID() { return 292; }
 
 CaneItem::CaneItem() : BaseItem() {
     textureRow = 14;
@@ -496,7 +496,7 @@ CaneItem::CaneItem() : BaseItem() {
     name = "Sugar Canes";
 }
 
-item_t CaneItem::getID() { return 293; }
+item_id CaneItem::getID() { return 293; }
 
 Flower1Item::Flower1Item() : BaseItem() {
     textureRow = 15;
@@ -507,7 +507,7 @@ Flower1Item::Flower1Item() : BaseItem() {
     terrainTexture = true;
 }
 
-item_t Flower1Item::getID() { return 294; }
+item_id Flower1Item::getID() { return 294; }
 
 Flower2Item::Flower2Item() : BaseItem() {
     textureRow = 15;
@@ -518,7 +518,7 @@ Flower2Item::Flower2Item() : BaseItem() {
     terrainTexture = true;
 }
 
-item_t Flower2Item::getID() { return 295; }
+item_id Flower2Item::getID() { return 295; }
 
 OakSaplingItem::OakSaplingItem() : BaseItem() {
     textureRow = 15;
@@ -529,7 +529,7 @@ OakSaplingItem::OakSaplingItem() : BaseItem() {
     terrainTexture = true;
 }
 
-item_t OakSaplingItem::getID() { return 296; }
+item_id OakSaplingItem::getID() { return 296; }
 
 Paper::Paper() : BaseItem() {
     textureRow = 12;
@@ -539,7 +539,7 @@ Paper::Paper() : BaseItem() {
     name = "Paper";
 }
 
-item_t Paper::getID() { return 297; }
+item_id Paper::getID() { return 297; }
 
 Book::Book() : BaseItem() {
     textureRow = 12;
@@ -549,7 +549,7 @@ Book::Book() : BaseItem() {
     name = "Book";
 }
 
-item_t Book::getID() { return 298; }
+item_id Book::getID() { return 298; }
 
 SnowBallItem::SnowBallItem() : BaseItem() {
     textureRow = 15;
@@ -559,7 +559,7 @@ SnowBallItem::SnowBallItem() : BaseItem() {
     name = "Snowball";
 }
 
-item_t SnowBallItem::getID() { return 299; }
+item_id SnowBallItem::getID() { return 299; }
 
 MooshroomItem1::MooshroomItem1() : BaseItem() {
     textureRow = 14;
@@ -570,7 +570,7 @@ MooshroomItem1::MooshroomItem1() : BaseItem() {
     terrainTexture = true;
 }
 
-item_t MooshroomItem1::getID() { return 300; }
+item_id MooshroomItem1::getID() { return 300; }
 
 
 MooshroomItem2::MooshroomItem2() : BaseItem() {
@@ -582,7 +582,7 @@ MooshroomItem2::MooshroomItem2() : BaseItem() {
     terrainTexture = true;
 }
 
-item_t MooshroomItem2::getID() { return 301; }
+item_id MooshroomItem2::getID() { return 301; }
 
 Bowl::Bowl() : BaseItem() {
     textureRow = 11;
@@ -592,7 +592,7 @@ Bowl::Bowl() : BaseItem() {
     name = "Bowl";
 }
 
-item_t Bowl::getID() { return 302; }
+item_id Bowl::getID() { return 302; }
 
 MooshroomBowl::MooshroomBowl() : BaseItem() {
     textureRow = 11;
@@ -602,7 +602,7 @@ MooshroomBowl::MooshroomBowl() : BaseItem() {
     name = "Mushroom Stew";
 }
 
-item_t MooshroomBowl::getID() { return 303; }
+item_id MooshroomBowl::getID() { return 303; }
 
 IronWateringCan::IronWateringCan() : BaseItem() {
     textureRow = 1;
@@ -610,7 +610,7 @@ IronWateringCan::IronWateringCan() : BaseItem() {
     plane = 3;
 }
 
-item_t IronWateringCan::getID() { return 304; }
+item_id IronWateringCan::getID() { return 304; }
 
 DiamondWateringCan::DiamondWateringCan() : BaseItem() {
     textureRow = 1;
@@ -618,7 +618,7 @@ DiamondWateringCan::DiamondWateringCan() : BaseItem() {
     plane = 4;
 }
 
-item_t DiamondWateringCan::getID() { return 305; }
+item_id DiamondWateringCan::getID() { return 305; }
 
 DoorItem::DoorItem() : BaseItem() {
     textureRow = 13;
@@ -629,7 +629,7 @@ DoorItem::DoorItem() : BaseItem() {
     name = "Door";
 }
 
-item_t DoorItem::getID() { return 306; }
+item_id DoorItem::getID() { return 306; }
 
 LadderItem::LadderItem() : BaseItem() {
     textureRow = 10;
@@ -640,7 +640,7 @@ LadderItem::LadderItem() : BaseItem() {
     terrainTexture = true;
 }
 
-item_t LadderItem::getID() { return 307; }
+item_id LadderItem::getID() { return 307; }
 
 TorchItem::TorchItem() : BaseItem() {
     textureRow = 10;
@@ -651,7 +651,7 @@ TorchItem::TorchItem() : BaseItem() {
     terrainTexture = true;
 }
 
-item_t TorchItem::getID() { return 308; }
+item_id TorchItem::getID() { return 308; }
 
 SpruceSaplingItem::SpruceSaplingItem() : BaseItem() {
     textureRow = 15;
@@ -662,7 +662,7 @@ SpruceSaplingItem::SpruceSaplingItem() : BaseItem() {
     terrainTexture = true;
 }
 
-item_t SpruceSaplingItem::getID() { return 309; }
+item_id SpruceSaplingItem::getID() { return 309; }
 
 BirchSaplingItem::BirchSaplingItem() : BaseItem() {
     textureRow = 14;
@@ -673,7 +673,7 @@ BirchSaplingItem::BirchSaplingItem() : BaseItem() {
     terrainTexture = true;
 }
 
-item_t BirchSaplingItem::getID() { return 310; }
+item_id BirchSaplingItem::getID() { return 310; }
 
 MelonItem::MelonItem() : BaseItem() {
     textureRow = 9;
@@ -683,7 +683,7 @@ MelonItem::MelonItem() : BaseItem() {
     name = "Melon";
 }
 
-item_t MelonItem::getID() { return 311; }
+item_id MelonItem::getID() { return 311; }
 
 MelonSeeds::MelonSeeds() : BaseItem() {
     textureRow = 12;
@@ -693,7 +693,7 @@ MelonSeeds::MelonSeeds() : BaseItem() {
     name = "Melon Seeds";
 }
 
-item_t MelonSeeds::getID() { return 312; }
+item_id MelonSeeds::getID() { return 312; }
 
 Sugar::Sugar() : BaseItem() {
     textureRow = 15;
@@ -703,17 +703,17 @@ Sugar::Sugar() : BaseItem() {
     name = "Sugar";
 }
 
-item_t Sugar::getID() { return 313; }
+item_id Sugar::getID() { return 313; }
 
 CocoaBeans::CocoaBeans() : BaseItem() {
     textureRow = 8;
     plane = 14;
-    itemType = 'Y';
+    itemType = ItemType::dye;
 
     name = "Cocoa Beans";
 }
 
-item_t CocoaBeans::getID() { return 314; }
+item_id CocoaBeans::getID() { return 314; }
 
 Cookie::Cookie() : BaseItem() {
     textureRow = 10;
@@ -723,7 +723,7 @@ Cookie::Cookie() : BaseItem() {
     name = "Cookie";
 }
 
-item_t Cookie::getID() { return 315; }
+item_id Cookie::getID() { return 315; }
 
 RawBeef::RawBeef() : BaseItem() {
     textureRow = 9;
@@ -734,7 +734,7 @@ RawBeef::RawBeef() : BaseItem() {
     name = "Raw Beef";
 }
 
-item_t RawBeef::getID() { return 316; }
+item_id RawBeef::getID() { return 316; }
 
 Steak::Steak() : BaseItem() {
     textureRow = 9;
@@ -744,17 +744,17 @@ Steak::Steak() : BaseItem() {
     name = "Steak";
 }
 
-item_t Steak::getID() { return 317; }
+item_id Steak::getID() { return 317; }
 
 LapisLazuli::LapisLazuli() : BaseItem() {
     textureRow = 7;
     plane = 14;
-    itemType = 'Y';
+    itemType = ItemType::dye;
 
     name = "Lapis Lazuli";
 }
 
-item_t LapisLazuli::getID() { return 318; }
+item_id LapisLazuli::getID() { return 318; }
 
 MilkBusket::MilkBusket() : BaseItem() {
     textureRow = 11;
@@ -765,7 +765,7 @@ MilkBusket::MilkBusket() : BaseItem() {
     stackable = false;
 }
 
-item_t MilkBusket::getID() { return 319; }
+item_id MilkBusket::getID() { return 319; }
 
 CakeItem::CakeItem() : BaseItem() {
     textureRow = 14;
@@ -776,7 +776,7 @@ CakeItem::CakeItem() : BaseItem() {
     stackable = false;
 }
 
-item_t CakeItem::getID() { return 320; }
+item_id CakeItem::getID() { return 320; }
 
 Bone::Bone() : BaseItem() {
     textureRow = 14;
@@ -786,17 +786,17 @@ Bone::Bone() : BaseItem() {
     name = "Bone";
 }
 
-item_t Bone::getID() { return 321; }
+item_id Bone::getID() { return 321; }
 
 BoneMeal::BoneMeal() : BaseItem() {
     textureRow = 4;
     plane = 15;
-    itemType = 'Y';
+    itemType = ItemType::dye;
 
     name = "Bone Meal";
 }
 
-item_t BoneMeal::getID() { return 322; }
+item_id BoneMeal::getID() { return 322; }
 
 Leather::Leather() : BaseItem() {
     textureRow = 9;
@@ -806,7 +806,7 @@ Leather::Leather() : BaseItem() {
     name = "Leather";
 }
 
-item_t Leather::getID() { return 323; }
+item_id Leather::getID() { return 323; }
 
 SampleHelmet::SampleHelmet() : BaseItem() {
     textureRow = 15;
@@ -815,7 +815,7 @@ SampleHelmet::SampleHelmet() : BaseItem() {
     stackable = false;
 }
 
-item_t SampleHelmet::getID() { return 324; }
+item_id SampleHelmet::getID() { return 324; }
 
 SampleChestplate::SampleChestplate() : BaseItem() {
     textureRow = 14;
@@ -824,7 +824,7 @@ SampleChestplate::SampleChestplate() : BaseItem() {
     stackable = false;
 }
 
-item_t SampleChestplate::getID() { return 325; }
+item_id SampleChestplate::getID() { return 325; }
 
 SampleLeggings::SampleLeggings() : BaseItem() {
     textureRow = 13;
@@ -833,7 +833,7 @@ SampleLeggings::SampleLeggings() : BaseItem() {
     stackable = false;
 }
 
-item_t SampleLeggings::getID() { return 326; }
+item_id SampleLeggings::getID() { return 326; }
 
 SampleBoots::SampleBoots() : BaseItem() {
     textureRow = 12;
@@ -842,267 +842,267 @@ SampleBoots::SampleBoots() : BaseItem() {
     stackable = false;
 }
 
-item_t SampleBoots::getID() { return 327; }
+item_id SampleBoots::getID() { return 327; }
 
 LeatherHelmet::LeatherHelmet() : BaseItem() {
     textureRow = 15;
 
     plane = 0;
-    itemType = 'H';
+    itemType = ItemType::helmet;
     durabilityPoints = 55;
     stackable = false;
 
     name = "Leather Helmet";
 }
 
-item_t LeatherHelmet::getID() { return 328; }
+item_id LeatherHelmet::getID() { return 328; }
 
 LeatherChestplate::LeatherChestplate() : BaseItem() {
     textureRow = 14;
 
     plane = 0;
-    itemType = 'C';
+    itemType = ItemType::chestplate;
     durabilityPoints = 80;
     stackable = false;
 
     name = "Leather Chestplate";
 }
 
-item_t LeatherChestplate::getID() { return 329; }
+item_id LeatherChestplate::getID() { return 329; }
 
 LeatherLeggings::LeatherLeggings() : BaseItem() {
     textureRow = 13;
 
     plane = 0;
-    itemType = 'L';
+    itemType = ItemType::leggings;
     durabilityPoints = 75;
     stackable = false;
 
     name = "Leather Leggings";
 }
 
-item_t LeatherLeggings::getID() { return 330; }
+item_id LeatherLeggings::getID() { return 330; }
 
 LeatherBoots::LeatherBoots() : BaseItem() {
     textureRow = 12;
 
     plane = 0;
-    itemType = 'B';
+    itemType = ItemType::boots;
     durabilityPoints = 65;
     stackable = false;
 
     name = "Leather Boots";
 }
 
-item_t LeatherBoots::getID() { return 331; }
+item_id LeatherBoots::getID() { return 331; }
 
 ChainmailHelmet::ChainmailHelmet() : BaseItem() {
     textureRow = 15;
 
     plane = 1;
-    itemType = 'H';
+    itemType = ItemType::helmet;
     durabilityPoints = 165;
     stackable = false;
 
     name = "Chainmail Helmet";
 }
 
-item_t ChainmailHelmet::getID() { return 332; }
+item_id ChainmailHelmet::getID() { return 332; }
 
 ChainmailChestplate::ChainmailChestplate() : BaseItem() {
     textureRow = 14;
 
     plane = 1;
-    itemType = 'C';
+    itemType = ItemType::chestplate;
     durabilityPoints = 240;
     stackable = false;
 
     name = "Chainmail Chestplate";
 }
 
-item_t ChainmailChestplate::getID() { return 333; }
+item_id ChainmailChestplate::getID() { return 333; }
 
 ChainmailLeggings::ChainmailLeggings() : BaseItem() {
     textureRow = 13;
 
     plane = 1;
-    itemType = 'L';
+    itemType = ItemType::leggings;
     durabilityPoints = 225;
     stackable = false;
 
     name = "Chainmail Leggings";
 }
 
-item_t ChainmailLeggings::getID() { return 334; }
+item_id ChainmailLeggings::getID() { return 334; }
 
 ChainmailBoots::ChainmailBoots() : BaseItem() {
     textureRow = 12;
 
     plane = 1;
-    itemType = 'B';
+    itemType = ItemType::boots;
     durabilityPoints = 195;
     stackable = false;
 
     name = "Chainmail Boots";
 }
 
-item_t ChainmailBoots::getID() { return 335; }
+item_id ChainmailBoots::getID() { return 335; }
 
 IronHelmet::IronHelmet() : BaseItem() {
     textureRow = 15;
 
     plane = 2;
-    itemType = 'H';
+    itemType = ItemType::helmet;
     durabilityPoints = 165;
     stackable = false;
 
     name = "Iron Helmet";
 }
 
-item_t IronHelmet::getID() { return 336; }
+item_id IronHelmet::getID() { return 336; }
 
 IronChestplate::IronChestplate() : BaseItem() {
     textureRow = 14;
 
     plane = 2;
-    itemType = 'C';
+    itemType = ItemType::chestplate;
     durabilityPoints = 240;
     stackable = false;
 
     name = "Iron Chestplate";
 }
 
-item_t IronChestplate::getID() { return 337; }
+item_id IronChestplate::getID() { return 337; }
 
 IronLeggings::IronLeggings() : BaseItem() {
     textureRow = 13;
 
     plane = 2;
-    itemType = 'L';
+    itemType = ItemType::leggings;
     durabilityPoints = 225;
     stackable = false;
 
     name = "Iron Leggings";
 }
 
-item_t IronLeggings::getID() { return 338; }
+item_id IronLeggings::getID() { return 338; }
 
 IronBoots::IronBoots() : BaseItem() {
     textureRow = 12;
 
     plane = 2;
-    itemType = 'B';
+    itemType = ItemType::boots;
     durabilityPoints = 195;
     stackable = false;
 
     name = "Iron Boots";
 }
 
-item_t IronBoots::getID() { return 339; }
+item_id IronBoots::getID() { return 339; }
 
 DiamondHelmet::DiamondHelmet() : BaseItem() {
     textureRow = 15;
 
     plane = 3;
-    itemType = 'H';
+    itemType = ItemType::helmet;
     durabilityPoints = 363;
     stackable = false;
 
     name = "Diamond Helmet";
 }
 
-item_t DiamondHelmet::getID() { return 340; }
+item_id DiamondHelmet::getID() { return 340; }
 
 DiamondChestplate::DiamondChestplate() : BaseItem() {
     textureRow = 14;
 
     plane = 3;
-    itemType = 'C';
+    itemType = ItemType::chestplate;
     durabilityPoints = 528;
     stackable = false;
 
     name = "Diamond Chestplate";
 }
 
-item_t DiamondChestplate::getID() { return 341; }
+item_id DiamondChestplate::getID() { return 341; }
 
 DiamondLeggings::DiamondLeggings() : BaseItem() {
     textureRow = 13;
 
     plane = 3;
-    itemType = 'L';
+    itemType = ItemType::leggings;
     durabilityPoints = 495;
     stackable = false;
 
     name = "Diamond Leggings";
 }
 
-item_t DiamondLeggings::getID() { return 342; }
+item_id DiamondLeggings::getID() { return 342; }
 
 DiamondBoots::DiamondBoots() : BaseItem() {
     textureRow = 12;
 
     plane = 3;
-    itemType = 'B';
+    itemType = ItemType::boots;
     durabilityPoints = 429;
     stackable = false;
 
     name = "Diamond Boots";
 }
 
-item_t DiamondBoots::getID() { return 343; }
+item_id DiamondBoots::getID() { return 343; }
 
 GoldenHelmet::GoldenHelmet() : BaseItem() {
     textureRow = 15;
 
     plane = 4;
-    itemType = 'H';
+    itemType = ItemType::helmet;
     durabilityPoints = 77;
     stackable = false;
 
     name = "Golden Helmet";
 }
 
-item_t GoldenHelmet::getID() { return 344; }
+item_id GoldenHelmet::getID() { return 344; }
 
 GoldenChestplate::GoldenChestplate() : BaseItem() {
     textureRow = 14;
 
     plane = 4;
-    itemType = 'C';
+    itemType = ItemType::chestplate;
     durabilityPoints = 112;
     stackable = false;
 
     name = "Golden Chestplate";
 }
 
-item_t GoldenChestplate::getID() { return 345; }
+item_id GoldenChestplate::getID() { return 345; }
 
 GoldenLeggings::GoldenLeggings() : BaseItem() {
     textureRow = 13;
 
     plane = 4;
-    itemType = 'L';
+    itemType = ItemType::leggings;
     durabilityPoints = 105;
     stackable = false;
 
     name = "Golden Leggings";
 }
 
-item_t GoldenLeggings::getID() { return 346; }
+item_id GoldenLeggings::getID() { return 346; }
 
 GoldenBoots::GoldenBoots() : BaseItem() {
     textureRow = 12;
 
     plane = 4;
-    itemType = 'B';
+    itemType = ItemType::boots;
     durabilityPoints = 91;
     stackable = false;
 
     name = "Golden Boots";
 }
 
-item_t GoldenBoots::getID() { return 347; }
+item_id GoldenBoots::getID() { return 347; }
 
 RottenFlesh::RottenFlesh() : BaseItem() {
     textureRow = 10;
@@ -1112,7 +1112,7 @@ RottenFlesh::RottenFlesh() : BaseItem() {
     name = "Rotten Flesh";
 }
 
-item_t RottenFlesh::getID() { return 348; }
+item_id RottenFlesh::getID() { return 348; }
 
 GlassPanelItem::GlassPanelItem() : BaseItem() {
     textureRow = 12;
@@ -1123,7 +1123,7 @@ GlassPanelItem::GlassPanelItem() : BaseItem() {
     name = "Glass Panel";
 }
 
-item_t GlassPanelItem::getID() { return 349; }
+item_id GlassPanelItem::getID() { return 349; }
 
 IronBarsItem::IronBarsItem() : BaseItem() {
     textureRow = 10;
@@ -1134,7 +1134,7 @@ IronBarsItem::IronBarsItem() : BaseItem() {
     name = "Iron Bars";
 }
 
-item_t IronBarsItem::getID() { return 350; }
+item_id IronBarsItem::getID() { return 350; }
 
 Flint::Flint() : BaseItem() {
     textureRow = 15;
@@ -1143,7 +1143,7 @@ Flint::Flint() : BaseItem() {
     name = "Flint";
 }
 
-item_t Flint::getID() { return 351; }
+item_id Flint::getID() { return 351; }
 
 Gunpowder::Gunpowder() : BaseItem() {
     textureRow = 13;
@@ -1152,7 +1152,7 @@ Gunpowder::Gunpowder() : BaseItem() {
     name = "Gunpowder";
 }
 
-item_t Gunpowder::getID() { return 352; }
+item_id Gunpowder::getID() { return 352; }
 
 Redstone::Redstone() : BaseItem() {
     textureRow = 12;
@@ -1161,7 +1161,7 @@ Redstone::Redstone() : BaseItem() {
     name = "Redstone";
 }
 
-item_t Redstone::getID() { return 353; }
+item_id Redstone::getID() { return 353; }
 
 Clock::Clock() : BaseItem() {
     textureRow = 11;
@@ -1171,7 +1171,7 @@ Clock::Clock() : BaseItem() {
     name = "Clock";
 }
 
-item_t Clock::getID() { return 354; }
+item_id Clock::getID() { return 354; }
 
 Compass::Compass() : BaseItem() {
     textureRow = 12;
@@ -1181,7 +1181,7 @@ Compass::Compass() : BaseItem() {
     name = "Compass";
 }
 
-item_t Compass::getID() { return 355; }
+item_id Compass::getID() { return 355; }
 
 Saddle::Saddle() : BaseItem() {
     textureRow = 9;
@@ -1191,7 +1191,7 @@ Saddle::Saddle() : BaseItem() {
     name = "Saddle";
 }
 
-item_t Saddle::getID() { return 356; }
+item_id Saddle::getID() { return 356; }
 
 Sign::Sign() : BaseItem() {
     textureRow = 13;
@@ -1201,7 +1201,7 @@ Sign::Sign() : BaseItem() {
     name = "Sign";
 }
 
-item_t Sign::getID() { return 357; }
+item_id Sign::getID() { return 357; }
 
 ItemFrameItem::ItemFrameItem() : BaseItem() {
     textureRow = 3;
@@ -1210,7 +1210,7 @@ ItemFrameItem::ItemFrameItem() : BaseItem() {
     name = "Item Frame";
 }
 
-item_t ItemFrameItem::getID() { return 358; }
+item_id ItemFrameItem::getID() { return 358; }
 
 FlowerPotItem::FlowerPotItem() : BaseItem() {
     textureRow = 3;
@@ -1219,7 +1219,7 @@ FlowerPotItem::FlowerPotItem() : BaseItem() {
     name = "Flower Pot";
 }
 
-item_t FlowerPotItem::getID() { return 359; }
+item_id FlowerPotItem::getID() { return 359; }
 
 PaintningItem::PaintningItem() : BaseItem() {
     textureRow = 14;
@@ -1228,7 +1228,7 @@ PaintningItem::PaintningItem() : BaseItem() {
     name = "Paintning";
 }
 
-item_t PaintningItem::getID() { return 360; }
+item_id PaintningItem::getID() { return 360; }
 
 BedItem::BedItem() : BaseItem() {
     textureRow = 13;
@@ -1238,7 +1238,7 @@ BedItem::BedItem() : BaseItem() {
     name = "Bed";
 }
 
-item_t BedItem::getID() { return 361; }
+item_id BedItem::getID() { return 361; }
 
 
 Disk1::Disk1() : BaseItem() {
@@ -1249,7 +1249,7 @@ Disk1::Disk1() : BaseItem() {
     name = "Music Disk";
 }
 
-item_t Disk1::getID() { return 362; }
+item_id Disk1::getID() { return 362; }
 
 Disk2::Disk2() : BaseItem() {
     textureRow = 0;
@@ -1259,7 +1259,7 @@ Disk2::Disk2() : BaseItem() {
     name = "Music Disk";
 }
 
-item_t Disk2::getID() { return 363; }
+item_id Disk2::getID() { return 363; }
 
 Disk3::Disk3() : BaseItem() {
     textureRow = 0;
@@ -1269,128 +1269,128 @@ Disk3::Disk3() : BaseItem() {
     name = "Music Disk";
 }
 
-item_t Disk3::getID() { return 364; }
+item_id Disk3::getID() { return 364; }
 
 
 LightGrayDye::LightGrayDye() : BaseItem() {
     textureRow = 4;
     plane = 14;
-    itemType = 'Y';
+    itemType = ItemType::dye;
 
     name = "Light Gray Dye";
 }
 
-item_t LightGrayDye::getID() { return 365; }
+item_id LightGrayDye::getID() { return 365; }
 
 GrayDye::GrayDye() : BaseItem() {
     textureRow = 11;
     plane = 15;
-    itemType = 'Y';
+    itemType = ItemType::dye;
 
     name = "Gray Dye";
 }
 
-item_t GrayDye::getID() { return 366; }
+item_id GrayDye::getID() { return 366; }
 
 InkSac::InkSac() : BaseItem() {
     textureRow = 11;
     plane = 14;
-    itemType = 'Y';
+    itemType = ItemType::dye;
 
     name = "Ink Sac";
 }
 
-item_t InkSac::getID() { return 367; }
+item_id InkSac::getID() { return 367; }
 
 PinkDye::PinkDye() : BaseItem() {
     textureRow = 10;
     plane = 15;
-    itemType = 'Y';
+    itemType = ItemType::dye;
 
     name = "Pink Dye";
 }
 
-item_t PinkDye::getID() { return 368; }
+item_id PinkDye::getID() { return 368; }
 
 RoseRed::RoseRed() : BaseItem() {
     textureRow = 10;
     plane = 14;
-    itemType = 'Y';
+    itemType = ItemType::dye;
 
     name = "Rose Red";
 }
 
-item_t RoseRed::getID() { return 369; }
+item_id RoseRed::getID() { return 369; }
 
 OrangeDye::OrangeDye() : BaseItem() {
     textureRow = 5;
     plane = 15;
-    itemType = 'Y';
+    itemType = ItemType::dye;
 
     name = "Orange Dye";
 }
 
-item_t OrangeDye::getID() { return 370; }
+item_id OrangeDye::getID() { return 370; }
 
 DandelionYellow::DandelionYellow() : BaseItem() {
     textureRow = 8;
     plane = 15;
-    itemType = 'Y';
+    itemType = ItemType::dye;
 
     name = "Dandelion Yellow";
 }
 
-item_t DandelionYellow::getID() { return 371; }
+item_id DandelionYellow::getID() { return 371; }
 
 LimeDye::LimeDye() : BaseItem() {
     textureRow = 9;
     plane = 15;
-    itemType = 'Y';
+    itemType = ItemType::dye;
 
     name = "Lime Dye";
 }
 
-item_t LimeDye::getID() { return 372; }
+item_id LimeDye::getID() { return 372; }
 
 CactusGreen::CactusGreen() : BaseItem() {
     textureRow = 9;
     plane = 14;
-    itemType = 'Y';
+    itemType = ItemType::dye;
 
     name = "Cactus Green";
 }
 
-item_t CactusGreen::getID() { return 373; }
+item_id CactusGreen::getID() { return 373; }
 
 LightBlueDye::LightBlueDye() : BaseItem() {
     textureRow = 7;
     plane = 15;
-    itemType = 'Y';
+    itemType = ItemType::dye;
 
     name = "Light Blue Dye";
 }
 
-item_t LightBlueDye::getID() { return 374; }
+item_id LightBlueDye::getID() { return 374; }
 
 PurpleDye::PurpleDye() : BaseItem() {
     textureRow = 6;
     plane = 14;
-    itemType = 'Y';
+    itemType = ItemType::dye;
 
     name = "Purple Dye";
 }
 
-item_t PurpleDye::getID() { return 375; }
+item_id PurpleDye::getID() { return 375; }
 
 MagnetaDye::MagnetaDye() : BaseItem() {
     textureRow = 6;
     plane = 15;
-    itemType = 'Y';
+    itemType = ItemType::dye;
 
     name = "Magneta Dye";
 }
 
-item_t MagnetaDye::getID() { return 376; }
+item_id MagnetaDye::getID() { return 376; }
 
 
 PumpkinSeeds::PumpkinSeeds() : BaseItem() {
@@ -1400,7 +1400,7 @@ PumpkinSeeds::PumpkinSeeds() : BaseItem() {
     name = "Pumpkin Seeds";
 }
 
-item_t PumpkinSeeds::getID() { return 377; }
+item_id PumpkinSeeds::getID() { return 377; }
 
 FlintAndSteel::FlintAndSteel() : BaseItem() {
     textureRow = 15;
@@ -1412,7 +1412,7 @@ FlintAndSteel::FlintAndSteel() : BaseItem() {
     name = "Flint and Steel";
 }
 
-item_t FlintAndSteel::getID() { return 378; }
+item_id FlintAndSteel::getID() { return 378; }
 
 Potato::Potato() : BaseItem() {
     textureRow = 8;
@@ -1422,7 +1422,7 @@ Potato::Potato() : BaseItem() {
     name = "Potato";
 }
 
-item_t Potato::getID() { return 379; }
+item_id Potato::getID() { return 379; }
 
 BakedPotato::BakedPotato() : BaseItem() {
     textureRow = 8;
@@ -1431,7 +1431,7 @@ BakedPotato::BakedPotato() : BaseItem() {
     name = "Baked Potato";
 }
 
-item_t BakedPotato::getID() { return 380; }
+item_id BakedPotato::getID() { return 380; }
 
 PoisonedPotato::PoisonedPotato() : BaseItem() {
     textureRow = 7;
@@ -1440,7 +1440,7 @@ PoisonedPotato::PoisonedPotato() : BaseItem() {
     name = "Poisioned Potato";
 }
 
-item_t PoisonedPotato::getID() { return 381; }
+item_id PoisonedPotato::getID() { return 381; }
 
 Carrot::Carrot() : BaseItem() {
     textureRow = 8;
@@ -1449,7 +1449,7 @@ Carrot::Carrot() : BaseItem() {
     name = "Carrot";
 }
 
-item_t Carrot::getID() { return 382; }
+item_id Carrot::getID() { return 382; }
 
 Disk4::Disk4() : BaseItem() {
     textureRow = 0;
@@ -1459,7 +1459,7 @@ Disk4::Disk4() : BaseItem() {
     name = "Music Disk";
 }
 
-item_t Disk4::getID() { return 383; }
+item_id Disk4::getID() { return 383; }
 
 Disk5::Disk5() : BaseItem() {
     textureRow = 0;
@@ -1469,7 +1469,7 @@ Disk5::Disk5() : BaseItem() {
     name = "Music Disk";
 }
 
-item_t Disk5::getID() { return 384; }
+item_id Disk5::getID() { return 384; }
 
 Disk6::Disk6() : BaseItem() {
     textureRow = 0;
@@ -1479,7 +1479,7 @@ Disk6::Disk6() : BaseItem() {
     name = "Music Disk";
 }
 
-item_t Disk6::getID() { return 385; }
+item_id Disk6::getID() { return 385; }
 
 Disk7::Disk7() : BaseItem() {
     textureRow = 0;
@@ -1489,7 +1489,7 @@ Disk7::Disk7() : BaseItem() {
     name = "Music Disk";
 }
 
-item_t Disk7::getID() { return 386; }
+item_id Disk7::getID() { return 386; }
 
 Disk8::Disk8() : BaseItem() {
     textureRow = 0;
@@ -1499,7 +1499,7 @@ Disk8::Disk8() : BaseItem() {
     name = "Music Disk";
 }
 
-item_t Disk8::getID() { return 387; }
+item_id Disk8::getID() { return 387; }
 
 Disk9::Disk9() : BaseItem() {
     textureRow = 0;
@@ -1509,7 +1509,7 @@ Disk9::Disk9() : BaseItem() {
     name = "Music Disk";
 }
 
-item_t Disk9::getID() { return 388; }
+item_id Disk9::getID() { return 388; }
 
 Disk10::Disk10() : BaseItem() {
     textureRow = 0;
@@ -1519,7 +1519,7 @@ Disk10::Disk10() : BaseItem() {
     name = "Music Disk";
 }
 
-item_t Disk10::getID() { return 389; }
+item_id Disk10::getID() { return 389; }
 
 Disk11::Disk11() : BaseItem() {
     textureRow = 0;
@@ -1529,7 +1529,7 @@ Disk11::Disk11() : BaseItem() {
     name = "Music Disk";
 }
 
-item_t Disk11::getID() { return 390; }
+item_id Disk11::getID() { return 390; }
 
 Disk12::Disk12() : BaseItem() {
     textureRow = 0;
@@ -1539,7 +1539,7 @@ Disk12::Disk12() : BaseItem() {
     name = "Music Disk";
 }
 
-item_t Disk12::getID() { return 391; }
+item_id Disk12::getID() { return 391; }
 
 Charcoal::Charcoal() : BaseItem() {
     textureRow = 13;
@@ -1549,4 +1549,4 @@ Charcoal::Charcoal() : BaseItem() {
     name = "Charcoal";
 }
 
-item_t Charcoal::getID() { return 392; }
+item_id Charcoal::getID() { return 392; }

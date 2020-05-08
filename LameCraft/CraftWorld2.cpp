@@ -15088,19 +15088,19 @@ void CraftWorld::drawArmor(int i, float light)
     sceGuColor(GU_COLOR(light,light,light,1));
     switch(itemTypes[i-250].itemType)
     {
-    case 'H':
+    case ItemType::head:
         points = 30;
         sceGumDrawArray(GU_TRIANGLES, GU_TEXTURE_32BITF | GU_VERTEX_32BITF | GU_TRANSFORM_3D, points, 0, helmetVertices);
     break;
-    case 'C':
+    case ItemType::chestplate:
         points = 24;
         sceGumDrawArray(GU_TRIANGLES, GU_TEXTURE_32BITF | GU_VERTEX_32BITF | GU_TRANSFORM_3D, points, 0, chestplateVertices);
     break;
-    case 'L':
+    case ItemType::leggings:
         points = 24;
         sceGumDrawArray(GU_TRIANGLES, GU_TEXTURE_32BITF | GU_VERTEX_32BITF | GU_TRANSFORM_3D, points, 0, leggingVertices);
     break;
-    case 'B':
+    case ItemType::boots:
         points = 30;
         sceGumDrawArray(GU_TRIANGLES, GU_TEXTURE_32BITF | GU_VERTEX_32BITF | GU_TRANSFORM_3D, points, 0, bootVertices);
     break;

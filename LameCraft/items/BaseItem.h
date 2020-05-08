@@ -4,10 +4,11 @@
 #include <Aurora/Graphics/Vertex.h>
 #include <stdlib.h>
 #include <string>
+#include "ItemType.h"
 
 using namespace Aurora::Graphics;
 
-typedef unsigned short item_t;
+typedef const unsigned short item_id;
 
 class BaseItem
 {
@@ -25,7 +26,7 @@ public:
 	bool terrainTexture;
     bool stackable;
 
-	char itemType; // "D" - default, "T" - tool, "F" - food, "H" - helmet, "C" - chestplate, "L" - leggings, "B" - boots "Y" - dye
+	item_t itemType; // "D" - default, "T" - tool, "F" - food, "H" - helmet, "C" - chestplate, "L" - leggings, "B" - boots "Y" - dye
 
 	TexturesPSPVertex *vertices;
 	TexturesPSPVertex *addVertices;
@@ -36,7 +37,7 @@ public:
 	BaseItem();
 	virtual ~BaseItem();
 
-	static item_t getBaseID();
+	static item_id getBaseID();
     std::string name;
 };
 

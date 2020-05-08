@@ -1,6 +1,5 @@
 #include "BaseItem.h"
 
-
 BaseItem::BaseItem()
 {
 	textureRow = 0;
@@ -11,7 +10,7 @@ BaseItem::BaseItem()
 
 	furnItem = -1;
 	durabilityPoints = -1;
-	itemType = 'D';
+	itemType = ItemType::normal;
 
 	vertices = NULL;
 	addVertices = NULL;
@@ -33,4 +32,4 @@ BaseItem::~BaseItem()
 	}
 }
 
-item_t BaseItem::getBaseID(){	return 0;}
+item_id BaseItem::getBaseID(){	return 0;}
