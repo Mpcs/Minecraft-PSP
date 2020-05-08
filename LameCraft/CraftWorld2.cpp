@@ -15088,7 +15088,7 @@ void CraftWorld::drawArmor(int i, float light)
     sceGuColor(GU_COLOR(light,light,light,1));
     switch(itemTypes[i-250].itemType)
     {
-    case ItemType::head:
+    case ItemType::helmet:
         points = 30;
         sceGumDrawArray(GU_TRIANGLES, GU_TEXTURE_32BITF | GU_VERTEX_32BITF | GU_TRANSFORM_3D, points, 0, helmetVertices);
     break;
@@ -15104,6 +15104,8 @@ void CraftWorld::drawArmor(int i, float light)
         points = 30;
         sceGumDrawArray(GU_TRIANGLES, GU_TEXTURE_32BITF | GU_VERTEX_32BITF | GU_TRANSFORM_3D, points, 0, bootVertices);
     break;
+        default:
+            break;
     }
 
     sceGuDisable(GU_ALPHA_TEST);
@@ -15147,13 +15149,15 @@ void CraftWorld::drawShoulder(int chestplateId, float light)
     sceGuColor(GU_COLOR(light,light,light,1));
     switch(itemTypes[chestplateId-250].itemType)
     {
-    case 'C':
+    case ItemType::chestplate:
         points = 30;
         DrawSetCulling(false);
         sceGumDrawArray(GU_TRIANGLES, GU_TEXTURE_32BITF | GU_VERTEX_32BITF | GU_TRANSFORM_3D, points, 0, shoulderVertices);
         DrawSetCulling(true);
         sceGumDrawArray(GU_TRIANGLES, GU_TEXTURE_32BITF | GU_VERTEX_32BITF | GU_TRANSFORM_3D, points, 0, shoulderVertices);
     break;
+        default:
+            break;
     }
 
     sceGuDisable(GU_ALPHA_TEST);
@@ -15198,11 +15202,13 @@ void CraftWorld::drawBelly(int leggingsId, float light)
     sceGuColor(GU_COLOR(light,light,light,1));
     switch(itemTypes[leggingsId-250].itemType)
     {
-    case 'L':
+    case ItemType::leggings:
         points = 24;
         DrawSetCulling(true);
         sceGumDrawArray(GU_TRIANGLES, GU_TEXTURE_32BITF | GU_VERTEX_32BITF | GU_TRANSFORM_3D, points, 0, bellyVertices);
     break;
+        default:
+            break;
     }
 
     sceGuDisable(GU_ALPHA_TEST);
