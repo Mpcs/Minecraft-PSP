@@ -594,7 +594,7 @@ void StatePlay::Enter() {
 }
 
 void StatePlay::CleanUp() {
-    if (mSnowBalls.empty() == false) {
+    if (!mSnowBalls.empty()) {
         for (unsigned int i = 0; i < mSnowBalls.size(); i++) {
             delete mSnowBalls[i];
         }
@@ -3489,7 +3489,7 @@ void StatePlay::HandleEvents(StateManager *sManager) {
     //update input
     mSystemMgr->InputUpdate();
 
-    if (mWorld->HP > 0 && sleepTime <= 0.0f) {
+    if (mWorld->health > 0 && sleepTime <= 0.0f) {
         mWorld->playerGrowth = 1.65f;
         if (menuState == 0)//game state
         {
@@ -3708,8 +3708,8 @@ void StatePlay::HandleEvents(StateManager *sManager) {
                                 fppCam->MovePhysicNoY(cameraMoveSpeed * slowdown2);
                         }
 
-                        if (mWorld->HG > 0) {
-                            mWorld->HG -= dt / 75.0f;
+                        if (mWorld->hunger > 0) {
+                            mWorld->hunger -= dt / 75.0f;
                         }
                     }
 
@@ -3760,8 +3760,8 @@ void StatePlay::HandleEvents(StateManager *sManager) {
                                 fppCam->MovePhysicNoY(-cameraMoveSpeed * slowdown2);
                         }
 
-                        if (mWorld->HG > 0) {
-                            mWorld->HG -= dt / 75.0f;
+                        if (mWorld->hunger > 0) {
+                            mWorld->hunger -= dt / 75.0f;
                         }
                     }
 
@@ -3782,8 +3782,8 @@ void StatePlay::HandleEvents(StateManager *sManager) {
                             moving = true;
                         }
 
-                        if (mWorld->HG > 0) {
-                            mWorld->HG -= dt / 75.0f;
+                        if (mWorld->hunger > 0) {
+                            mWorld->hunger -= dt / 75.0f;
                         }
                     }
 
@@ -3804,8 +3804,8 @@ void StatePlay::HandleEvents(StateManager *sManager) {
                             moving = true;
                         }
 
-                        if (mWorld->HG > 0) {
-                            mWorld->HG -= dt / 75.0f;
+                        if (mWorld->hunger > 0) {
+                            mWorld->hunger -= dt / 75.0f;
                         }
                     }
 
@@ -3828,8 +3828,8 @@ void StatePlay::HandleEvents(StateManager *sManager) {
                         {
                             playerVelocity.y = 1.2 * JUMPVELOCITY;
                             walkingOnGround = false;
-                            if (mWorld->HG > 0.0001) {
-                                mWorld->HG -= 0.00001;
+                            if (mWorld->hunger > 0.0001) {
+                                mWorld->hunger -= 0.00001;
                             }
                         }
                         if (walkingOnGround == true) {
@@ -5043,27 +5043,27 @@ void StatePlay::HandleEvents(StateManager *sManager) {
                                 }
                             }
 
-                            if (ceilf(mWorld->HG) < 20.0f && selectedBlock != Soil::getID() &&
+                            if (ceilf(mWorld->hunger) < 20.0f && selectedBlock != Soil::getID() &&
                                 selectedBlock != WateredSoil::getID()) {
                                 bool foodEaten = false;
 
                                 if (mWorld->invId[27 + barPosition] == 288) ///BREAD
                                 {
                                     foodEaten = true;
-                                    mWorld->HG += 5;
+                                    mWorld->hunger += 5;
                                 }
 
                                 if (mWorld->invId[27 + barPosition] == 315) ///COOKIE
                                 {
                                     foodEaten = true;
-                                    mWorld->HG += 1;
-                                    mWorld->HP += 1;
+                                    mWorld->hunger += 1;
+                                    mWorld->health += 1;
                                 }
 
                                 if (mWorld->invId[27 + barPosition] == RottenFlesh::getID()) ///ROTTEN FLESH
                                 {
                                     foodEaten = true;
-                                    mWorld->HG += 1;
+                                    mWorld->hunger += 1;
 
                                     if (rand() % 100 < 45) {
                                         HurtPlayer(1);
@@ -5073,13 +5073,13 @@ void StatePlay::HandleEvents(StateManager *sManager) {
                                 if (mWorld->invId[27 + barPosition] == Potato::getID()) ///POTATO
                                 {
                                     foodEaten = true;
-                                    mWorld->HG += 1;
+                                    mWorld->hunger += 1;
                                 }
 
                                 if (mWorld->invId[27 + barPosition] == PoisonedPotato::getID()) ///POSIONED POTATO
                                 {
                                     foodEaten = true;
-                                    mWorld->HG += 1;
+                                    mWorld->hunger += 1;
 
                                     HurtPlayer(4);
                                 }
@@ -5087,44 +5087,44 @@ void StatePlay::HandleEvents(StateManager *sManager) {
                                 if (mWorld->invId[27 + barPosition] == BakedPotato::getID()) ///BAKED POTATO
                                 {
                                     foodEaten = true;
-                                    mWorld->HG += 5;
+                                    mWorld->hunger += 5;
                                 }
 
                                 if (mWorld->invId[27 + barPosition] == Carrot::getID()) ///CARROT
                                 {
                                     foodEaten = true;
-                                    mWorld->HG += 3;
+                                    mWorld->hunger += 3;
                                 }
 
                                 if (mWorld->invId[27 + barPosition] == 311) ///MELON
                                 {
                                     foodEaten = true;
-                                    mWorld->HG += 2;
+                                    mWorld->hunger += 2;
                                 }
 
                                 if (mWorld->invId[27 + barPosition] == 317) ///STEAK
                                 {
                                     foodEaten = true;
-                                    mWorld->HG += 8;
+                                    mWorld->hunger += 8;
                                 }
 
                                 if (mWorld->invId[27 + barPosition] == 284) ///APPLE
                                 {
                                     foodEaten = true;
-                                    mWorld->HG += 4;
+                                    mWorld->hunger += 4;
                                 }
 
                                 if (mWorld->invId[27 + barPosition] == 285) ///GOLDEN APPLE
                                 {
                                     foodEaten = true;
-                                    mWorld->HG = 20;
-                                    mWorld->HP = 20;
+                                    mWorld->hunger = 20;
+                                    mWorld->health = 20;
                                 }
 
                                 if (mWorld->invId[27 + barPosition] == 303) ///MOOSHROOM BOWL
                                 {
                                     foodEaten = true;
-                                    mWorld->HG += 6;
+                                    mWorld->hunger += 6;
                                 }
 
                                 if (foodEaten) {
@@ -5151,8 +5151,8 @@ void StatePlay::HandleEvents(StateManager *sManager) {
                                         }
                                     }
 
-                                    if (mWorld->HG >= 20) {
-                                        mWorld->HG = 19.999f;
+                                    if (mWorld->hunger >= 20) {
+                                        mWorld->hunger = 19.999f;
                                     }
 
                                     if (mWorld->invId[27 + barPosition] == MooshroomBowl::getID()) {
@@ -5824,7 +5824,7 @@ void StatePlay::HandleEvents(StateManager *sManager) {
                                                                                                                (mWorld->invId[
                                                                                                                         27 +
                                                                                                                         barPosition] -
-                                                                                                                294); //very difficult expression >:
+                                                                                                                294); //very difficulty expression >:
                                                         fppCam->needUpdate = true;
 
                                                         mWorld->invAm[27 + barPosition] -= 1;
@@ -5850,7 +5850,7 @@ void StatePlay::HandleEvents(StateManager *sManager) {
                                                                                                                (mWorld->invId[
                                                                                                                         27 +
                                                                                                                         barPosition] -
-                                                                                                                309); //very difficult expression >:
+                                                                                                                309); //very difficulty expression >:
                                                         fppCam->needUpdate = true;
 
                                                         mWorld->invAm[27 + barPosition] -= 1;
@@ -6227,26 +6227,26 @@ void StatePlay::HandleEvents(StateManager *sManager) {
                         }
                     }
 
-                    if (ceilf(mWorld->HG) < 20.0f) {
+                    if (ceilf(mWorld->hunger) < 20.0f) {
                         bool foodEaten = false;
 
                         if (mWorld->invId[27 + barPosition] == 288) ///BREAD
                         {
                             foodEaten = true;
-                            mWorld->HG += 5;
+                            mWorld->hunger += 5;
                         }
 
                         if (mWorld->invId[27 + barPosition] == 315) ///COOKIE
                         {
                             foodEaten = true;
-                            mWorld->HG += 1;
-                            mWorld->HP += 1;
+                            mWorld->hunger += 1;
+                            mWorld->health += 1;
                         }
 
                         if (mWorld->invId[27 + barPosition] == RottenFlesh::getID()) ///ROTTEN FLESH
                         {
                             foodEaten = true;
-                            mWorld->HG += 1;
+                            mWorld->hunger += 1;
 
                             if (rand() % 100 < 45) {
                                 HurtPlayer(1);
@@ -6256,13 +6256,13 @@ void StatePlay::HandleEvents(StateManager *sManager) {
                         if (mWorld->invId[27 + barPosition] == Potato::getID()) ///POTATO
                         {
                             foodEaten = true;
-                            mWorld->HG += 1;
+                            mWorld->hunger += 1;
                         }
 
                         if (mWorld->invId[27 + barPosition] == PoisonedPotato::getID()) ///POSIONED POTATO
                         {
                             foodEaten = true;
-                            mWorld->HG += 1;
+                            mWorld->hunger += 1;
 
                             HurtPlayer(4);
                         }
@@ -6270,44 +6270,44 @@ void StatePlay::HandleEvents(StateManager *sManager) {
                         if (mWorld->invId[27 + barPosition] == BakedPotato::getID()) ///BAKED POTATO
                         {
                             foodEaten = true;
-                            mWorld->HG += 5;
+                            mWorld->hunger += 5;
                         }
 
                         if (mWorld->invId[27 + barPosition] == Carrot::getID()) ///CARROT
                         {
                             foodEaten = true;
-                            mWorld->HG += 3;
+                            mWorld->hunger += 3;
                         }
 
                         if (mWorld->invId[27 + barPosition] == 311) ///MELON
                         {
                             foodEaten = true;
-                            mWorld->HG += 2;
+                            mWorld->hunger += 2;
                         }
 
                         if (mWorld->invId[27 + barPosition] == 317) ///STEAK
                         {
                             foodEaten = true;
-                            mWorld->HG += 8;
+                            mWorld->hunger += 8;
                         }
 
                         if (mWorld->invId[27 + barPosition] == 284) ///APPLE
                         {
                             foodEaten = true;
-                            mWorld->HG += 4;
+                            mWorld->hunger += 4;
                         }
 
                         if (mWorld->invId[27 + barPosition] == 285) ///GOLDEN APPLE
                         {
                             foodEaten = true;
-                            mWorld->HG = 20;
-                            mWorld->HP = 20;
+                            mWorld->hunger = 20;
+                            mWorld->health = 20;
                         }
 
                         if (mWorld->invId[27 + barPosition] == 303) ///MOOSHROOM BOWL
                         {
                             foodEaten = true;
-                            mWorld->HG += 6;
+                            mWorld->hunger += 6;
                         }
 
                         if (foodEaten) {
@@ -6333,8 +6333,8 @@ void StatePlay::HandleEvents(StateManager *sManager) {
                                 }
                             }
 
-                            if (mWorld->HG >= 20) {
-                                mWorld->HG = 19.999f;
+                            if (mWorld->hunger >= 20) {
+                                mWorld->hunger = 19.999f;
                             }
 
                             if (mWorld->invId[27 + barPosition] == MooshroomBowl::getID()) {
@@ -7248,8 +7248,8 @@ void StatePlay::HandleEvents(StateManager *sManager) {
                                 }
                             }
 
-                            if (mWorld->HG > 0.01) {
-                                mWorld->HG -= (1.0f) / 64.0f;
+                            if (mWorld->hunger > 0.01) {
+                                mWorld->hunger -= (1.0f) / 64.0f;
                             }
 
                             fppCam->needUpdate = true;
@@ -8319,11 +8319,11 @@ void StatePlay::HandleEvents(StateManager *sManager) {
                         }
                     }
                     if (optionsMenuPos == 9) {
-                        mWorld->mainOptions.difficult += 1;
+                        mWorld->mainOptions.difficulty += 1;
                         mSoundMgr->PlayMenuSound();
 
-                        if (mWorld->mainOptions.difficult > 3) {
-                            mWorld->mainOptions.difficult = 3;
+                        if (mWorld->mainOptions.difficulty > 3) {
+                            mWorld->mainOptions.difficulty = 3;
                         }
                     }
                 }
@@ -8360,18 +8360,18 @@ void StatePlay::HandleEvents(StateManager *sManager) {
                         }
                     }
                     if (optionsMenuPos == 9) {
-                        mWorld->mainOptions.difficult -= 1;
+                        mWorld->mainOptions.difficulty -= 1;
                         mSoundMgr->PlayMenuSound();
 
-                        if (mWorld->mainOptions.difficult < 0) {
-                            mWorld->mainOptions.difficult = 0;
+                        if (mWorld->mainOptions.difficulty < 0) {
+                            mWorld->mainOptions.difficulty = 0;
                         }
                     }
                 }
 
                 //back
                 if (mSystemMgr->KeyPressed(PSP_CTRL_CIRCLE)) {
-                    if (mWorld->mainOptions.difficult == 0) {
+                    if (mWorld->mainOptions.difficulty == 0) {
                         mWorld->DestroyAllZombies();
                         mWorld->DestroyAllCreepers();
                     }
@@ -8550,7 +8550,7 @@ void StatePlay::HandleEvents(StateManager *sManager) {
             }
         }
     }
-    if (mWorld->HP <= 0) {
+    if (mWorld->health <= 0) {
         mWorld->playerGrowth = 0.65f;
         if (dieFactor == 1) // drop your loot
         {
@@ -8626,8 +8626,8 @@ void StatePlay::HandleEvents(StateManager *sManager) {
                 fppCam->RotateView(0, 0, 90, 0);
                 fppCam->upDownAngle = 0;
                 fppCam->horAngle = 270;
-                mWorld->HP = 20;
-                mWorld->HG = 20;
+                mWorld->health = 20;
+                mWorld->hunger = 20;
                 mWorld->OS = 10;
 
                 invEn = false;
@@ -8805,7 +8805,7 @@ void StatePlay::Update(StateManager *sManager) {
 
                     if ((*it)->ItIsTimeToSpawn() &&
                         mWorld->BlockFinalLight((*it)->GetX(), (*it)->GetY() + 1, (*it)->GetZ()) < 0.6f &&
-                        mWorld->mainOptions.difficult != 0) {
+                        mWorld->mainOptions.difficulty != 0) {
                         (*it)->forceSpawn = false;
                         int nearbyEntityAmount = 0;
 
@@ -9223,8 +9223,8 @@ void StatePlay::Update(StateManager *sManager) {
                                     HurtPlayer((playerVelocity.y * -1 - 11) / 1.4);
                                 }
 
-                                if (mWorld->HG > 0.2) {
-                                    mWorld->HG -= 0.2;
+                                if (mWorld->hunger > 0.2) {
+                                    mWorld->hunger -= 0.2;
                                 }
                                 mWorld->mainStatistics.badlyFalls += 1;
 
@@ -9242,8 +9242,8 @@ void StatePlay::Update(StateManager *sManager) {
                                     HurtPlayer((playerVelocity.y * -1 - 11) * 1.3f);
                                 }
 
-                                if (mWorld->HG > 0.3) {
-                                    mWorld->HG -= 0.3;
+                                if (mWorld->hunger > 0.3) {
+                                    mWorld->hunger -= 0.3;
                                 }
                                 mWorld->mainStatistics.badlyFalls += 1;
 
@@ -9264,7 +9264,7 @@ void StatePlay::Update(StateManager *sManager) {
                             walkingOnGround = false;
 
                             mWorld->mainStatistics.jumps += 1;
-                            mWorld->HG -= (1.0f) / 55.0f;
+                            mWorld->hunger -= (1.0f) / 55.0f;
                         }
                         jumping = false;
                     }
@@ -9290,7 +9290,7 @@ void StatePlay::Update(StateManager *sManager) {
                     mWorld->kickedTimer = 0.5f;
                     fppCam->needUpdate = true;
 
-                    switch (mWorld->mainOptions.difficult) {
+                    switch (mWorld->mainOptions.difficulty) {
                         case 0: // peaceful
                             HurtPlayerConsiderArmor(0);
                             break;
@@ -9324,7 +9324,7 @@ void StatePlay::Update(StateManager *sManager) {
                     mWorld->kickedTimer = 0.6f;
                     fppCam->needUpdate = true;
 
-                    switch (mWorld->mainOptions.difficult) {
+                    switch (mWorld->mainOptions.difficulty) {
                         case 0: // peaceful
                             HurtPlayerConsiderArmor(mWorld->kickedDamage * 0.5f);
                             break;
@@ -10352,7 +10352,7 @@ void StatePlay::Draw(StateManager *sManager) {
         MatrixPop();
     }
 
-    if (mWorld->mainOptions.guiDrawing == 1 && mWorld->HP > 0) {
+    if (mWorld->mainOptions.guiDrawing == 1 && mWorld->health > 0) {
         float cubeBob = sinf(bobCycle - (3.14 / 2) + 3.14) / 16; // some animtaion vars
         float cubeBob2 = cosf(bobCycle - (3.14 / 2) + 3.14) / 18;
 
@@ -10460,7 +10460,7 @@ void StatePlay::Draw(StateManager *sManager) {
     /// GUI
     mRender->SetOrtho(0, 0, 0, 0, 0, 0);
 
-    if (mWorld->HP <= 0) {
+    if (mWorld->health <= 0) {
         DrawSetDepthTest(false);
         DrawSetDepthMask(true);
         DrawSetBlend(true);
@@ -10640,7 +10640,7 @@ void StatePlay::Draw(StateManager *sManager) {
         }
         barSprite->Draw();
         if (menuState != 1 || makeScreen == true) {
-            /// HP and HG RENDERING
+            /// health and hunger RENDERING
             // draw cells
             hpCellSpriteW->SetPosition(84, 12);
             hpCellSprite->SetPosition(84, 12);
@@ -10669,8 +10669,8 @@ void StatePlay::Draw(StateManager *sManager) {
                 hpHardHalfSpriteW->SetPosition(-4 + i * 16, 12);
 
                 if (hurt == true && sinf(hpAnim) > 0) {
-                    if (last_HP > mWorld->HP) {
-                        if (i * 2 >= floorf(mWorld->HP / 2.0f) * 2) {
+                    if (last_HP > mWorld->health) {
+                        if (i * 2 >= floorf(mWorld->health / 2.0f) * 2) {
                             if (i * 2 <= ceilf(last_HP)) {
                                 if (mWorld->gameModeWorld == 2) // hardcore mode
                                 {
@@ -10691,7 +10691,7 @@ void StatePlay::Draw(StateManager *sManager) {
                     }
                 }
 
-                if (i * 2 <= ceilf(mWorld->HP) && mWorld->HP >= 0) {
+                if (i * 2 <= ceilf(mWorld->health) && mWorld->health >= 0) {
                     if (mWorld->gameModeWorld == 2) // hardcore mode
                     {
                         hpHardSprite->Draw();
@@ -10699,7 +10699,7 @@ void StatePlay::Draw(StateManager *sManager) {
                         hpSprite->Draw();
                     }
                 }
-                if (i * 2 - ceilf(mWorld->HP) == 1 && mWorld->HP >= 0) {
+                if (i * 2 - ceilf(mWorld->health) == 1 && mWorld->health >= 0) {
                     if (mWorld->gameModeWorld == 2) // hardcore mode
                     {
                         hpHardHalfSprite->Draw();
@@ -10712,10 +10712,10 @@ void StatePlay::Draw(StateManager *sManager) {
                 hgSprite->SetPosition(486 - i * 16, 12);
                 hgHalfSprite->SetPosition(486 - i * 16, 12);
 
-                if (i * 2 <= ceilf(mWorld->HG)) {
+                if (i * 2 <= ceilf(mWorld->hunger)) {
                     hgSprite->Draw();
                 }
-                if (i * 2 - ceilf(mWorld->HG) == 1) {
+                if (i * 2 - ceilf(mWorld->hunger) == 1) {
                     hgHalfSprite->Draw();
                 }
 
@@ -10739,7 +10739,7 @@ void StatePlay::Draw(StateManager *sManager) {
                 }
             }
 
-            if (mWorld->HP > 0) {
+            if (mWorld->health > 0) {
                 DrawSetInverseColors();
                 crossSprite->Draw();
                 DrawSetDefaultColors();
@@ -11369,7 +11369,7 @@ void StatePlay::Draw(StateManager *sManager) {
     sceGuDepthMask(0);
 
     //text
-    if (mWorld->HP <= 0) {
+    if (mWorld->health <= 0) {
         sceGuDisable(GU_DEPTH_TEST);
         sceGuEnable(GU_BLEND);
         sceGuColor(GU_COLOR(1, 1, 1, 1.0f));
@@ -11812,10 +11812,10 @@ void StatePlay::Draw(StateManager *sManager) {
             }
             moverSprite->Draw();
 
-            if (mWorld->mainOptions.difficult != 3) {
-                moverSprite->SetPosition((mWorld->mainOptions.difficult) * (190.0f / 3.0f) + 265 + 16, 70);
+            if (mWorld->mainOptions.difficulty != 3) {
+                moverSprite->SetPosition((mWorld->mainOptions.difficulty) * (190.0f / 3.0f) + 265 + 16, 70);
             } else {
-                moverSprite->SetPosition((mWorld->mainOptions.difficult) * (190.0f / 3.0f) + 269, 70);
+                moverSprite->SetPosition((mWorld->mainOptions.difficulty) * (190.0f / 3.0f) + 269, 70);
             }
             moverSprite->Draw();
 
@@ -11867,7 +11867,7 @@ void StatePlay::Draw(StateManager *sManager) {
                 }
 
 
-                switch (mWorld->mainOptions.difficult) {
+                switch (mWorld->mainOptions.difficulty) {
                     case 0:
                         optionsMenuPos == 9 ? RenderManager::InstancePtr()->SetFontStyle(default_size,
                                                                                          GU_COLOR(1, 1, 0, 1), 0,
@@ -12040,7 +12040,7 @@ void StatePlay::Draw(StateManager *sManager) {
                                         mWorld->mainOptions.verticalViewDistance);
                 }
 
-                switch (mWorld->mainOptions.difficult) {
+                switch (mWorld->mainOptions.difficulty) {
                     case 0:
                         optionsMenuPos == 9 ? RenderManager::InstancePtr()->SetFontStyle(default_size,
                                                                                          GU_COLOR(1, 1, 0, 1), 0,
@@ -12809,23 +12809,27 @@ bool StatePlay::keyHold(int currentKey) {
 
 
 void StatePlay::HungerTime() {
-    if (mWorld->HG >= 16) {
+    if (mWorld->hunger >= 16) {
         if (rand() % 4 == 0) {
-            mWorld->HG -= 1;
+            mWorld->hunger -= 1;
         }
     } else {
-        mWorld->HG -= 1;
+        mWorld->hunger -= 1;
     }
-    if (mWorld->HG < 0) {
-        mWorld->HG = 0;
+    if (mWorld->hunger < 0) {
+        mWorld->hunger = 0;
     }
 }
 
 void StatePlay::HealthTime() {
-    if (mWorld->HG <= 0 && mWorld->HP > 0) {
-        if (mWorld->mainOptions.difficult == 0) {
-            if (mWorld->HP > 1) {
-                if (mWorld->HP == 2) {
+    if (mWorld->health <= 0) {
+        return;
+    }
+
+    if (mWorld->hunger <= 0) {
+        if (mWorld->mainOptions.difficulty == 0) {
+            if (mWorld->health > 1) {
+                if (mWorld->health == 2) {
                     HurtPlayer(1);
                 } else {
                     HurtPlayer(2);
@@ -12834,21 +12838,17 @@ void StatePlay::HealthTime() {
         } else {
             HurtPlayer(2);
         }
+    } else if (mWorld->hunger >= 18) {
+        mWorld->health += 1;
     }
 
-    if (mWorld->HG >= 18) {
-        if (mWorld->HP > 0) {
-            mWorld->HP += 1;
-        }
-    }
-
-    if (mWorld->HP > 20) {
-        mWorld->HP = 20;
+    if (mWorld->health > 20) {
+        mWorld->health = 20;
     }
 }
 
 void StatePlay::OxygenTime() {
-    if (mWorld->HP > 0) {
+    if (mWorld->health > 0) {
         if (mWorld->OS <= 0) {
             HurtPlayer(2);
         }
@@ -12860,11 +12860,11 @@ void StatePlay::OxygenTime() {
 
 void StatePlay::HurtPlayer(float damage) {
     mSoundMgr->PlayHitSound();
-    last_HP = mWorld->HP;
-    mWorld->HP -= damage;
+    last_HP = mWorld->health;
+    mWorld->health -= damage;
     mWorld->mainStatistics.damageRecieved += damage;
 
-    if (mWorld->HP > 0) {
+    if (mWorld->health > 0) {
         hurt = true;
         hurt_time = 1.0f;
         hpAnim = 0.0f;
@@ -12873,11 +12873,11 @@ void StatePlay::HurtPlayer(float damage) {
 
 void StatePlay::HurtPlayerConsiderArmor(float damage) {
     mSoundMgr->PlayHitSound();
-    last_HP = mWorld->HP;
-    mWorld->HP -= damage * (1.0f - (mWorld->AP / 25.0f));
+    last_HP = mWorld->health;
+    mWorld->health -= damage * (1.0f - (mWorld->AP / 25.0f));
     mWorld->mainStatistics.damageRecieved += damage * (1.0f - (mWorld->AP / 25.0f));
 
-    if (mWorld->HP > 0) {
+    if (mWorld->health > 0) {
         hurt = true;
         hurt_time = 1.0f;
         hpAnim = 0.0f;

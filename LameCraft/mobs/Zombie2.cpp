@@ -275,7 +275,7 @@ void Zombie::Update(CraftWorld *myWorld, Vector3 playerPos, float dt) {
                                               position.z + checkPos2.z) == false &&
                             world->BlockSolid(position.x + checkPos3.x, position.y + checkPos3.y,
                                               position.z + checkPos3.z) == false) {
-                            if (world->HP > 0) {
+                            if (world->health > 0) {
                                 world->kickedStart = true;
                                 world->kickedAngle = ATAN2_fast(position.x - myWorld->playerPos.x,
                                                                 position.z - myWorld->playerPos.z);
@@ -294,7 +294,7 @@ void Zombie::Update(CraftWorld *myWorld, Vector3 playerPos, float dt) {
 
                 /// BECOME ANGRY --- *
                 if (killed == false) {
-                    if (fastDistanceToPlayer < 11 && world->HP > 0) // it sees you
+                    if (fastDistanceToPlayer < 11 && world->health > 0) // it sees you
                     {
                         haunting = false;
                         hauntingTimer = 0.0f;

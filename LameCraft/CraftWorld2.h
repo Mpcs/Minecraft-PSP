@@ -116,7 +116,7 @@ public:
         float fov;
         char horizontalViewDistance;
         char verticalViewDistance;
-        int difficult;
+        int difficulty;
     } opt;
 
     typedef struct WorldVariables {
@@ -593,8 +593,8 @@ public:
     float blockXConstLight;
 
     unsigned int worldSeed;  // ��� ����
-    float HP;       // ��������
-    float HG;       // �������
+    float health;       // ��������
+    float hunger;       // �������
     float AP;       // �����
     char OS;        // ���������� ���������
 

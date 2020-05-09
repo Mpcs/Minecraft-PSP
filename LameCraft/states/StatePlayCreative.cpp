@@ -3945,15 +3945,15 @@ void StatePlayCreative::HandleEvents(StateManager *sManager) {
 
                 /*if (mWorld->invId[27+barPosition] == 288) ///BREAD
                 {
-                    if((int)(mWorld->HG) < 20)
+                    if((int)(mWorld->hunger) < 20)
                     {
                         mSoundMgr->PlayEatSound();
                         mWorld->mainStatistics.foodEaten += 1;
-                        mWorld->HG += 5;
+                        mWorld->hunger += 5;
 
-                        if(mWorld->HG > 20)
+                        if(mWorld->hunger > 20)
                         {
-                            mWorld->HG = 20;
+                            mWorld->hunger = 20;
                         }
                         mWorld->invAm[27+barPosition] -= 1;
                         if (mWorld->invAm[27+barPosition] == 0) // [27+barPosition] - selected item/block
@@ -3968,15 +3968,15 @@ void StatePlayCreative::HandleEvents(StateManager *sManager) {
 
                 if (mWorld->invId[27+barPosition] == 284) ///APPLE
                 {
-                    if((int)(mWorld->HG) < 20)
+                    if((int)(mWorld->hunger) < 20)
                     {
                         mSoundMgr->PlayEatSound();
                         mWorld->mainStatistics.foodEaten += 1;
-                        mWorld->HG += 4;
+                        mWorld->hunger += 4;
 
-                        if(mWorld->HG > 20)
+                        if(mWorld->hunger > 20)
                         {
-                            mWorld->HG = 20;
+                            mWorld->hunger = 20;
                         }
                         mWorld->invAm[27+barPosition] -= 1;
                         if (mWorld->invAm[27+barPosition] == 0)
@@ -3991,15 +3991,15 @@ void StatePlayCreative::HandleEvents(StateManager *sManager) {
 
                 if (mWorld->invId[27+barPosition] == 303) ///MOOSHROOM BOWL
                 {
-                    if((int)(mWorld->HG) < 20)
+                    if((int)(mWorld->hunger) < 20)
                     {
                         mSoundMgr->PlayEatSound();
                         mWorld->mainStatistics.foodEaten += 1;
-                        mWorld->HG += 6;
+                        mWorld->hunger += 6;
 
-                        if(mWorld->HG > 20)
+                        if(mWorld->hunger > 20)
                         {
-                            mWorld->HG = 20;
+                            mWorld->hunger = 20;
                         }
                         mWorld->invId[27+barPosition] = 302; // turn it into simple stackable bowl
                         mWorld->invSt[27+barPosition] = 1;
@@ -4009,12 +4009,12 @@ void StatePlayCreative::HandleEvents(StateManager *sManager) {
 
                 if (mWorld->invId[27+barPosition] == 285) ///GOLDEN APPLE
                 {
-                    if((int)(mWorld->HG) < 20)
+                    if((int)(mWorld->hunger) < 20)
                     {
                         mSoundMgr->PlayEatSound();
                         mWorld->mainStatistics.foodEaten += 1;
-                        mWorld->HG = 20;
-                        mWorld->HP = 20;
+                        mWorld->hunger = 20;
+                        mWorld->health = 20;
                         mWorld->invAm[27+barPosition] -= 1;
                         if (mWorld->invAm[27+barPosition] == 0)
                         {
@@ -5708,7 +5708,7 @@ void StatePlayCreative::HandleEvents(StateManager *sManager) {
                                                                                                            (mWorld->invId[
                                                                                                                     27 +
                                                                                                                     barPosition] -
-                                                                                                            309); //very difficult expression >:
+                                                                                                            309); //very difficulty expression >:
                                                     fppCam->needUpdate = true;
 
                                                     mWorld->invAm[27 + barPosition] -= 1;
@@ -7551,11 +7551,11 @@ void StatePlayCreative::HandleEvents(StateManager *sManager) {
                     }
                 }
                 if (optionsMenuPos == 9) {
-                    mWorld->mainOptions.difficult += 1;
+                    mWorld->mainOptions.difficulty += 1;
                     mSoundMgr->PlayMenuSound();
 
-                    if (mWorld->mainOptions.difficult > 3) {
-                        mWorld->mainOptions.difficult = 3;
+                    if (mWorld->mainOptions.difficulty > 3) {
+                        mWorld->mainOptions.difficulty = 3;
                     }
                 }
             }
@@ -7592,18 +7592,18 @@ void StatePlayCreative::HandleEvents(StateManager *sManager) {
                     }
                 }
                 if (optionsMenuPos == 9) {
-                    mWorld->mainOptions.difficult -= 1;
+                    mWorld->mainOptions.difficulty -= 1;
                     mSoundMgr->PlayMenuSound();
 
-                    if (mWorld->mainOptions.difficult < 0) {
-                        mWorld->mainOptions.difficult = 0;
+                    if (mWorld->mainOptions.difficulty < 0) {
+                        mWorld->mainOptions.difficulty = 0;
                     }
                 }
             }
 
             //back
             if (mSystemMgr->KeyPressed(PSP_CTRL_CIRCLE)) {
-                if (mWorld->mainOptions.difficult == 0) {
+                if (mWorld->mainOptions.difficulty == 0) {
                     mWorld->DestroyAllZombies();
                 }
                 selectPos = 1;
@@ -8148,8 +8148,8 @@ void StatePlayCreative::Update(StateManager *sManager) {
                             if (playerVelocity.y < -12.8 && playerVelocity.y > -19) {
                                 mSoundMgr->PlayFallSound(playerVelocity.y);
 
-                                if (mWorld->HG > 0.2) {
-                                    mWorld->HG -= 0.2;
+                                if (mWorld->hunger > 0.2) {
+                                    mWorld->hunger -= 0.2;
                                 }
                                 mWorld->mainStatistics.badlyFalls += 1;
 
@@ -8161,8 +8161,8 @@ void StatePlayCreative::Update(StateManager *sManager) {
                             if (playerVelocity.y < -19) {
                                 mSoundMgr->PlayFallSound(playerVelocity.y);
 
-                                if (mWorld->HG > 0.3) {
-                                    mWorld->HG -= 0.3;
+                                if (mWorld->hunger > 0.3) {
+                                    mWorld->hunger -= 0.3;
                                 }
                                 mWorld->mainStatistics.badlyFalls += 1;
 
@@ -8183,7 +8183,7 @@ void StatePlayCreative::Update(StateManager *sManager) {
                             walkingOnGround = false;
 
                             mWorld->mainStatistics.jumps += 1;
-                            mWorld->HG -= (1.0f) / 55.0f;
+                            mWorld->hunger -= (1.0f) / 55.0f;
                         }
                         jumping = false;
                     }
@@ -10146,10 +10146,10 @@ void StatePlayCreative::Draw(StateManager *sManager) {
             }
             moverSprite->Draw();
 
-            if (mWorld->mainOptions.difficult != 3) {
-                moverSprite->SetPosition((mWorld->mainOptions.difficult) * (190.0f / 3.0f) + 265 + 16, 70);
+            if (mWorld->mainOptions.difficulty != 3) {
+                moverSprite->SetPosition((mWorld->mainOptions.difficulty) * (190.0f / 3.0f) + 265 + 16, 70);
             } else {
-                moverSprite->SetPosition((mWorld->mainOptions.difficult) * (190.0f / 3.0f) + 269, 70);
+                moverSprite->SetPosition((mWorld->mainOptions.difficulty) * (190.0f / 3.0f) + 269, 70);
             }
             moverSprite->Draw();
 
@@ -10201,7 +10201,7 @@ void StatePlayCreative::Draw(StateManager *sManager) {
                 }
 
 
-                switch (mWorld->mainOptions.difficult) {
+                switch (mWorld->mainOptions.difficulty) {
                     case 0:
                         optionsMenuPos == 9 ? RenderManager::InstancePtr()->SetFontStyle(default_size,
                                                                                          GU_COLOR(1, 1, 0, 1), 0,
@@ -10375,7 +10375,7 @@ void StatePlayCreative::Draw(StateManager *sManager) {
                                         mWorld->mainOptions.verticalViewDistance);
                 }
 
-                switch (mWorld->mainOptions.difficult) {
+                switch (mWorld->mainOptions.difficulty) {
                     case 0:
                         optionsMenuPos == 9 ? RenderManager::InstancePtr()->SetFontStyle(default_size,
                                                                                          GU_COLOR(1, 1, 0, 1), 0,

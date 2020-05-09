@@ -50,7 +50,7 @@ CraftWorld::CraftWorld() {
     mainOptions.freezeDayTime = 0;
     mainOptions.worldBlockAnimation = 1;
     mainOptions.particles = 0;
-    mainOptions.difficult = 2; // normal
+    mainOptions.difficulty = 2; // normal
     mainOptions.horizontalViewDistance = 4;
     mainOptions.verticalViewDistance = 1;
     mainOptions.guiDrawing = 1;
@@ -105,8 +105,8 @@ CraftWorld::CraftWorld() {
 
     worldSeed = 0;
 
-    HP = 20;
-    HG = 20;
+    health = 20;
+    hunger = 20;
     OS = 10;
     AP = 0;
 
@@ -1619,9 +1619,9 @@ void CraftWorld::SaveCompressedWorld(std::string filename) // Сохранени
 
     gzwrite(saveFile, &armorSt, sizeof(bool) * (4));
 
-    gzwrite(saveFile, &HP, sizeof(unsigned int));
+    gzwrite(saveFile, &health, sizeof(unsigned int));
 
-    gzwrite(saveFile, &HG, sizeof(unsigned int));
+    gzwrite(saveFile, &hunger, sizeof(unsigned int));
 
     gzwrite(saveFile, &OS, sizeof(unsigned int));
 
@@ -2257,9 +2257,9 @@ void CraftWorld::LoadCompressedWorld(std::string filename) // Загрузка �
 
         gzread(saveFile, &armorSt, sizeof(bool) * (4));
 
-        gzread(saveFile, &HP, sizeof(unsigned int));
+        gzread(saveFile, &health, sizeof(unsigned int));
 
-        gzread(saveFile, &HG, sizeof(unsigned int));
+        gzread(saveFile, &hunger, sizeof(unsigned int));
 
         gzread(saveFile, &OS, sizeof(unsigned int));
 
@@ -15038,7 +15038,7 @@ void CraftWorld::SpawnMobs(float dt) {
     spawnZombiesTimer += dt;
     if (spawnZombiesTimer > 15.0f) {
         bool wasSpawned = false;
-        if ((worldDayTime > 21 || worldDayTime < 6) && mainOptions.difficult != 0 && playerPos.y > 55.0f) // spawn zombs
+        if ((worldDayTime > 21 || worldDayTime < 6) && mainOptions.difficulty != 0 && playerPos.y > 55.0f) // spawn zombs
         {
             if (rand() % 50 <= 26 + (24 * mZombies.empty()) && mZombies.size() < 8) {
                 float spawnX = 0;
@@ -15064,7 +15064,7 @@ void CraftWorld::SpawnMobs(float dt) {
             spawnZombiesTimer = -10.0f + rand() % 11;
         }
 
-        if (mainOptions.difficult != 0 && playerPos.y <= 55.0f) // spawn zombs underground
+        if (mainOptions.difficulty != 0 && playerPos.y <= 55.0f) // spawn zombs underground
         {
             if (rand() % 50 <= 30 + (24 * mZombies.empty()) && mZombies.size() < 12) {
                 float spawnX = 0;
@@ -15174,7 +15174,7 @@ void CraftWorld::SpawnMobs(float dt) {
 
     spawnCreeperTimer -= dt;
     if (spawnCreeperTimer < 0.0f) {
-        if ((worldDayTime > 21 || worldDayTime < 6) && mainOptions.difficult != 0) // spawn creepers
+        if ((worldDayTime > 21 || worldDayTime < 6) && mainOptions.difficulty != 0) // spawn creepers
         {
             if (rand() % 50 <= 27 - mCreepers.size() * 1.5f && mCreepers.size() < 4) {
                 float spawnX = 0;

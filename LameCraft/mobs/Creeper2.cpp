@@ -239,7 +239,7 @@ void Creeper::Update(CraftWorld *myWorld, Vector3 playerPos, float dt) {
 
                 /// BECOME ANGRY --- *
                 if (killed == false) {
-                    if (fastDistanceToPlayer < 11 && world->HP > 0 && boredom == false) // it sees you
+                    if (fastDistanceToPlayer < 11 && world->health > 0 && boredom == false) // it sees you
                     {
                         haunting = false;
                         hauntingTimer = 0.0f;

@@ -126,7 +126,7 @@ namespace Aurora {
 
                         return true;
                     } else {
-                        // case MMP: side(R,HD) < 0 or side(R,FB) > 0 or side(R,HG) > 0 or side(R,AB) < 0 or side(R,DA) < 0 or side(R,GF) > 0 to miss
+                        // case MMP: side(R,HD) < 0 or side(R,FB) > 0 or side(R,hunger) > 0 or side(R,AB) < 0 or side(R,DA) < 0 or side(R,GF) > 0 to miss
 
                         if ((origin.x < box.min.x) || (origin.y < box.min.y) || (origin.z > box.max.z))
                             return false;
@@ -172,7 +172,7 @@ namespace Aurora {
 
                         return true;
                     } else {
-                        // case MPP: side(R,EA) < 0 or side(R,GC) > 0 or side(R,HG) > 0 or side(R,AB) < 0 or side(R,HE) < 0 or side(R,CB) > 0 to miss
+                        // case MPP: side(R,EA) < 0 or side(R,GC) > 0 or side(R,hunger) > 0 or side(R,AB) < 0 or side(R,HE) < 0 or side(R,CB) > 0 to miss
 
                         if ((origin.x < box.min.x) || (origin.y > box.max.y) || (origin.z > box.max.z))
                             return false;
@@ -198,7 +198,7 @@ namespace Aurora {
             } else {
                 if (direction.y < 0.0f) {
                     if (direction.z < 0.0f) {
-                        // case PMM: side(R,GC) < 0 or side(R,EA) > 0 or side(R,AB) > 0 or side(R,HG) < 0 or side(R,CB) < 0 or side(R,HE) > 0 to miss
+                        // case PMM: side(R,GC) < 0 or side(R,EA) > 0 or side(R,AB) > 0 or side(R,hunger) < 0 or side(R,CB) < 0 or side(R,HE) > 0 to miss
 
                         if ((origin.x > box.max.x) || (origin.y < box.min.y) || (origin.z < box.min.z))
                             return false;
@@ -244,7 +244,7 @@ namespace Aurora {
                     }
                 } else {
                     if (direction.z < 0.0f) {
-                        // case PPM: side(R,FB) < 0 or side(R,HD) > 0 or side(R,AB) > 0 or side(R,HG) < 0 or side(R,GF) < 0 or side(R,DA) > 0 to miss
+                        // case PPM: side(R,FB) < 0 or side(R,HD) > 0 or side(R,AB) > 0 or side(R,hunger) < 0 or side(R,GF) < 0 or side(R,DA) > 0 to miss
 
                         if ((origin.x > box.max.x) || (origin.y > box.max.y) || (origin.z < box.min.z))
                             return false;
