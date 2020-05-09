@@ -7,7 +7,7 @@
 
 class ItemType {
 public:
-    enum type{
+    enum type {
         normal,
         tool,
         food,

@@ -15,20 +15,25 @@
 
 class CraftWorld;
 
-class Sheep : public LameMob
-{
+class Sheep : public LameMob {
 public:
 
     Sheep(Vector3 position1, int number1);
+
     ~Sheep();
 
     void BoxCollision();
+
     void Update(CraftWorld *myWorld, Vector3 playerPos, float dt);
+
     void Render(Frustum &camFrustum, float dt);
+
     void TakeDamage(float damage, float power, float dt);
+
     void TakeDamageFromPointExplosion(float damage, float power, float dt, Vector3 point);
 
     void SetFurColor(int newColor);
+
     int GetFurColor();
 
     void FetchFurColor();

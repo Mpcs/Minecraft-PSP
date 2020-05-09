@@ -25,112 +25,105 @@
 
 #include "NoiseJobQueue.h"
 
-namespace noisepp
-{
-namespace utils
-{
+namespace noisepp {
+    namespace utils {
 
-void JobQueue::addJob (Job *job)
-{
+        void JobQueue::addJob(Job *job) {
 //	NoiseAssert (job != NULL, job);
-	mJobs.push (job);
-}
+            mJobs.push(job);
+        }
 
-void JobQueue::executeJobs ()
-{
-	Job *job = 0;
-	while (!mJobs.empty())
-	{
-		job = mJobs.front ();
-		mJobs.pop ();
-		job->execute();
-		job->finish();
-		delete job;
-		job = 0;
-	}
-}
+        void JobQueue::executeJobs() {
+            Job *job = 0;
+            while (!mJobs.empty()) {
+                job = mJobs.front();
+                mJobs.pop();
+                job->execute();
+                job->finish();
+                delete job;
+                job = 0;
+            }
+        }
 
-JobQueue::~JobQueue ()
-{
-	while (!mJobs.empty())
-	{
-		delete mJobs.front ();
-		mJobs.pop ();
-	}
-}
+        JobQueue::~JobQueue() {
+            while (!mJobs.empty()) {
+                delete mJobs.front();
+                mJobs.pop();
+            }
+        }
 
 #if NOISEPP_ENABLE_THREADS
-void ThreadedJobQueue::threadFunction ()
-{
-	threadpp::Mutex::Lock lk(mMutex);
-	while (!mThreadsDone)
-	{
-		if (mJobs.empty())
-			mCond.wait(lk);
-		if (!mJobs.empty())
-		{
-			Job *job = mJobs.front ();
-			mJobs.pop ();
-			++mWorkingThreads;
-			lk.unlock ();
-			job->execute();
-			lk.lock ();
-			--mWorkingThreads;
-			mJobsDone.push (job);
-			mMainCond.notifyOne ();
-		}
-	}
-}
+        void ThreadedJobQueue::threadFunction ()
+        {
+            threadpp::Mutex::Lock lk(mMutex);
+            while (!mThreadsDone)
+            {
+                if (mJobs.empty())
+                    mCond.wait(lk);
+                if (!mJobs.empty())
+                {
+                    Job *job = mJobs.front ();
+                    mJobs.pop ();
+                    ++mWorkingThreads;
+                    lk.unlock ();
+                    job->execute();
+                    lk.lock ();
+                    --mWorkingThreads;
+                    mJobsDone.push (job);
+                    mMainCond.notifyOne ();
+                }
+            }
+        }
 
-void *ThreadedJobQueue::threadEntry (void *queue)
-{
-	(static_cast<ThreadedJobQueue*>(queue))->threadFunction ();
-	return NULL;
-}
+        void *ThreadedJobQueue::threadEntry (void *queue)
+        {
+            (static_cast<ThreadedJobQueue*>(queue))->threadFunction ();
+            return NULL;
+        }
 
-ThreadedJobQueue::ThreadedJobQueue (size_t numberOfThreads) : mThreadsDone(false), mWorkingThreads(0)
-{
-	NoiseAssert (numberOfThreads > 0, numberOfThreads);
-	for (size_t i=0;i<numberOfThreads;++i)
-	{
-		mThreads.createThread (threadEntry, this);
-	}
-}
+        ThreadedJobQueue::ThreadedJobQueue (size_t numberOfThreads) : mThreadsDone(false), mWorkingThreads(0)
+        {
+            NoiseAssert (numberOfThreads > 0, numberOfThreads);
+            for (size_t i=0;i<numberOfThreads;++i)
+            {
+                mThreads.createThread (threadEntry, this);
+            }
+        }
 
-void ThreadedJobQueue::executeJobs ()
-{
-	mCond.notifyAll();
-	threadpp::Mutex::Lock lk(mMutex);
-	while (!mJobs.empty() || mWorkingThreads > 0)
-	{
-		if (!mJobs.empty() || mWorkingThreads > 0)
-			mMainCond.wait(lk);
-		while (!mJobsDone.empty())
-		{
-			Job *job = mJobsDone.front ();
-			mJobsDone.pop ();
-			lk.unlock ();
-			job->finish ();
-			delete job;
-			lk.lock ();
-		}
-	}
-}
+        void ThreadedJobQueue::executeJobs ()
+        {
+            mCond.notifyAll();
+            threadpp::Mutex::Lock lk(mMutex);
+            while (!mJobs.empty() || mWorkingThreads > 0)
+            {
+                if (!mJobs.empty() || mWorkingThreads > 0)
+                    mMainCond.wait(lk);
+                while (!mJobsDone.empty())
+                {
+                    Job *job = mJobsDone.front ();
+                    mJobsDone.pop ();
+                    lk.unlock ();
+                    job->finish ();
+                    delete job;
+                    lk.lock ();
+                }
+            }
+        }
 
-void ThreadedJobQueue::addJob (Job *job)
-{
-	NoiseAssert (job != NULL, job);
-	threadpp::Mutex::Lock lk(mMutex);
-	mJobs.push (job);
-}
+        void ThreadedJobQueue::addJob (Job *job)
+        {
+            NoiseAssert (job != NULL, job);
+            threadpp::Mutex::Lock lk(mMutex);
+            mJobs.push (job);
+        }
 
-ThreadedJobQueue::~ThreadedJobQueue ()
-{
-	mThreadsDone = true;
-	mCond.notifyAll();
-	mThreads.join ();
-}
+        ThreadedJobQueue::~ThreadedJobQueue ()
+        {
+            mThreadsDone = true;
+            mCond.notifyAll();
+            mThreads.join ();
+        }
 #endif
 
-};
+    };
 };

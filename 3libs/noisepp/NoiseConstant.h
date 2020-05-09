@@ -29,83 +29,83 @@
 #include "NoisePipeline.h"
 #include "NoiseModule.h"
 
-namespace noisepp
-{
-	template <class PipelineElement>
-	class ConstantElement : public PipelineElement
-	{
-		private:
-			Real mValue;
+namespace noisepp {
+    template<class PipelineElement>
+    class ConstantElement : public PipelineElement {
+    private:
+        Real mValue;
 
-		public:
-			ConstantElement (Real value) : mValue(value)
-			{
-			}
-			virtual Real getValue (Real x, Cache *cache) const
-			{
-				return mValue;
-			}
-			virtual Real getValue (Real x, Real y, Cache *cache) const
-			{
-				return mValue;
-			}
-			virtual Real getValue (Real x, Real y, Real z, Cache *cache) const
-			{
-				return mValue;
-			}
-	};
+    public:
+        ConstantElement(Real value) : mValue(value) {
+        }
 
-	typedef ConstantElement<PipelineElement1D> ConstantElement1D;
-	typedef ConstantElement<PipelineElement2D> ConstantElement2D;
-	typedef ConstantElement<PipelineElement3D> ConstantElement3D;
+        virtual Real getValue(Real x, Cache *cache) const {
+            return mValue;
+        }
 
-	/** Module which returns a constant value.
-		Returns the specified constant value.
-	*/
-	class ConstantModule : public Module
-	{
-		private:
-			Real mValue;
+        virtual Real getValue(Real x, Real y, Cache *cache) const {
+            return mValue;
+        }
 
-		public:
-			/// Constructor.
-			ConstantModule() : Module(0), mValue(0.0)
-			{
-			}
-			/// Sets the constant value.
-			void setValue (Real v)
-			{
-				mValue = v;
-			}
-			/// Returns the constant value.
-			Real getValue () const
-			{
-				return mValue;
-			}
-			/// @copydoc noisepp::Module::addToPipeline()
-			ElementID addToPipeline (Pipeline1D *pipe) const
-			{
-				return pipe->addElement (this, new ConstantElement1D(mValue));
-			}
-			/// @copydoc noisepp::Module::addToPipeline()
-			ElementID addToPipeline (Pipeline2D *pipe) const
-			{
-				return pipe->addElement (this, new ConstantElement2D(mValue));
-			}
-			/// @copydoc noisepp::Module::addToPipeline()
-			ElementID addToPipeline (Pipeline3D *pipe) const
-			{
-				return pipe->addElement (this, new ConstantElement3D(mValue));
-			}
-			/// @copydoc noisepp::Module::getType()
-			ModuleTypeId getType() const { return MODULE_CONSTANT; }
+        virtual Real getValue(Real x, Real y, Real z, Cache *cache) const {
+            return mValue;
+        }
+    };
+
+    typedef ConstantElement<PipelineElement1D> ConstantElement1D;
+    typedef ConstantElement<PipelineElement2D> ConstantElement2D;
+    typedef ConstantElement<PipelineElement3D> ConstantElement3D;
+
+    /** Module which returns a constant value.
+        Returns the specified constant value.
+    */
+    class ConstantModule : public Module {
+    private:
+        Real mValue;
+
+    public:
+        /// Constructor.
+        ConstantModule() : Module(0), mValue(0.0) {
+        }
+
+        /// Sets the constant value.
+        void setValue(Real v) {
+            mValue = v;
+        }
+
+        /// Returns the constant value.
+        Real getValue() const {
+            return mValue;
+        }
+
+        /// @copydoc noisepp::Module::addToPipeline()
+        ElementID addToPipeline(Pipeline1D *pipe) const {
+            return pipe->addElement(this, new ConstantElement1D(mValue));
+        }
+
+        /// @copydoc noisepp::Module::addToPipeline()
+        ElementID addToPipeline(Pipeline2D *pipe) const {
+            return pipe->addElement(this, new ConstantElement2D(mValue));
+        }
+
+        /// @copydoc noisepp::Module::addToPipeline()
+        ElementID addToPipeline(Pipeline3D *pipe) const {
+            return pipe->addElement(this, new ConstantElement3D(mValue));
+        }
+
+        /// @copydoc noisepp::Module::getType()
+        ModuleTypeId getType() const { return MODULE_CONSTANT; }
+
 #if NOISEPP_ENABLE_UTILS
-			/// @copydoc noisepp::Module::write()
-			virtual void write (utils::OutStream &stream) const;
-			/// @copydoc noisepp::Module::read()
-			virtual void read (utils::InStream &stream);
+
+        /// @copydoc noisepp::Module::write()
+        virtual void write(utils::OutStream &stream) const;
+
+        /// @copydoc noisepp::Module::read()
+        virtual void read(utils::InStream &stream);
+
 #endif
-	};
+    };
 };
 
 #endif

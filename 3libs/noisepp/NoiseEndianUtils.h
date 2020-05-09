@@ -28,20 +28,17 @@
 
 #include "NoisePrerequisites.h"
 
-namespace noisepp
-{
-namespace utils
-{
+namespace noisepp {
+    namespace utils {
 
 /// Endian utility class.
-class EndianUtils
-{
-	public:
-		/// Flips the endian mode if required.
-		static void flipEndian (void *data, size_t size);
-};
+        class EndianUtils {
+        public:
+            /// Flips the endian mode if required.
+            static void flipEndian(void *data, size_t size);
+        };
 
-};
+    };
 };
 
 #endif // NOISEENDIANUTILS_H

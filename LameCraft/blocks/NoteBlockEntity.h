@@ -3,15 +3,17 @@
 
 #include "blocks/BlockEntity.h"
 
-class NoteBlockEntity : public BlockEntity
-{
+class NoteBlockEntity : public BlockEntity {
 public:
-	NoteBlockEntity(int create_x, int create_y, int create_z, int create_note);
-	virtual ~NoteBlockEntity();
+    NoteBlockEntity(int create_x, int create_y, int create_z, int create_note);
 
-	int GetNote();
-	float GetPitch();
-	void IncreaseNote();
+    virtual ~NoteBlockEntity();
+
+    int GetNote();
+
+    float GetPitch();
+
+    void IncreaseNote();
 
 private:
     int note;

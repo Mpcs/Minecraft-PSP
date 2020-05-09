@@ -12,20 +12,24 @@
 
 class CraftWorld;
 
-class WeatherSystem
-{
+class WeatherSystem {
 public:
     WeatherSystem();
+
     ~WeatherSystem();
 
     void SetWeatherDuration(float duration);
+
     void SetWeatherType(int type);
 
     float GetWeatherDuration();
+
     int GetWeatherType();
 
-    void Update(CraftWorld* mWorld, float dt);
-    void Render(CraftWorld* mWorld, Frustum &camFrustum, float camera_angle, Vector3 playerPosition, float dt);
+    void Update(CraftWorld *mWorld, float dt);
+
+    void Render(CraftWorld *mWorld, Frustum &camFrustum, float camera_angle, Vector3 playerPosition, float dt);
+
     void BuildPlanesVertex();
 
     int raindropsCount;
@@ -52,10 +56,15 @@ private:
     Vector3 GetPlaneCoord(int planeID);
 
     void RenderPlane(int shiftX, int shiftY, int shiftZ);
+
     void RenderRightPlane();
+
     void RenderLeftPlane();
+
     void RenderBackPlane();
+
     void RenderFrontPlane();
+
     void RenderDiagonalePlane(int type);
 };
 

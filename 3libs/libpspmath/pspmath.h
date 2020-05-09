@@ -26,7 +26,7 @@ extern "C" {
 #endif
 
 typedef struct quat {
-	float x, y, z, w;
+    float x, y, z, w;
 } __attribute__((aligned(16))) ScePspQuatMatrix;
 
 /** @addtogroup VFPUMATH */
@@ -398,7 +398,9 @@ void vfpu_quaternion_sample_linear(ScePspQuatMatrix *qout, ScePspQuatMatrix *a, 
   * @param t    - time value to sample, from 0 to 1
   *
 **/
-void vfpu_quaternion_sample_hermite(ScePspQuatMatrix *qout, ScePspQuatMatrix *a, ScePspQuatMatrix *b, ScePspQuatMatrix *at, ScePspQuatMatrix *bt, float t);
+void
+vfpu_quaternion_sample_hermite(ScePspQuatMatrix *qout, ScePspQuatMatrix *a, ScePspQuatMatrix *b, ScePspQuatMatrix *at,
+                               ScePspQuatMatrix *bt, float t);
 
 /**
   * Return a tangent point for hermite spline interpolation

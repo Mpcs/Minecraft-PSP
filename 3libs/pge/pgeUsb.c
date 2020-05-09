@@ -28,111 +28,107 @@
 #include "pgeUsb.h"
 
 int pgeSupportLoadStartModule(const char *path);
+
 int pgeSupportStopUnloadModule(SceUID modid);
 
 static int pgeUsbInitialised = 0;
 static SceUID pgeUsbModuleId[7];
 
-int pgeUsbInit(void)
-{	
-	if(pgeUsbInitialised)
-		return 1;
-		
+int pgeUsbInit(void) {
+    if (pgeUsbInitialised)
+        return 1;
+
     pgeUsbModuleId[0] = pgeSupportLoadStartModule("flash0:/kd/chkreg.prx");
-	
-	if(pgeUsbModuleId[0] < 0)
-		return pgeUsbModuleId[0];
-		
+
+    if (pgeUsbModuleId[0] < 0)
+        return pgeUsbModuleId[0];
+
     pgeUsbModuleId[1] = pgeSupportLoadStartModule("flash0:/kd/npdrm.prx");
-	
-	if(pgeUsbModuleId[1] < 0)
-		return pgeUsbModuleId[1];
-		
+
+    if (pgeUsbModuleId[1] < 0)
+        return pgeUsbModuleId[1];
+
     pgeUsbModuleId[2] = pgeSupportLoadStartModule("flash0:/kd/semawm.prx");
-	
-	if(pgeUsbModuleId[2] < 0)
-		return pgeUsbModuleId[2];
-		
+
+    if (pgeUsbModuleId[2] < 0)
+        return pgeUsbModuleId[2];
+
     pgeUsbModuleId[3] = pgeSupportLoadStartModule("flash0:/kd/usbstor.prx");
-	
-	if(pgeUsbModuleId[3] < 0)
-		return pgeUsbModuleId[3];
-		
+
+    if (pgeUsbModuleId[3] < 0)
+        return pgeUsbModuleId[3];
+
     pgeUsbModuleId[4] = pgeSupportLoadStartModule("flash0:/kd/usbstormgr.prx");
-	
-	if(pgeUsbModuleId[4] < 0)
-		return pgeUsbModuleId[4];
-		
+
+    if (pgeUsbModuleId[4] < 0)
+        return pgeUsbModuleId[4];
+
     pgeUsbModuleId[5] = pgeSupportLoadStartModule("flash0:/kd/usbstorms.prx");
-	
-	if(pgeUsbModuleId[5] < 0)
-		return pgeUsbModuleId[5];
-		
+
+    if (pgeUsbModuleId[5] < 0)
+        return pgeUsbModuleId[5];
+
     pgeUsbModuleId[6] = pgeSupportLoadStartModule("flash0:/kd/usbstorboot.prx");
-	
-	if(pgeUsbModuleId[6] < 0)
-		return pgeUsbModuleId[6];
+
+    if (pgeUsbModuleId[6] < 0)
+        return pgeUsbModuleId[6];
 
     int result = sceUsbStart(PSP_USBBUS_DRIVERNAME, 0, 0);
-    
-	if(result < 0)
-		return result;
-		
+
+    if (result < 0)
+        return result;
+
     result = sceUsbStart(PSP_USBSTOR_DRIVERNAME, 0, 0);
-    
-	if(result < 0)
-		return result;
+
+    if (result < 0)
+        return result;
 
     result = sceUsbstorBootSetCapacity(0x800000);
-    
-	if(result < 0)
-		return result;
-		
-	pgeUsbInitialised = 1;
-	
+
+    if (result < 0)
+        return result;
+
+    pgeUsbInitialised = 1;
+
     return 1;
 }
 
-int pgeUsbShutdown(void)
-{
+int pgeUsbShutdown(void) {
     int i;
 
     sceUsbStop(PSP_USBSTOR_DRIVERNAME, 0, 0);
     sceUsbStop(PSP_USBBUS_DRIVERNAME, 0, 0);
-	
-    for(i = 6; i >= 0; i--)
+
+    for (i = 6; i >= 0; i--)
         pgeSupportStopUnloadModule(pgeUsbModuleId[i]);
-		
-	pgeUsbInitialised = 0;
-		
+
+    pgeUsbInitialised = 0;
+
     return 1;
 }
 
-int pgeUsbGetState(void)
-{
-	int state = sceUsbGetState();
-	
-	return state;
+int pgeUsbGetState(void) {
+    int state = sceUsbGetState();
+
+    return state;
 }
 
-int pgeUsbActivate(void)
-{
+int pgeUsbActivate(void) {
     int result = sceUsbActivate(0x1c8);
-	
-	if(result < 0)
-		return 0;
-	
+
+    if (result < 0)
+        return 0;
+
     return 1;
 }
 
-int pgeUsbDeactivate(void)
-{
+int pgeUsbDeactivate(void) {
     int result = sceUsbDeactivate(0x1c8);
-	
+
     sceIoDevctl("fatms0:", 0x0240D81E, NULL, 0, NULL, 0);
-	
-	if(result < 0)
-		return 0;
-	
+
+    if (result < 0)
+        return 0;
+
     return 1;
 }

@@ -10,20 +10,26 @@
 
 class CraftWorld;
 
-class Drop
-{
+class Drop {
 public:
     Drop(Vector3 position2, int id2, int amount2, bool stackable2, int num2);
+
     ~Drop();
 
     void CheckOtherDrops();
+
     void BuildVerticesForItem();
+
     void Update(float dt);
+
     void Render(Frustum &camFrustum, Vector3 playerPos, float camAngle);
+
     void SetVelociy(Vector3 velocity2);
 
     int GetId();
+
     int GetAmount();
+
     bool GetStackable();
 
     Vector3 position;
@@ -31,7 +37,7 @@ public:
     bool toDestroy;
     bool getMe;
 
-    CraftWorld* myCrft;
+    CraftWorld *myCrft;
 
 private:
 

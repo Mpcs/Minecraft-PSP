@@ -9,18 +9,21 @@
 #include <Aurora/Graphics/Vertex.h>
 #include <Aurora/Math/BoundingBox.h>
 
-class MonsterSpawnerEntity : public BlockEntity
-{
+class MonsterSpawnerEntity : public BlockEntity {
 public:
-	MonsterSpawnerEntity(int create_x, int create_y, int create_z, std::string create_mobToSpawn);
-	virtual ~MonsterSpawnerEntity();
+    MonsterSpawnerEntity(int create_x, int create_y, int create_z, std::string create_mobToSpawn);
 
-	void Update(float dt);
-	void SetStandardProperties();
+    virtual ~MonsterSpawnerEntity();
 
-	bool ItIsTimeToSpawn();
-	std::string MobToSpawn();
-	int MobCountToSpawn();
+    void Update(float dt);
+
+    void SetStandardProperties();
+
+    bool ItIsTimeToSpawn();
+
+    std::string MobToSpawn();
+
+    int MobCountToSpawn();
 
     BoundingBox actArea;
     bool forceSpawn;

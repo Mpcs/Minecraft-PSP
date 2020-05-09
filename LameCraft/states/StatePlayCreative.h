@@ -45,66 +45,84 @@ using namespace Aurora::System;
 using namespace Aurora;
 
 
-class StatePlayCreative : public CGameState
-{
+class StatePlayCreative : public CGameState {
 public:
-	StatePlayCreative();
-	virtual ~StatePlayCreative();
+    StatePlayCreative();
 
-	void Init();
-	void InitParametric(bool makeTrees,bool makeWater,bool makeCaves, unsigned int seedIII, int worldType, char gameMode);
-	void Enter();
-	void CleanUp();
+    virtual ~StatePlayCreative();
 
-	void Pause();
-	void Resume();
-	void LoadTextures();
+    void Init();
 
-	void HandleEvents(StateManager* sManager);
-	void Update(StateManager* sManager);
-	void Draw(StateManager* sManager);
+    void
+    InitParametric(bool makeTrees, bool makeWater, bool makeCaves, unsigned int seedIII, int worldType, char gameMode);
 
-	void LoadMap(std::string fileName,bool compressed);
-	void SetWorldAndSaveName(std::string worldName,std::string fileName);
-	void InitCamera();
+    void Enter();
 
-	//keys helpers
-	bool keyPressed(int currentKey);
-	bool keyHold(int currentKey);
-	void PutInInventory(int id, int num, bool st);
+    void CleanUp();
+
+    void Pause();
+
+    void Resume();
+
+    void LoadTextures();
+
+    void HandleEvents(StateManager *sManager);
+
+    void Update(StateManager *sManager);
+
+    void Draw(StateManager *sManager);
+
+    void LoadMap(std::string fileName, bool compressed);
+
+    void SetWorldAndSaveName(std::string worldName, std::string fileName);
+
+    void InitCamera();
+
+    //keys helpers
+    bool keyPressed(int currentKey);
+
+    bool keyHold(int currentKey);
+
+    void PutInInventory(int id, int num, bool st);
 
 private:
 
-	void advancedBlit(int sx, int sy, int sw, int sh, int dx, int dy, int slice);
-	bool TryToMove(Vector3 moveVector,float dt);
-	void SetDayTimeAfterLoad();
-	void CraftItem2x2();
-	void CraftItem3x3();
+    void advancedBlit(int sx, int sy, int sw, int sh, int dx, int dy, int slice);
 
-	void CheckForFurnFuel(Furnace* Fur);
-	void CheckForFurnWorking(Furnace* Fur);
-	void ReadyFurnSmelting(Furnace* Fur);
+    bool TryToMove(Vector3 moveVector, float dt);
+
+    void SetDayTimeAfterLoad();
+
+    void CraftItem2x2();
+
+    void CraftItem3x3();
+
+    void CheckForFurnFuel(Furnace *Fur);
+
+    void CheckForFurnWorking(Furnace *Fur);
+
+    void ReadyFurnSmelting(Furnace *Fur);
 
     int FindFurnaceId(int x, int y, int z);
 
-	int FindChestId(int x, int y, int z);
+    int FindChestId(int x, int y, int z);
 
 
 private:
 
-	RenderManager *mRender;
-	SystemManager *mSystemMgr;
-	SoundManager *mSoundMgr;
-	InputHelper *mIhelper;
-	Camera *fppCam;
+    RenderManager *mRender;
+    SystemManager *mSystemMgr;
+    SoundManager *mSoundMgr;
+    InputHelper *mIhelper;
+    Camera *fppCam;
 
-	std::string saveFileName;
-	int freeMemory;
-	float freeMemoryTimer;
+    std::string saveFileName;
+    int freeMemory;
+    float freeMemoryTimer;
 
     float cloudsOffset;
 
-	CraftWorld *mWorld;
+    CraftWorld *mWorld;
 
     SkyLight *skyLight;
     SkyLight *skyMoonLight;
@@ -116,7 +134,7 @@ private:
     bool check;
     bool cycle;
 
-	bool startDt;
+    bool startDt;
     float dT;
     float dET;          // ����� �������
     char dStd;          // ������ �������� ���������� �����
@@ -129,8 +147,8 @@ private:
 
     Vector3 testPos1;
 
-	Vector3 cubePos;
-	bool showCube;
+    Vector3 cubePos;
+    bool showCube;
 
     float sleepMessageTime;
     int sleepMessageType;
@@ -160,40 +178,40 @@ private:
     char chestId;
     char furnaceId;
 
-    Chest* UseChest;
-    Furnace* UseFurnace;
-	//zmienne do poruszania
-	float GRAVITY;
-	float JUMPVELOCITY;
-	float CLIMBVELOCITY;
+    Chest *UseChest;
+    Furnace *UseFurnace;
+    //zmienne do poruszania
+    float GRAVITY;
+    float JUMPVELOCITY;
+    float CLIMBVELOCITY;
 
-	Vector3 playerVelocity;
-	Vector3 playerPosition;
-	Vector3 newPlayerPos;
-	Vector3 oldPlayerPos;
+    Vector3 playerVelocity;
+    Vector3 playerPosition;
+    Vector3 newPlayerPos;
+    Vector3 oldPlayerPos;
 
     bool moveForward;
-	bool walkingOnGround;
-	bool moving;
-	bool jumping;
-	bool headInWater;
-	bool footInWater;
-	bool headInLava;
-	bool footInLava;
+    bool walkingOnGround;
+    bool moving;
+    bool jumping;
+    bool headInWater;
+    bool footInWater;
+    bool headInLava;
+    bool footInLava;
 
-	bool invEn;
-	bool upEn;
-	bool craft3xEn;
-	bool chestEn;
-	bool furnaceEn;
+    bool invEn;
+    bool upEn;
+    bool craft3xEn;
+    bool chestEn;
+    bool furnaceEn;
 
-	bool usingSlider; // craive vars
-	bool onDestroySlot;
+    bool usingSlider; // craive vars
+    bool onDestroySlot;
 
-	bool showSlotName;
-	float showSlotTimer;
-	float showSlotTimerMax;
-	int slotId;
+    bool showSlotName;
+    float showSlotTimer;
+    float showSlotTimerMax;
+    int slotId;
 
     char barPosition;
     char invXPosition;
@@ -215,100 +233,100 @@ private:
     char tempYChest;
     bool tempUpChest;
 
-	int ram1;
-	int ram2;
+    int ram1;
+    int ram2;
 
     float tickCave; //cave sounds timer
-	float tickHunger;
-	float tickHealth;
-	float tickOS;
+    float tickHunger;
+    float tickHealth;
+    float tickOS;
     float tickChunk;
     float tickShowFlymodeMessage;
     float tickShowSlotName;
     float rainSoundFrequency;
 
     float inputDiskNameTimer;
-	std::string inputDiskName;
+    std::string inputDiskName;
 
-	short chunks; // 0 - 7;
+    short chunks; // 0 - 7;
 
     int chunkId;
 
-	Timer mTimer;
-	float dt;
+    Timer mTimer;
+    float dt;
 
-	//int texture[16];
-	int barItems;
-	int texture;
-	int texture_mips;
-	int waterAnimation;
+    //int texture[16];
+    int barItems;
+    int texture;
+    int texture_mips;
+    int waterAnimation;
 
-	unsigned char blue;
-	unsigned char red;
-	unsigned char black;
-	unsigned char stars;
+    unsigned char blue;
+    unsigned char red;
+    unsigned char black;
+    unsigned char stars;
 
     int snowBall4;
-	int cloudsTex;
-	int suntex;
-	int moontex;
-	int grassColorTex;
+    int cloudsTex;
+    int suntex;
+    int moontex;
+    int grassColorTex;
 
-	unsigned char currentTexture;
-	unsigned char timeTexture;
+    unsigned char currentTexture;
+    unsigned char timeTexture;
 
     float pre_fps;
-	int average_fps;
-	float tick_fps;
-	int ticks;
+    int average_fps;
+    float tick_fps;
+    int ticks;
 
     Sprite *waterScreen;
 
     Sprite *invCellSprite;
-	Sprite *invSprite;
-	Sprite *sliderSprite;
-	Sprite *sliderLightedSprite;
+    Sprite *invSprite;
+    Sprite *sliderSprite;
+    Sprite *sliderLightedSprite;
     Sprite *crtSprite;
     Sprite *chtSprite;
     Sprite *selectInvSprite;
-	Sprite *barSprite;
-	Sprite *crossSprite;
-	Sprite *selectSprite;
+    Sprite *barSprite;
+    Sprite *crossSprite;
+    Sprite *selectSprite;
 
-	Sprite *furArrowSprite[22];
-	Sprite *furFireSprite[14];
+    Sprite *furArrowSprite[22];
+    Sprite *furFireSprite[14];
     Sprite *furSprite;
     Sprite *toolPointSprite[14];
 
-	float cameraSpeed;
-	float cameraMoveSpeed;
+    float cameraSpeed;
+    float cameraMoveSpeed;
 
-	//menu sprites
-	Sprite *buttonSprite;
-	Sprite *sbuttonSprite;
-	Sprite *nbuttonSprite;
-	Sprite *moverSprite;
+    //menu sprites
+    Sprite *buttonSprite;
+    Sprite *sbuttonSprite;
+    Sprite *nbuttonSprite;
+    Sprite *moverSprite;
 
-	int menuState;//0 game,1 menu
-	bool menuOptions;
-	int optionsMenuPos;
-	int selectPos;
+    int menuState;//0 game,1 menu
+    bool menuOptions;
+    int optionsMenuPos;
+    int selectPos;
 
     char statisticsPage;
-	//some settings
-	bool canFly;
-	bool devMode;
-	bool analogLeft,analogRight,analogUp,analogDown;
+    //some settings
+    bool canFly;
+    bool devMode;
+    bool analogLeft, analogRight, analogUp, analogDown;
 
-	//for sound of walkinng
-	float walkSoundAccu;
-	bool  isWalking;
+    //for sound of walkinng
+    float walkSoundAccu;
+    bool isWalking;
 
-	//Headbob
-	bool canHeadBob;
-	float bobCycle;
-	bool bobType;
-	float cubeLight;
+    //Headbob
+    bool canHeadBob;
+    float bobCycle;
+    bool bobType;
+    float cubeLight;
 
     float shift_x;
     float shift_y;
@@ -319,21 +337,24 @@ private:
     bool animGo;
 
     bool anim[3];
-	bool makeScreen;
-	bool dieFactor;
+    bool makeScreen;
+    bool dieFactor;
 
-	float angleFactor;
+    float angleFactor;
 
     void SetCreativePage(char page);
+
     void InitCreativeInventory();
 
-    void DrawText(int x,int y, unsigned int color, float size, const char *message, ...);
-    void DrawText2(int x,int y, unsigned int color, float size, const char *message, ...);
-    void DrawAmount(int x,int y, int amount);
+    void DrawText(int x, int y, unsigned int color, float size, const char *message, ...);
 
-	std::vector<SnowBall2*> mSnowBalls;
-	std::vector<int> inventoryItems;
-	std::vector<Particle*> mParticles;
+    void DrawText2(int x, int y, unsigned int color, float size, const char *message, ...);
+
+    void DrawAmount(int x, int y, int amount);
+
+    std::vector<SnowBall2 *> mSnowBalls;
+    std::vector<int> inventoryItems;
+    std::vector<Particle *> mParticles;
 
     int creativePage;
     int creativePageMax;

@@ -3,1282 +3,1140 @@
 
 #include "items/BaseItem.h"
 
-class WoodenPickaxe : public BaseItem
-{
+class WoodenPickaxe : public BaseItem {
 public:
 
-	WoodenPickaxe();
+    WoodenPickaxe();
 
-	static item_id getID();
+    static item_id getID();
 };
 
-class StonePickaxe : public BaseItem
-{
+class StonePickaxe : public BaseItem {
 public:
 
-	StonePickaxe();
+    StonePickaxe();
 
-	static item_id getID();
+    static item_id getID();
 };
 
-class IronPickaxe : public BaseItem
-{
+class IronPickaxe : public BaseItem {
 public:
 
-	IronPickaxe();
+    IronPickaxe();
 
-	static item_id getID();
+    static item_id getID();
 };
 
-class DiamondPickaxe : public BaseItem
-{
+class DiamondPickaxe : public BaseItem {
 public:
 
-	DiamondPickaxe();
+    DiamondPickaxe();
 
-	static item_id getID();
+    static item_id getID();
 };
 
-class GoldenPickaxe : public BaseItem
-{
+class GoldenPickaxe : public BaseItem {
 public:
 
-	GoldenPickaxe();
+    GoldenPickaxe();
 
-	static item_id getID();
+    static item_id getID();
 };
 
-class WoodenSword : public BaseItem
-{
+class WoodenSword : public BaseItem {
 public:
 
-	WoodenSword();
+    WoodenSword();
 
-	static item_id getID();
+    static item_id getID();
 };
 
-class StoneSword : public BaseItem
-{
+class StoneSword : public BaseItem {
 public:
 
-	StoneSword();
+    StoneSword();
 
-	static item_id getID();
+    static item_id getID();
 };
 
-class IronSword : public BaseItem
-{
+class IronSword : public BaseItem {
 public:
 
-	IronSword();
+    IronSword();
 
-	static item_id getID();
+    static item_id getID();
 };
 
-class DiamondSword : public BaseItem
-{
+class DiamondSword : public BaseItem {
 public:
 
-	DiamondSword();
+    DiamondSword();
 
-	static item_id getID();
+    static item_id getID();
 };
 
-class GoldenSword : public BaseItem
-{
+class GoldenSword : public BaseItem {
 public:
 
-	GoldenSword();
+    GoldenSword();
 
-	static item_id getID();
+    static item_id getID();
 };
 
-class WoodenShovel : public BaseItem
-{
+class WoodenShovel : public BaseItem {
 public:
 
-	WoodenShovel();
+    WoodenShovel();
 
-	static item_id getID();
+    static item_id getID();
 };
 
-class StoneShovel : public BaseItem
-{
+class StoneShovel : public BaseItem {
 public:
 
-	StoneShovel();
+    StoneShovel();
 
-	static item_id getID();
+    static item_id getID();
 };
 
-class IronShovel : public BaseItem
-{
+class IronShovel : public BaseItem {
 public:
 
-	IronShovel();
+    IronShovel();
 
-	static item_id getID();
+    static item_id getID();
 };
 
-class DiamondShovel : public BaseItem
-{
+class DiamondShovel : public BaseItem {
 public:
 
-	DiamondShovel();
+    DiamondShovel();
 
-	static item_id getID();
+    static item_id getID();
 };
 
-class GoldenShovel : public BaseItem
-{
+class GoldenShovel : public BaseItem {
 public:
 
-	GoldenShovel();
+    GoldenShovel();
 
-	static item_id getID();
+    static item_id getID();
 };
 
-class WoodenAxe : public BaseItem
-{
+class WoodenAxe : public BaseItem {
 public:
 
-	WoodenAxe();
+    WoodenAxe();
 
-	static item_id getID();
+    static item_id getID();
 };
 
-class StoneAxe : public BaseItem
-{
+class StoneAxe : public BaseItem {
 public:
 
-	StoneAxe();
+    StoneAxe();
 
-	static item_id getID();
+    static item_id getID();
 };
 
-class IronAxe : public BaseItem
-{
+class IronAxe : public BaseItem {
 public:
 
-	IronAxe();
+    IronAxe();
 
-	static item_id getID();
+    static item_id getID();
 };
 
-class DiamondAxe : public BaseItem
-{
+class DiamondAxe : public BaseItem {
 public:
 
-	DiamondAxe();
+    DiamondAxe();
 
-	static item_id getID();
+    static item_id getID();
 };
 
-class GoldenAxe : public BaseItem
-{
+class GoldenAxe : public BaseItem {
 public:
 
-	GoldenAxe();
+    GoldenAxe();
 
-	static item_id getID();
+    static item_id getID();
 };
 
-class WoodenHoe : public BaseItem
-{
+class WoodenHoe : public BaseItem {
 public:
 
-	WoodenHoe();
+    WoodenHoe();
 
-	static item_id getID();
+    static item_id getID();
 };
 
-class StoneHoe : public BaseItem
-{
+class StoneHoe : public BaseItem {
 public:
 
-	StoneHoe();
+    StoneHoe();
 
-	static item_id getID();
+    static item_id getID();
 };
 
-class IronHoe : public BaseItem
-{
+class IronHoe : public BaseItem {
 public:
 
-	IronHoe();
+    IronHoe();
 
-	static item_id getID();
+    static item_id getID();
 };
 
-class DiamondHoe : public BaseItem
-{
+class DiamondHoe : public BaseItem {
 public:
 
-	DiamondHoe();
+    DiamondHoe();
 
-	static item_id getID();
+    static item_id getID();
 };
 
-class GoldenHoe : public BaseItem
-{
+class GoldenHoe : public BaseItem {
 public:
 
-	GoldenHoe();
+    GoldenHoe();
 
-	static item_id getID();
+    static item_id getID();
 };
 
-class Scissors : public BaseItem
-{
+class Scissors : public BaseItem {
 public:
 
-	Scissors();
+    Scissors();
 
-	static item_id getID();
+    static item_id getID();
 };
 
-class Stick : public BaseItem
-{
+class Stick : public BaseItem {
 public:
 
-	Stick();
+    Stick();
 
-	static item_id getID();
+    static item_id getID();
 };
 
-class Coal : public BaseItem
-{
+class Coal : public BaseItem {
 public:
 
-	Coal();
+    Coal();
 
-	static item_id getID();
+    static item_id getID();
 };
 
-class IronBar : public BaseItem
-{
+class IronBar : public BaseItem {
 public:
 
-	IronBar();
+    IronBar();
 
-	static item_id getID();
+    static item_id getID();
 };
 
-class DiamondItem : public BaseItem
-{
+class DiamondItem : public BaseItem {
 public:
 
-	DiamondItem();
+    DiamondItem();
 
-	static item_id getID();
+    static item_id getID();
 };
 
-class GoldenBar : public BaseItem
-{
+class GoldenBar : public BaseItem {
 public:
 
-	GoldenBar();
+    GoldenBar();
 
-	static item_id getID();
+    static item_id getID();
 };
 
-class FireItem : public BaseItem
-{
+class FireItem : public BaseItem {
 public:
 
-	FireItem();
+    FireItem();
 
-	static item_id getID();
+    static item_id getID();
 };
 
-class LigniteCoal : public BaseItem
-{
+class LigniteCoal : public BaseItem {
 public:
 
-	LigniteCoal();
+    LigniteCoal();
 
-	static item_id getID();
+    static item_id getID();
 };
 
-class Clay : public BaseItem
-{
+class Clay : public BaseItem {
 public:
 
-	Clay();
+    Clay();
 
-	static item_id getID();
+    static item_id getID();
 };
 
-class Apple : public BaseItem
-{
+class Apple : public BaseItem {
 public:
 
-	Apple();
+    Apple();
 
-	static item_id getID();
+    static item_id getID();
 };
 
-class GoldenApple : public BaseItem
-{
+class GoldenApple : public BaseItem {
 public:
 
-	GoldenApple();
+    GoldenApple();
 
-	static item_id getID();
+    static item_id getID();
 };
 
-class WheatSeeds : public BaseItem
-{
+class WheatSeeds : public BaseItem {
 public:
 
-	WheatSeeds();
+    WheatSeeds();
 
-	static item_id getID();
+    static item_id getID();
 };
 
-class Wheat : public BaseItem
-{
+class Wheat : public BaseItem {
 public:
 
-	Wheat();
+    Wheat();
 
-	static item_id getID();
+    static item_id getID();
 };
 
-class WhiteBread : public BaseItem
-{
+class WhiteBread : public BaseItem {
 public:
 
-	WhiteBread();
+    WhiteBread();
 
-	static item_id getID();
+    static item_id getID();
 };
 
-class Brick : public BaseItem
-{
+class Brick : public BaseItem {
 public:
 
-	Brick();
+    Brick();
 
-	static item_id getID();
+    static item_id getID();
 };
 
-class Busket : public BaseItem
-{
+class Busket : public BaseItem {
 public:
 
-	Busket();
+    Busket();
 
-	static item_id getID();
+    static item_id getID();
 };
 
-class WaterBusket : public BaseItem
-{
+class WaterBusket : public BaseItem {
 public:
 
-	WaterBusket();
+    WaterBusket();
 
-	static item_id getID();
+    static item_id getID();
 };
 
-class LavaBusket : public BaseItem
-{
+class LavaBusket : public BaseItem {
 public:
 
-	LavaBusket();
+    LavaBusket();
 
-	static item_id getID();
+    static item_id getID();
 };
 
-class CaneItem : public BaseItem
-{
+class CaneItem : public BaseItem {
 public:
 
-	CaneItem();
+    CaneItem();
 
-	static item_id getID();
+    static item_id getID();
 };
 
-class Flower1Item : public BaseItem
-{
+class Flower1Item : public BaseItem {
 public:
 
-	Flower1Item();
+    Flower1Item();
 
-	static item_id getID();
+    static item_id getID();
 };
 
-class Flower2Item : public BaseItem
-{
+class Flower2Item : public BaseItem {
 public:
 
-	Flower2Item();
+    Flower2Item();
 
-	static item_id getID();
+    static item_id getID();
 };
 
-class OakSaplingItem : public BaseItem
-{
+class OakSaplingItem : public BaseItem {
 public:
 
-	OakSaplingItem();
+    OakSaplingItem();
 
-	static item_id getID();
+    static item_id getID();
 };
 
-class Paper : public BaseItem
-{
+class Paper : public BaseItem {
 public:
 
-	Paper();
+    Paper();
 
-	static item_id getID();
+    static item_id getID();
 };
 
-class Book : public BaseItem
-{
+class Book : public BaseItem {
 public:
 
-	Book();
+    Book();
 
-	static item_id getID();
+    static item_id getID();
 };
 
-class SnowBallItem : public BaseItem
-{
+class SnowBallItem : public BaseItem {
 public:
 
-	SnowBallItem();
+    SnowBallItem();
 
-	static item_id getID();
+    static item_id getID();
 };
 
-class MooshroomItem1 : public BaseItem
-{
+class MooshroomItem1 : public BaseItem {
 public:
 
-	MooshroomItem1();
+    MooshroomItem1();
 
-	static item_id getID();
+    static item_id getID();
 };
 
-class MooshroomItem2 : public BaseItem
-{
+class MooshroomItem2 : public BaseItem {
 public:
 
-	MooshroomItem2();
+    MooshroomItem2();
 
-	static item_id getID();
+    static item_id getID();
 };
 
-class Bowl : public BaseItem
-{
+class Bowl : public BaseItem {
 public:
 
-	Bowl();
+    Bowl();
 
-	static item_id getID();
+    static item_id getID();
 };
 
-class MooshroomBowl : public BaseItem
-{
+class MooshroomBowl : public BaseItem {
 public:
 
-	MooshroomBowl();
+    MooshroomBowl();
 
-	static item_id getID();
+    static item_id getID();
 };
 
-class IronWateringCan : public BaseItem
-{
+class IronWateringCan : public BaseItem {
 public:
 
-	IronWateringCan();
+    IronWateringCan();
 
-	static item_id getID();
+    static item_id getID();
 };
 
-class DiamondWateringCan : public BaseItem
-{
+class DiamondWateringCan : public BaseItem {
 public:
 
-	DiamondWateringCan();
+    DiamondWateringCan();
 
-	static item_id getID();
+    static item_id getID();
 };
 
-class DoorItem : public BaseItem
-{
+class DoorItem : public BaseItem {
 public:
 
-	DoorItem();
+    DoorItem();
 
-	static item_id getID();
+    static item_id getID();
 };
 
-class LadderItem : public BaseItem
-{
+class LadderItem : public BaseItem {
 public:
 
-	LadderItem();
+    LadderItem();
 
-	static item_id getID();
+    static item_id getID();
 };
 
-class TorchItem : public BaseItem
-{
+class TorchItem : public BaseItem {
 public:
 
-	TorchItem();
+    TorchItem();
 
-	static item_id getID();
+    static item_id getID();
 };
 
-class SpruceSaplingItem : public BaseItem
-{
+class SpruceSaplingItem : public BaseItem {
 public:
 
-	SpruceSaplingItem();
+    SpruceSaplingItem();
 
-	static item_id getID();
+    static item_id getID();
 };
 
-class BirchSaplingItem : public BaseItem
-{
+class BirchSaplingItem : public BaseItem {
 public:
 
-	BirchSaplingItem();
+    BirchSaplingItem();
 
-	static item_id getID();
+    static item_id getID();
 };
 
-class MelonItem : public BaseItem
-{
+class MelonItem : public BaseItem {
 public:
 
-	MelonItem();
+    MelonItem();
 
-	static item_id getID();
+    static item_id getID();
 };
 
-class MelonSeeds : public BaseItem
-{
+class MelonSeeds : public BaseItem {
 public:
 
-	MelonSeeds();
+    MelonSeeds();
 
-	static item_id getID();
+    static item_id getID();
 };
 
-class Sugar : public BaseItem
-{
+class Sugar : public BaseItem {
 public:
 
-	Sugar();
+    Sugar();
 
-	static item_id getID();
+    static item_id getID();
 };
 
-class CocoaBeans : public BaseItem
-{
+class CocoaBeans : public BaseItem {
 public:
 
-	CocoaBeans();
+    CocoaBeans();
 
-	static item_id getID();
+    static item_id getID();
 };
 
-class Cookie : public BaseItem
-{
+class Cookie : public BaseItem {
 public:
 
-	Cookie();
+    Cookie();
 
-	static item_id getID();
+    static item_id getID();
 };
 
-class RawBeef : public BaseItem
-{
+class RawBeef : public BaseItem {
 public:
 
-	RawBeef();
+    RawBeef();
 
-	static item_id getID();
+    static item_id getID();
 };
 
-class Steak : public BaseItem
-{
+class Steak : public BaseItem {
 public:
 
-	Steak();
+    Steak();
 
-	static item_id getID();
+    static item_id getID();
 };
 
-class LapisLazuli : public BaseItem
-{
+class LapisLazuli : public BaseItem {
 public:
 
-	LapisLazuli();
+    LapisLazuli();
 
-	static item_id getID();
+    static item_id getID();
 };
 
-class MilkBusket : public BaseItem
-{
+class MilkBusket : public BaseItem {
 public:
 
-	MilkBusket();
+    MilkBusket();
 
-	static item_id getID();
+    static item_id getID();
 };
 
-class CakeItem : public BaseItem
-{
+class CakeItem : public BaseItem {
 public:
 
-	CakeItem();
+    CakeItem();
 
-	static item_id getID();
+    static item_id getID();
 };
 
-class Bone : public BaseItem
-{
+class Bone : public BaseItem {
 public:
 
-	Bone();
+    Bone();
 
-	static item_id getID();
+    static item_id getID();
 };
 
-class BoneMeal : public BaseItem
-{
+class BoneMeal : public BaseItem {
 public:
 
-	BoneMeal();
+    BoneMeal();
 
-	static item_id getID();
+    static item_id getID();
 };
 
-class Leather : public BaseItem
-{
+class Leather : public BaseItem {
 public:
 
-	Leather();
+    Leather();
 
-	static item_id getID();
+    static item_id getID();
 };
 
-class SampleHelmet : public BaseItem
-{
+class SampleHelmet : public BaseItem {
 public:
 
-	SampleHelmet();
+    SampleHelmet();
 
-	static item_id getID();
+    static item_id getID();
 };
 
-class SampleChestplate : public BaseItem
-{
+class SampleChestplate : public BaseItem {
 public:
 
-	SampleChestplate();
+    SampleChestplate();
 
-	static item_id getID();
+    static item_id getID();
 };
 
-class SampleLeggings : public BaseItem
-{
+class SampleLeggings : public BaseItem {
 public:
 
-	SampleLeggings();
+    SampleLeggings();
 
-	static item_id getID();
+    static item_id getID();
 };
 
-class SampleBoots : public BaseItem
-{
+class SampleBoots : public BaseItem {
 public:
 
-	SampleBoots();
+    SampleBoots();
 
-	static item_id getID();
+    static item_id getID();
 };
 
-class LeatherHelmet : public BaseItem
-{
+class LeatherHelmet : public BaseItem {
 public:
 
-	LeatherHelmet();
+    LeatherHelmet();
 
-	static item_id getID();
+    static item_id getID();
 };
 
-class LeatherChestplate : public BaseItem
-{
+class LeatherChestplate : public BaseItem {
 public:
 
-	LeatherChestplate();
+    LeatherChestplate();
 
-	static item_id getID();
+    static item_id getID();
 };
 
-class LeatherLeggings : public BaseItem
-{
+class LeatherLeggings : public BaseItem {
 public:
 
-	LeatherLeggings();
+    LeatherLeggings();
 
-	static item_id getID();
+    static item_id getID();
 };
 
-class LeatherBoots : public BaseItem
-{
+class LeatherBoots : public BaseItem {
 public:
 
-	LeatherBoots();
+    LeatherBoots();
 
-	static item_id getID();
+    static item_id getID();
 };
 
-class ChainmailHelmet : public BaseItem
-{
+class ChainmailHelmet : public BaseItem {
 public:
 
-	ChainmailHelmet();
+    ChainmailHelmet();
 
-	static item_id getID();
+    static item_id getID();
 };
 
-class ChainmailChestplate : public BaseItem
-{
+class ChainmailChestplate : public BaseItem {
 public:
 
-	ChainmailChestplate();
+    ChainmailChestplate();
 
-	static item_id getID();
+    static item_id getID();
 };
 
-class ChainmailLeggings : public BaseItem
-{
+class ChainmailLeggings : public BaseItem {
 public:
 
-	ChainmailLeggings();
+    ChainmailLeggings();
 
-	static item_id getID();
+    static item_id getID();
 };
 
-class ChainmailBoots : public BaseItem
-{
+class ChainmailBoots : public BaseItem {
 public:
 
-	ChainmailBoots();
+    ChainmailBoots();
 
-	static item_id getID();
+    static item_id getID();
 };
 
-class IronHelmet : public BaseItem
-{
+class IronHelmet : public BaseItem {
 public:
 
-	IronHelmet();
+    IronHelmet();
 
-	static item_id getID();
+    static item_id getID();
 };
 
-class IronChestplate : public BaseItem
-{
+class IronChestplate : public BaseItem {
 public:
 
-	IronChestplate();
+    IronChestplate();
 
-	static item_id getID();
+    static item_id getID();
 };
 
-class IronLeggings : public BaseItem
-{
+class IronLeggings : public BaseItem {
 public:
 
-	IronLeggings();
+    IronLeggings();
 
-	static item_id getID();
+    static item_id getID();
 };
 
-class IronBoots : public BaseItem
-{
+class IronBoots : public BaseItem {
 public:
 
-	IronBoots();
+    IronBoots();
 
-	static item_id getID();
+    static item_id getID();
 };
 
-class DiamondHelmet : public BaseItem
-{
+class DiamondHelmet : public BaseItem {
 public:
 
-	DiamondHelmet();
+    DiamondHelmet();
 
-	static item_id getID();
+    static item_id getID();
 };
 
-class DiamondChestplate : public BaseItem
-{
+class DiamondChestplate : public BaseItem {
 public:
 
-	DiamondChestplate();
+    DiamondChestplate();
 
-	static item_id getID();
+    static item_id getID();
 };
 
-class DiamondLeggings : public BaseItem
-{
+class DiamondLeggings : public BaseItem {
 public:
 
-	DiamondLeggings();
+    DiamondLeggings();
 
-	static item_id getID();
+    static item_id getID();
 };
 
-class DiamondBoots : public BaseItem
-{
+class DiamondBoots : public BaseItem {
 public:
 
-	DiamondBoots();
+    DiamondBoots();
 
-	static item_id getID();
+    static item_id getID();
 };
 
-class GoldenHelmet : public BaseItem
-{
+class GoldenHelmet : public BaseItem {
 public:
 
-	GoldenHelmet();
+    GoldenHelmet();
 
-	static item_id getID();
+    static item_id getID();
 };
 
-class GoldenChestplate : public BaseItem
-{
+class GoldenChestplate : public BaseItem {
 public:
 
-	GoldenChestplate();
+    GoldenChestplate();
 
-	static item_id getID();
+    static item_id getID();
 };
 
-class GoldenLeggings : public BaseItem
-{
+class GoldenLeggings : public BaseItem {
 public:
 
-	GoldenLeggings();
+    GoldenLeggings();
 
-	static item_id getID();
+    static item_id getID();
 };
 
-class GoldenBoots : public BaseItem
-{
+class GoldenBoots : public BaseItem {
 public:
 
-	GoldenBoots();
+    GoldenBoots();
 
-	static item_id getID();
+    static item_id getID();
 };
 
-class RottenFlesh : public BaseItem
-{
+class RottenFlesh : public BaseItem {
 public:
 
-	RottenFlesh();
+    RottenFlesh();
 
-	static item_id getID();
+    static item_id getID();
 };
 
-class GlassPanelItem : public BaseItem
-{
+class GlassPanelItem : public BaseItem {
 public:
 
-	GlassPanelItem();
+    GlassPanelItem();
 
-	static item_id getID();
+    static item_id getID();
 };
 
-class IronBarsItem : public BaseItem
-{
+class IronBarsItem : public BaseItem {
 public:
 
-	IronBarsItem();
+    IronBarsItem();
 
-	static item_id getID();
+    static item_id getID();
 };
 
-class Flint : public BaseItem
-{
+class Flint : public BaseItem {
 public:
 
-	Flint();
+    Flint();
 
-	static item_id getID();
+    static item_id getID();
 };
 
-class Gunpowder : public BaseItem
-{
+class Gunpowder : public BaseItem {
 public:
 
-	Gunpowder();
+    Gunpowder();
 
-	static item_id getID();
+    static item_id getID();
 };
 
-class Redstone : public BaseItem
-{
+class Redstone : public BaseItem {
 public:
 
-	Redstone();
+    Redstone();
 
-	static item_id getID();
+    static item_id getID();
 };
 
-class Clock : public BaseItem
-{
+class Clock : public BaseItem {
 public:
 
-	Clock();
+    Clock();
 
-	static item_id getID();
+    static item_id getID();
 };
 
-class Compass : public BaseItem
-{
+class Compass : public BaseItem {
 public:
 
-	Compass();
+    Compass();
 
-	static item_id getID();
+    static item_id getID();
 };
 
-class Saddle : public BaseItem
-{
+class Saddle : public BaseItem {
 public:
 
-	Saddle();
+    Saddle();
 
-	static item_id getID();
+    static item_id getID();
 };
 
-class Sign : public BaseItem
-{
+class Sign : public BaseItem {
 public:
 
-	Sign();
+    Sign();
 
-	static item_id getID();
+    static item_id getID();
 };
 
-class ItemFrameItem : public BaseItem
-{
+class ItemFrameItem : public BaseItem {
 public:
 
-	ItemFrameItem ();
+    ItemFrameItem();
 
-	static item_id getID();
+    static item_id getID();
 };
 
-class FlowerPotItem : public BaseItem
-{
+class FlowerPotItem : public BaseItem {
 public:
 
-	FlowerPotItem ();
+    FlowerPotItem();
 
-	static item_id getID();
+    static item_id getID();
 };
 
-class PaintningItem : public BaseItem
-{
+class PaintningItem : public BaseItem {
 public:
 
-	PaintningItem ();
+    PaintningItem();
 
-	static item_id getID();
+    static item_id getID();
 };
 
-class BedItem : public BaseItem
-{
+class BedItem : public BaseItem {
 public:
 
-	BedItem ();
+    BedItem();
 
-	static item_id getID();
+    static item_id getID();
 };
 
-class Disk1 : public BaseItem
-{
+class Disk1 : public BaseItem {
 public:
 
-	Disk1 ();
+    Disk1();
 
-	static item_id getID();
+    static item_id getID();
 };
 
-class Disk2 : public BaseItem
-{
+class Disk2 : public BaseItem {
 public:
 
-	Disk2 ();
+    Disk2();
 
-	static item_id getID();
+    static item_id getID();
 };
 
-class Disk3 : public BaseItem
-{
+class Disk3 : public BaseItem {
 public:
 
-	Disk3 ();
+    Disk3();
 
-	static item_id getID();
+    static item_id getID();
 };
 
-class LightGrayDye : public BaseItem
-{
+class LightGrayDye : public BaseItem {
 public:
 
-	LightGrayDye ();
+    LightGrayDye();
 
-	static item_id getID();
+    static item_id getID();
 };
 
-class GrayDye : public BaseItem
-{
+class GrayDye : public BaseItem {
 public:
 
-	GrayDye ();
+    GrayDye();
 
-	static item_id getID();
+    static item_id getID();
 };
 
-class InkSac : public BaseItem
-{
+class InkSac : public BaseItem {
 public:
 
-	InkSac ();
+    InkSac();
 
-	static item_id getID();
+    static item_id getID();
 };
 
-class PinkDye : public BaseItem
-{
+class PinkDye : public BaseItem {
 public:
 
-	PinkDye ();
+    PinkDye();
 
-	static item_id getID();
+    static item_id getID();
 };
 
-class RoseRed : public BaseItem
-{
+class RoseRed : public BaseItem {
 public:
 
-	RoseRed ();
+    RoseRed();
 
-	static item_id getID();
+    static item_id getID();
 };
 
-class OrangeDye : public BaseItem
-{
+class OrangeDye : public BaseItem {
 public:
 
-	OrangeDye ();
+    OrangeDye();
 
-	static item_id getID();
+    static item_id getID();
 };
 
-class DandelionYellow : public BaseItem
-{
+class DandelionYellow : public BaseItem {
 public:
 
-	DandelionYellow ();
+    DandelionYellow();
 
-	static item_id getID();
+    static item_id getID();
 };
 
-class LimeDye : public BaseItem
-{
+class LimeDye : public BaseItem {
 public:
 
-	LimeDye ();
+    LimeDye();
 
-	static item_id getID();
+    static item_id getID();
 };
 
-class CactusGreen : public BaseItem
-{
+class CactusGreen : public BaseItem {
 public:
 
-	CactusGreen ();
+    CactusGreen();
 
-	static item_id getID();
+    static item_id getID();
 };
 
-class LightBlueDye : public BaseItem
-{
+class LightBlueDye : public BaseItem {
 public:
 
-	LightBlueDye ();
+    LightBlueDye();
 
-	static item_id getID();
+    static item_id getID();
 };
 
-class PurpleDye : public BaseItem
-{
+class PurpleDye : public BaseItem {
 public:
 
-	PurpleDye ();
+    PurpleDye();
 
-	static item_id getID();
+    static item_id getID();
 };
 
-class MagnetaDye : public BaseItem
-{
+class MagnetaDye : public BaseItem {
 public:
 
-	MagnetaDye ();
+    MagnetaDye();
 
-	static item_id getID();
+    static item_id getID();
 };
 
-class PumpkinSeeds : public BaseItem
-{
+class PumpkinSeeds : public BaseItem {
 public:
 
-	PumpkinSeeds ();
+    PumpkinSeeds();
 
-	static item_id getID();
+    static item_id getID();
 };
 
-class FlintAndSteel : public BaseItem
-{
+class FlintAndSteel : public BaseItem {
 public:
 
-	FlintAndSteel ();
+    FlintAndSteel();
 
-	static item_id getID();
+    static item_id getID();
 };
 
-class Potato : public BaseItem
-{
+class Potato : public BaseItem {
 public:
 
-	Potato ();
+    Potato();
 
-	static item_id getID();
+    static item_id getID();
 };
 
-class BakedPotato : public BaseItem
-{
+class BakedPotato : public BaseItem {
 public:
 
-	BakedPotato ();
+    BakedPotato();
 
-	static item_id getID();
+    static item_id getID();
 };
 
-class PoisonedPotato : public BaseItem
-{
+class PoisonedPotato : public BaseItem {
 public:
 
-	PoisonedPotato ();
+    PoisonedPotato();
 
-	static item_id getID();
+    static item_id getID();
 };
 
-class Carrot : public BaseItem
-{
+class Carrot : public BaseItem {
 public:
 
-	Carrot ();
+    Carrot();
 
-	static item_id getID();
+    static item_id getID();
 };
 
-class Disk4 : public BaseItem
-{
+class Disk4 : public BaseItem {
 public:
 
-	Disk4 ();
+    Disk4();
 
-	static item_id getID();
+    static item_id getID();
 };
 
-class Disk5 : public BaseItem
-{
+class Disk5 : public BaseItem {
 public:
 
-	Disk5 ();
+    Disk5();
 
-	static item_id getID();
+    static item_id getID();
 };
 
-class Disk6 : public BaseItem
-{
+class Disk6 : public BaseItem {
 public:
 
-	Disk6 ();
+    Disk6();
 
-	static item_id getID();
+    static item_id getID();
 };
 
-class Disk7 : public BaseItem
-{
+class Disk7 : public BaseItem {
 public:
 
-	Disk7 ();
+    Disk7();
 
-	static item_id getID();
+    static item_id getID();
 };
 
-class Disk8 : public BaseItem
-{
+class Disk8 : public BaseItem {
 public:
 
-	Disk8 ();
+    Disk8();
 
-	static item_id getID();
+    static item_id getID();
 };
 
-class Disk9 : public BaseItem
-{
+class Disk9 : public BaseItem {
 public:
 
-	Disk9 ();
+    Disk9();
 
-	static item_id getID();
+    static item_id getID();
 };
 
-class Disk10 : public BaseItem
-{
+class Disk10 : public BaseItem {
 public:
 
-	Disk10 ();
+    Disk10();
 
-	static item_id getID();
+    static item_id getID();
 };
 
-class Disk11 : public BaseItem
-{
+class Disk11 : public BaseItem {
 public:
 
-	Disk11 ();
+    Disk11();
 
-	static item_id getID();
+    static item_id getID();
 };
 
-class Disk12 : public BaseItem
-{
+class Disk12 : public BaseItem {
 public:
 
-	Disk12 ();
+    Disk12();
 
-	static item_id getID();
+    static item_id getID();
 };
 
 class Charcoal : public BaseItem {

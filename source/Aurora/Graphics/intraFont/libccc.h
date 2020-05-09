@@ -19,8 +19,8 @@ extern "C" {
  *  @{
  */
 
-typedef unsigned short cccUCS2; 
-typedef unsigned char  cccCode;
+typedef unsigned short cccUCS2;
+typedef unsigned char cccCode;
 
 /* supported codepages */
 #define CCC_CP000  0x00 //ASCII
@@ -54,14 +54,20 @@ typedef unsigned char  cccCode;
  *
  * @returns number of characters in the string
  */
-int cccStrlen(cccCode const * str);                 //for single byte character sets
-int cccStrlenSJIS(cccCode const * str);
-int cccStrlenGBK(cccCode const * str);
-int cccStrlenKOR(cccCode const * str);
-int cccStrlenBIG5(cccCode const * str);
-int cccStrlenUTF8(cccCode const * str);
-int cccStrlenCode(cccCode const * str, unsigned char cp);
-int cccStrlenUCS2(cccUCS2 const * str); 
+int cccStrlen(cccCode const *str);                 //for single byte character sets
+int cccStrlenSJIS(cccCode const *str);
+
+int cccStrlenGBK(cccCode const *str);
+
+int cccStrlenKOR(cccCode const *str);
+
+int cccStrlenBIG5(cccCode const *str);
+
+int cccStrlenUTF8(cccCode const *str);
+
+int cccStrlenCode(cccCode const *str, unsigned char cp);
+
+int cccStrlenUCS2(cccUCS2 const *str);
 
 /**
  * Character code conversion 
@@ -76,12 +82,17 @@ int cccStrlenUCS2(cccUCS2 const * str);
  *
  * @returns number of converted character codes
  */
-int cccSJIStoUCS2(cccUCS2 * dst, size_t count, cccCode const * str);
-int cccGBKtoUCS2 (cccUCS2 * dst, size_t count, cccCode const * str);
-int cccKORtoUCS2 (cccUCS2 * dst, size_t count, cccCode const * str);
-int cccBIG5toUCS2(cccUCS2 * dst, size_t count, cccCode const * str);
-int cccUTF8toUCS2(cccUCS2 * dst, size_t count, cccCode const * str);
-int cccCodetoUCS2(cccUCS2 * dst, size_t count, cccCode const * str, unsigned char cp); 
+int cccSJIStoUCS2(cccUCS2 *dst, size_t count, cccCode const *str);
+
+int cccGBKtoUCS2(cccUCS2 *dst, size_t count, cccCode const *str);
+
+int cccKORtoUCS2(cccUCS2 *dst, size_t count, cccCode const *str);
+
+int cccBIG5toUCS2(cccUCS2 *dst, size_t count, cccCode const *str);
+
+int cccUTF8toUCS2(cccUCS2 *dst, size_t count, cccCode const *str);
+
+int cccCodetoUCS2(cccUCS2 *dst, size_t count, cccCode const *str, unsigned char cp);
 
 /**
  * Set error character (character that's used for code points where conversion failed)

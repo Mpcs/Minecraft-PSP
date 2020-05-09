@@ -10,17 +10,22 @@
 
 class CraftWorld;
 
-class TNT
-{
+class TNT {
 public:
-    TNT(CraftWorld* world, Vector3 position2, Vector3 velocity2);
+    TNT(CraftWorld *world, Vector3 position2, Vector3 velocity2);
+
     ~TNT();
 
     void Update(float dt);
+
     void Render();
+
     void SetVelociy(Vector3 velocity2);
+
     void SetPosition(Vector3 position2);
+
     void ActivateOtherTNTs();
+
     void HurtNearbyMobs(float dt);
 
     float timeToExplode;
@@ -39,7 +44,7 @@ private:
     float blockScale;
     bool onGround;
 
-    CraftWorld* myWorld;
+    CraftWorld *myWorld;
 };
 
 #endif

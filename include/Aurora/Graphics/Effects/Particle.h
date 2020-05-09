@@ -10,43 +10,51 @@
 #include <psptypes.h>
 #include <string>
 
-namespace Aurora
-{
-	namespace Graphics
-	{
-		class Particle
-		{
-		public:
+namespace Aurora {
+    namespace Graphics {
+        class Particle {
+        public:
 
-			Particle(CraftWorld* world, std::string _name, Vector3 _position);
-			virtual ~Particle();
+            Particle(CraftWorld *world, std::string _name, Vector3 _position);
 
-			void Update(CraftWorld* crtf, float dt);
-			void Render(Frustum &camFrustum);
+            virtual ~Particle();
 
-			bool CheckCollision(CraftWorld* crtf);
+            void Update(CraftWorld *crtf, float dt);
 
-			void SetVelocity(Vector3 _velocity);
-			void SetFramesAmount(int _totalFrames);
-			void SetScale(float scale);
-			void SetScale(float minScale, float maxScale);
+            void Render(Frustum &camFrustum);
+
+            bool CheckCollision(CraftWorld *crtf);
+
+            void SetVelocity(Vector3 _velocity);
+
+            void SetFramesAmount(int _totalFrames);
+
+            void SetScale(float scale);
+
+            void SetScale(float minScale, float maxScale);
 
             void SetMaxLiveTime(int _maxLiveTime);
+
             void SetLiveTime(int _liveTime); // in milisecs
             void SetLiveTime(int minLiveTime, int maxLiveTime); // in milisecs
             void SetGravity(float _gravity);
+
             void SetColor(Vector3 _color);
+
             void SetBrightness(float brightness);
+
             void SetBrightness(float minBrightness, float maxBrightness);
 
-			void BuildVerticies();
-			void BuildVerticiesForBlockCrack(CraftWorld* crtf, int blockId);
-			void BuildVerticiesForItemCrack(CraftWorld* crtf, int itemId);
+            void BuildVerticies();
 
-			Vector3 position;
-			Vector3 velocity;
+            void BuildVerticiesForBlockCrack(CraftWorld *crtf, int blockId);
 
-			bool toDestroy;
+            void BuildVerticiesForItemCrack(CraftWorld *crtf, int itemId);
+
+            Vector3 position;
+            Vector3 velocity;
+
+            bool toDestroy;
             float friction;
 
             // additional vars
@@ -57,29 +65,29 @@ namespace Aurora
             float varf1;
             float varf2;
 
-		private:
+        private:
 
-		    TexturesPSPVertex *particleVertices;
+            TexturesPSPVertex *particleVertices;
 
-			float horizontalScale;
-			float verticalScale;
-			int texture;
+            float horizontalScale;
+            float verticalScale;
+            int texture;
 
-			float timeToLive;
-			float maxTimeToLive;
-			int frame;
-			int totalFrames;
+            float timeToLive;
+            float maxTimeToLive;
+            int frame;
+            int totalFrames;
 
-			Vector3 color;
+            Vector3 color;
 
-			float gravity;
-			float myLight;
-			bool rederMe;
+            float gravity;
+            float myLight;
+            bool rederMe;
 
-			std::string name;
-			BoundingBox bBox;
-		};
-	}
+            std::string name;
+            BoundingBox bBox;
+        };
+    }
 }
 
 #endif

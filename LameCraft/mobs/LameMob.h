@@ -12,27 +12,40 @@
 
 class CraftWorld;
 
-class LameMob
-{
+class LameMob {
 public:
-	LameMob(Vector3 mobPosition, int mobNumber);
+    LameMob(Vector3 mobPosition, int mobNumber);
+
     virtual ~LameMob();
 
     float DistanceToPlayer();
+
     unsigned int FastDistanceToPlayer();
+
     float PreciseDistanceToPlayer();
+
     float DistanceToHauntingPos();
+
     void TryToJump();
+
     void TryToMove(Vector3 movePosition1, float speed);
+
     void TryToMoveWithoutJump(Vector3 movePosition1, float speed);
+
     void SetPosition(Vector3 newPosition);
+
     void SetCollideBox(Vector3 collider1, Vector3 collider2);
+
     void UpdateBBox();
 
     virtual void BoxCollision();
+
     virtual void TakeDamage(float damage, float power, float dt);
+
     virtual void TakeDamageFromPointExplosion(float damage, float power, float dt, Vector3 point);
+
     virtual void Update(CraftWorld *myWorld, Vector3 playerPos, float dt);
+
     virtual void Render(Frustum &camFrustum, float dt);
 
     float mainAngle;

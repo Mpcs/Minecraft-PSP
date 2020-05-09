@@ -29,74 +29,66 @@
 #include "NoisePipeline.h"
 #include "NoiseModule.h"
 
-namespace noisepp
-{
-	class InvertElement1D : public PipelineElement1D
-	{
-		private:
-			ElementID mElement;
-			const PipelineElement1D *mElementPtr;
+namespace noisepp {
+    class InvertElement1D : public PipelineElement1D {
+    private:
+        ElementID mElement;
+        const PipelineElement1D *mElementPtr;
 
-		public:
-			InvertElement1D (const Pipeline1D *pipe, ElementID element) : mElement(element)
-			{
-				mElementPtr = pipe->getElement (element);
-			}
-			virtual Real getValue (Real x, Cache *cache) const
-			{
-				Real value;
-				value = getElementValue (mElementPtr, mElement, x, cache);
-				return -(value);
-			}
-	};
+    public:
+        InvertElement1D(const Pipeline1D *pipe, ElementID element) : mElement(element) {
+            mElementPtr = pipe->getElement(element);
+        }
 
-	class InvertElement2D : public PipelineElement2D
-	{
-		private:
-			ElementID mElement;
-			const PipelineElement2D *mElementPtr;
+        virtual Real getValue(Real x, Cache *cache) const {
+            Real value;
+            value = getElementValue(mElementPtr, mElement, x, cache);
+            return -(value);
+        }
+    };
 
-		public:
-			InvertElement2D (const Pipeline2D *pipe, ElementID element) : mElement(element)
-			{
-				mElementPtr = pipe->getElement (element);
-			}
-			virtual Real getValue (Real x, Real y, Cache *cache) const
-			{
-				Real value;
-				value = getElementValue (mElementPtr, mElement, x, y, cache);
-				return -(value);
-			}
-	};
+    class InvertElement2D : public PipelineElement2D {
+    private:
+        ElementID mElement;
+        const PipelineElement2D *mElementPtr;
 
-	class InvertElement3D : public PipelineElement3D
-	{
-		private:
-			ElementID mElement;
-			const PipelineElement3D *mElementPtr;
+    public:
+        InvertElement2D(const Pipeline2D *pipe, ElementID element) : mElement(element) {
+            mElementPtr = pipe->getElement(element);
+        }
 
-		public:
-			InvertElement3D (const Pipeline3D *pipe, ElementID element) : mElement(element)
-			{
-				mElementPtr = pipe->getElement (element);
-			}
-			virtual Real getValue (Real x, Real y, Real z, Cache *cache) const
-			{
-				Real value;
-				value = getElementValue (mElementPtr, mElement, x, y, z, cache);
-				return -(value);
-			}
-	};
+        virtual Real getValue(Real x, Real y, Cache *cache) const {
+            Real value;
+            value = getElementValue(mElementPtr, mElement, x, y, cache);
+            return -(value);
+        }
+    };
 
-	/** Inversion module.
-		Inverts the output of the source module.
-	*/
-	class InvertModule : public SingleSourceModule<InvertElement1D, InvertElement2D, InvertElement3D>
-	{
-		public:
-			/// @copydoc noisepp::Module::getType()
-			ModuleTypeId getType() const { return MODULE_INVERT; }
-	};
+    class InvertElement3D : public PipelineElement3D {
+    private:
+        ElementID mElement;
+        const PipelineElement3D *mElementPtr;
+
+    public:
+        InvertElement3D(const Pipeline3D *pipe, ElementID element) : mElement(element) {
+            mElementPtr = pipe->getElement(element);
+        }
+
+        virtual Real getValue(Real x, Real y, Real z, Cache *cache) const {
+            Real value;
+            value = getElementValue(mElementPtr, mElement, x, y, z, cache);
+            return -(value);
+        }
+    };
+
+    /** Inversion module.
+        Inverts the output of the source module.
+    */
+    class InvertModule : public SingleSourceModule<InvertElement1D, InvertElement2D, InvertElement3D> {
+    public:
+        /// @copydoc noisepp::Module::getType()
+        ModuleTypeId getType() const { return MODULE_INVERT; }
+    };
 };
 
 #endif

@@ -42,9 +42,11 @@ extern "C" {
 #include "pgeSystem.h"
 
 #ifndef __PSP__
-	#include "SDL/SDL.h"
-	#include "SDL/SDL_opengl.h"
-	#include "pgeEmulator.h"
+
+#include "SDL/SDL.h"
+#include "SDL/SDL_opengl.h"
+#include "pgeEmulator.h"
+
 #endif
 
 /**

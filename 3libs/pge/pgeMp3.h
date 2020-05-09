@@ -32,23 +32,22 @@ extern "C" {
 /** @defgroup pgeMp3 MP3 Library
  *  @{
  */
- 
-typedef struct
-{
-    char   *title;
-    char   *artist;
-    char   *album;
-    char   *year;
-    char   *comment;
-    char   *genrecode;
-    char   *genretext;
-    char   id3version[4];
-    int    track;    
-    char   *tracktext;
-    int    pictureoffset;
-    int    picturelength;
-    int    length;
-	
+
+typedef struct {
+    char *title;
+    char *artist;
+    char *album;
+    char *year;
+    char *comment;
+    char *genrecode;
+    char *genretext;
+    char id3version[4];
+    int track;
+    char *tracktext;
+    int pictureoffset;
+    int picturelength;
+    int length;
+
 } pgeMp3Info;
 
 /**

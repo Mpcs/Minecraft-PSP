@@ -36,22 +36,21 @@ extern "C" {
 /**
  * A WAV file struct
  */
-typedef struct
-{
-	unsigned int samplerate;	/**<  Sample rate */
-	unsigned int samplecount;	/**<  Sample count */
-	unsigned int datalength;	/**<  Data length */
-	unsigned int rateratio;		/**<  Rate ratio (samplerate / 44100 * 0x10000) */
-	unsigned int playptr;		/**<  Current play position */
-	unsigned int playptrfrac;	/**<  Current fractional play position */
-	unsigned int loop;			/**<  Loop flag */
-	unsigned int id;			/**<  The ID of the WAV */
-	short channels;				/**<  Number of channels */
-	short bits;					/**<  The bit size of the WAV */
-	float leftvolume;			/**<  The left volume of the WAV */
-	float rightvolume;			/**<  The right volume of the WAV */
-	unsigned char *data;		/**<  A pointer to the actual WAV data */
-		
+typedef struct {
+    unsigned int samplerate;    /**<  Sample rate */
+    unsigned int samplecount;    /**<  Sample count */
+    unsigned int datalength;    /**<  Data length */
+    unsigned int rateratio;        /**<  Rate ratio (samplerate / 44100 * 0x10000) */
+    unsigned int playptr;        /**<  Current play position */
+    unsigned int playptrfrac;    /**<  Current fractional play position */
+    unsigned int loop;            /**<  Loop flag */
+    unsigned int id;            /**<  The ID of the WAV */
+    short channels;                /**<  Number of channels */
+    short bits;                    /**<  The bit size of the WAV */
+    float leftvolume;            /**<  The left volume of the WAV */
+    float rightvolume;            /**<  The right volume of the WAV */
+    unsigned char *data;        /**<  A pointer to the actual WAV data */
+
 } pgeWav;
 
 /**

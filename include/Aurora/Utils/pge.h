@@ -23,8 +23,10 @@ extern "C" {
 //#include <pspkerneltypes.h>
 
 #ifndef __PSP__
-	#include "SDL/SDL.h"
-	#include "SDL/SDL_opengl.h"
+
+#include "SDL/SDL.h"
+#include "SDL/SDL_opengl.h"
+
 #endif
 
 /**

@@ -32,137 +32,128 @@
 #error To use this classes please set NOISEPP_ENABLE_THREADS to 1
 #endif
 
-namespace noisepp
-{
-	/** Threaded pipeline base class.
-		In Noise++ the noise generation process is different to other libraries.
-		Instead of calling a noise generation function from your module instances directly,
-		you add your modules to a so called Pipeline.
-		The pipeline internally creates pipeline elements from the specified noise modules.
-		Then you either create a cache and start generating or add jobs to the pipeline to
-		run them in several threads.
-	*/
-	template <class Element>
-	class ThreadedPipeline : public Pipeline<Element>
-	{
-		private:
-			threadpp::ThreadGroup mThreads;
-			threadpp::Mutex mMutex;
-			threadpp::Condition mCond, mMainCond;
+namespace noisepp {
+    /** Threaded pipeline base class.
+        In Noise++ the noise generation process is different to other libraries.
+        Instead of calling a noise generation function from your module instances directly,
+        you add your modules to a so called Pipeline.
+        The pipeline internally creates pipeline elements from the specified noise modules.
+        Then you either create a cache and start generating or add jobs to the pipeline to
+        run them in several threads.
+    */
+    template<class Element>
+    class ThreadedPipeline : public Pipeline<Element> {
+    private:
+        threadpp::ThreadGroup mThreads;
+        threadpp::Mutex mMutex;
+        threadpp::Condition mCond, mMainCond;
 
-			bool mThreadsDone;
-			unsigned mWorkingThreads;
-			PipelineJobQueue mJobsDone;
-			void threadFunction ()
-			{
-				Cache *cache = NULL;
-				threadpp::Mutex::Lock lk(mMutex);
-				while (!mThreadsDone)
-				{
-					if (Pipeline<Element>::mJobs.empty())
-						mCond.wait(lk);
-					if (!Pipeline<Element>::mJobs.empty())
-					{
-						PipelineJob *job = Pipeline<Element>::mJobs.front ();
-						Pipeline<Element>::mJobs.pop ();
-						++mWorkingThreads;
-						lk.unlock ();
-						if (!cache)
-							cache = Pipeline<Element>::createCache();
-						job->execute(cache);
-						lk.lock ();
-						--mWorkingThreads;
-						mJobsDone.push (job);
-						mMainCond.notifyOne ();
-					}
-				}
-				lk.unlock ();
-				if (cache)
-				{
-					Pipeline<Element>::freeCache (cache);
-				}
-			}
-			static void *threadEntry (void *pipe)
-			{
-				(static_cast<ThreadedPipeline<Element>*>(pipe))->threadFunction ();
-				return NULL;
-			}
+        bool mThreadsDone;
+        unsigned mWorkingThreads;
+        PipelineJobQueue mJobsDone;
 
-		public:
-			/// Constructor.
-			/// @param numberOfThreads The number of threads
-			ThreadedPipeline (size_t numberOfThreads) : mThreadsDone(false), mWorkingThreads(0)
-			{
-				NoiseAssert (numberOfThreads > 0, numberOfThreads);
-				for (size_t i=0;i<numberOfThreads;++i)
-				{
-					mThreads.createThread (threadEntry, this);
-				}
-			}
-			/// executes the jobs in queue
-			/// WARNING: Don't change the pipeline after calling this function
-			virtual void executeJobs ()
-			{
-				mCond.notifyAll();
-				threadpp::Mutex::Lock lk(mMutex);
-				while (!Pipeline<Element>::mJobs.empty() || mWorkingThreads > 0)
-				{
-					if (!Pipeline<Element>::mJobs.empty() || mWorkingThreads > 0)
-						mMainCond.wait(lk);
-					while (!mJobsDone.empty())
-					{
-						PipelineJob *job = mJobsDone.front ();
-						mJobsDone.pop ();
-						lk.unlock ();
-						job->finish ();
-						delete job;
-						lk.lock ();
-					}
-				}
-			}
-			/// @copydoc noisepp::Pipeline::addJob()
-			virtual void addJob (PipelineJob *job)
-			{
-				NoiseAssert (job != NULL, job);
-				threadpp::Mutex::Lock lk(mMutex);
-				Pipeline<Element>::mJobs.push (job);
-			}
-			/// Destructor.
-			virtual ~ThreadedPipeline ()
-			{
-				mThreadsDone = true;
-				mCond.notifyAll();
-				mThreads.join ();
-			}
-	};
+        void threadFunction() {
+            Cache *cache = NULL;
+            threadpp::Mutex::Lock lk(mMutex);
+            while (!mThreadsDone) {
+                if (Pipeline<Element>::mJobs.empty())
+                    mCond.wait(lk);
+                if (!Pipeline<Element>::mJobs.empty()) {
+                    PipelineJob *job = Pipeline<Element>::mJobs.front();
+                    Pipeline<Element>::mJobs.pop();
+                    ++mWorkingThreads;
+                    lk.unlock();
+                    if (!cache)
+                        cache = Pipeline<Element>::createCache();
+                    job->execute(cache);
+                    lk.lock();
+                    --mWorkingThreads;
+                    mJobsDone.push(job);
+                    mMainCond.notifyOne();
+                }
+            }
+            lk.unlock();
+            if (cache) {
+                Pipeline<Element>::freeCache(cache);
+            }
+        }
 
-	/** 1D threaded pipeline.
-		In Noise++ the noise generation process is different to other libraries.
-		Instead of calling a noise generation function from your module instances directly,
-		you add your modules to a so called Pipeline.
-		The pipeline internally creates pipeline elements from the specified noise modules.
-		Then you either create a cache and start generating or add jobs to the pipeline to
-		run them in several threads.
-	*/
-	typedef ThreadedPipeline<PipelineElement1D> ThreadedPipeline1D;
-	/** 2D threaded pipeline.
-		In Noise++ the noise generation process is different to other libraries.
-		Instead of calling a noise generation function from your module instances directly,
-		you add your modules to a so called Pipeline.
-		The pipeline internally creates pipeline elements from the specified noise modules.
-		Then you either create a cache and start generating or add jobs to the pipeline to
-		run them in several threads.
-	*/
-	typedef ThreadedPipeline<PipelineElement2D> ThreadedPipeline2D;
-	/** 3D threaded pipeline.
-		In Noise++ the noise generation process is different to other libraries.
-		Instead of calling a noise generation function from your module instances directly,
-		you add your modules to a so called Pipeline.
-		The pipeline internally creates pipeline elements from the specified noise modules.
-		Then you either create a cache and start generating or add jobs to the pipeline to
-		run them in several threads.
-	*/
-	typedef ThreadedPipeline<PipelineElement3D> ThreadedPipeline3D;
+        static void *threadEntry(void *pipe) {
+            (static_cast<ThreadedPipeline<Element> *>(pipe))->threadFunction();
+            return NULL;
+        }
+
+    public:
+        /// Constructor.
+        /// @param numberOfThreads The number of threads
+        ThreadedPipeline(size_t numberOfThreads) : mThreadsDone(false), mWorkingThreads(0) {
+            NoiseAssert(numberOfThreads > 0, numberOfThreads);
+            for (size_t i = 0; i < numberOfThreads; ++i) {
+                mThreads.createThread(threadEntry, this);
+            }
+        }
+
+        /// executes the jobs in queue
+        /// WARNING: Don't change the pipeline after calling this function
+        virtual void executeJobs() {
+            mCond.notifyAll();
+            threadpp::Mutex::Lock lk(mMutex);
+            while (!Pipeline<Element>::mJobs.empty() || mWorkingThreads > 0) {
+                if (!Pipeline<Element>::mJobs.empty() || mWorkingThreads > 0)
+                    mMainCond.wait(lk);
+                while (!mJobsDone.empty()) {
+                    PipelineJob *job = mJobsDone.front();
+                    mJobsDone.pop();
+                    lk.unlock();
+                    job->finish();
+                    delete job;
+                    lk.lock();
+                }
+            }
+        }
+
+        /// @copydoc noisepp::Pipeline::addJob()
+        virtual void addJob(PipelineJob *job) {
+            NoiseAssert(job != NULL, job);
+            threadpp::Mutex::Lock lk(mMutex);
+            Pipeline<Element>::mJobs.push(job);
+        }
+
+        /// Destructor.
+        virtual ~ThreadedPipeline() {
+            mThreadsDone = true;
+            mCond.notifyAll();
+            mThreads.join();
+        }
+    };
+
+    /** 1D threaded pipeline.
+        In Noise++ the noise generation process is different to other libraries.
+        Instead of calling a noise generation function from your module instances directly,
+        you add your modules to a so called Pipeline.
+        The pipeline internally creates pipeline elements from the specified noise modules.
+        Then you either create a cache and start generating or add jobs to the pipeline to
+        run them in several threads.
+    */
+    typedef ThreadedPipeline<PipelineElement1D> ThreadedPipeline1D;
+    /** 2D threaded pipeline.
+        In Noise++ the noise generation process is different to other libraries.
+        Instead of calling a noise generation function from your module instances directly,
+        you add your modules to a so called Pipeline.
+        The pipeline internally creates pipeline elements from the specified noise modules.
+        Then you either create a cache and start generating or add jobs to the pipeline to
+        run them in several threads.
+    */
+    typedef ThreadedPipeline<PipelineElement2D> ThreadedPipeline2D;
+    /** 3D threaded pipeline.
+        In Noise++ the noise generation process is different to other libraries.
+        Instead of calling a noise generation function from your module instances directly,
+        you add your modules to a so called Pipeline.
+        The pipeline internally creates pipeline elements from the specified noise modules.
+        Then you either create a cache and start generating or add jobs to the pipeline to
+        run them in several threads.
+    */
+    typedef ThreadedPipeline<PipelineElement3D> ThreadedPipeline3D;
 };
 
 #endif // NOISEPP_THREADEDPIPELINE_H

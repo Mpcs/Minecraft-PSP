@@ -5,28 +5,26 @@
 #include <stdio.h>
 #include <psprtc.h>
 
-namespace Aurora
-{
-	namespace Utils
-	{
+namespace Aurora {
+    namespace Utils {
 
-		class Timer
-		{
-			public:
-				Timer();
-				virtual ~Timer();
+        class Timer {
+        public:
+            Timer();
 
-				double GetDeltaTime( void );	// Returns the delta time
+            virtual ~Timer();
 
-			private:
-				double dt;
+            double GetDeltaTime(void);    // Returns the delta time
 
-				u64 timeNow;
-				u64 timeLastAsk;
-				u32 tickResolution;
-		};
+        private:
+            double dt;
 
-	}
+            u64 timeNow;
+            u64 timeLastAsk;
+            u32 tickResolution;
+        };
+
+    }
 }
 
 #endif /* TIMER_H_ */

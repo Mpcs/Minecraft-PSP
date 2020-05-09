@@ -34,36 +34,35 @@ extern "C" {
 /** @defgroup pgeControls Controller Library
  *  @{
  */
- 
+
 /**
  * Enumerator for buttons
  */
-enum pgeCtrlButtons
-{
-	/** Select button. */
-	PGE_CTRL_SELECT =	PSP_CTRL_SELECT,
-	/** Start button. */
-	PGE_CTRL_START =	PSP_CTRL_START,
-	/** Up D-Pad button. */
-	PGE_CTRL_UP =		PSP_CTRL_UP,
-	/** Right D-Pad button. */
-	PGE_CTRL_RIGHT =	PSP_CTRL_RIGHT,
-	/** Down D-Pad button. */
-	PGE_CTRL_DOWN =		PSP_CTRL_DOWN,
-	/** Left D-Pad button. */
-	PGE_CTRL_LEFT =		PSP_CTRL_LEFT,
-	/** Left trigger. */
-	PGE_CTRL_LTRIGGER =	PSP_CTRL_LTRIGGER,
-	/** Right trigger. */
-	PGE_CTRL_RTRIGGER =	PSP_CTRL_RTRIGGER,
-	/** Triangle button. */
-	PGE_CTRL_TRIANGLE =	PSP_CTRL_TRIANGLE,
-	/** Circle button. */
-	PGE_CTRL_CIRCLE =	PSP_CTRL_CIRCLE,
-	/** Cross button. */
-	PGE_CTRL_CROSS =	PSP_CTRL_CROSS,
-	/** Square button. */
-	PGE_CTRL_SQUARE =	PSP_CTRL_SQUARE
+enum pgeCtrlButtons {
+    /** Select button. */
+    PGE_CTRL_SELECT = PSP_CTRL_SELECT,
+    /** Start button. */
+    PGE_CTRL_START = PSP_CTRL_START,
+    /** Up D-Pad button. */
+    PGE_CTRL_UP = PSP_CTRL_UP,
+    /** Right D-Pad button. */
+    PGE_CTRL_RIGHT = PSP_CTRL_RIGHT,
+    /** Down D-Pad button. */
+    PGE_CTRL_DOWN = PSP_CTRL_DOWN,
+    /** Left D-Pad button. */
+    PGE_CTRL_LEFT = PSP_CTRL_LEFT,
+    /** Left trigger. */
+    PGE_CTRL_LTRIGGER = PSP_CTRL_LTRIGGER,
+    /** Right trigger. */
+    PGE_CTRL_RTRIGGER = PSP_CTRL_RTRIGGER,
+    /** Triangle button. */
+    PGE_CTRL_TRIANGLE = PSP_CTRL_TRIANGLE,
+    /** Circle button. */
+    PGE_CTRL_CIRCLE = PSP_CTRL_CIRCLE,
+    /** Cross button. */
+    PGE_CTRL_CROSS = PSP_CTRL_CROSS,
+    /** Square button. */
+    PGE_CTRL_SQUARE = PSP_CTRL_SQUARE
 };
 
 /**

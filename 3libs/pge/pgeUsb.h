@@ -32,17 +32,16 @@ extern "C" {
 /** @defgroup pgeUsb USB Library
  *  @{
  */
- 
+
 /**
  * Enumeration for USB states
  */
-enum pgeUsbStates
-{
-	PGE_USB_ACTIVATED =					0x200,
-	PGE_USB_CABLE_CONNECTED =			0x020,
-	PGE_USB_CONNECTION_ESTABLISHED =	0x002
+enum pgeUsbStates {
+    PGE_USB_ACTIVATED = 0x200,
+    PGE_USB_CABLE_CONNECTED = 0x020,
+    PGE_USB_CONNECTION_ESTABLISHED = 0x002
 };
- 
+
 /**
  * Initialise USB
  *

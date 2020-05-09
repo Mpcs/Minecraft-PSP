@@ -26,97 +26,81 @@
 #include "NoiseGradientRenderer.h"
 #include "NoiseSystem.h"
 
-namespace noisepp
-{
-namespace utils
-{
+namespace noisepp {
+    namespace utils {
 
-GradientRenderer::GradientRenderer() : mCallback(0)
-{
-}
+        GradientRenderer::GradientRenderer() : mCallback(0) {
+        }
 
-void GradientRenderer::addGradient (Real value, const ColourValue &color)
-{
-	Gradient gradient;
-	gradient.value = value;
-	gradient.color = color;
-	mGradients.push_back (gradient);
-	std::sort (mGradients.begin(), mGradients.end());
-}
+        void GradientRenderer::addGradient(Real value, const ColourValue &color) {
+            Gradient gradient;
+            gradient.value = value;
+            gradient.color = color;
+            mGradients.push_back(gradient);
+            std::sort(mGradients.begin(), mGradients.end());
+        }
 
-void GradientRenderer::renderImage (Image &image, const Real *data, JobQueue *jobQueue)
-{
+        void GradientRenderer::renderImage(Image &image, const Real *data, JobQueue *jobQueue) {
 //	NoiseAssert (mGradients.size() >= 2, mGradients);
-	if (!jobQueue)
-		jobQueue = System::createOptimalJobQueue();
-	unsigned char *buffer = image.getPixelData ();
-	int width = image.getWidth();
-	for (int y=0;y<image.getHeight();++y)
-	{
-		jobQueue->addJob (new GradientRendererJob(this, width, data+(y*width), buffer+(y*width*3)));
-	}
-	jobQueue->executeJobs();
-	if (mCallback)
-		mCallback->reset ();
-	delete jobQueue;
-	jobQueue = 0;
-}
+            if (!jobQueue)
+                jobQueue = System::createOptimalJobQueue();
+            unsigned char *buffer = image.getPixelData();
+            int width = image.getWidth();
+            for (int y = 0; y < image.getHeight(); ++y) {
+                jobQueue->addJob(new GradientRendererJob(this, width, data + (y * width), buffer + (y * width * 3)));
+            }
+            jobQueue->executeJobs();
+            if (mCallback)
+                mCallback->reset();
+            delete jobQueue;
+            jobQueue = 0;
+        }
 
-void GradientRenderer::setCallback(BuilderCallback *callback)
-{
-	if (mCallback)
-		delete mCallback;
-	mCallback = callback;
-}
+        void GradientRenderer::setCallback(BuilderCallback *callback) {
+            if (mCallback)
+                delete mCallback;
+            mCallback = callback;
+        }
 
-GradientRenderer::~GradientRenderer()
-{
-	if (mCallback)
-	{
-		delete mCallback;
-		mCallback = 0;
-	}
-}
+        GradientRenderer::~GradientRenderer() {
+            if (mCallback) {
+                delete mCallback;
+                mCallback = 0;
+            }
+        }
 
-GradientRenderer::GradientRendererJob::GradientRendererJob(GradientRenderer *renderer, int width, const Real *data, unsigned char *buffer) :
-	renderer(renderer), width(width), data(data), buffer(buffer)
-{
-	assert (renderer);
-}
+        GradientRenderer::GradientRendererJob::GradientRendererJob(GradientRenderer *renderer, int width,
+                                                                   const Real *data, unsigned char *buffer) :
+                renderer(renderer), width(width), data(data), buffer(buffer) {
+            assert (renderer);
+        }
 
-void GradientRenderer::GradientRendererJob::execute ()
-{
-	size_t n;
-	for (int x=0;x<width;++x)
-	{
-		Real value = *data++;
-		ColourValue color = renderer->mGradients.front().color;
-		for (n=0;n<renderer->mGradients.size();++n)
-		{
-			if (renderer->mGradients[n].value > value)
-				break;
-		}
-		if (n < renderer->mGradients.size())
-		{
-			if (n > 0)
-			{
-				const Gradient &left = renderer->mGradients[n-1];
-				const Gradient &right = renderer->mGradients[n];
-				const float a = (float)((value - left.value) / (right.value - left.value));
-				color = left.color * (1.0f-a) + right.color * a;
-			}
-		}
-		else
-			color = renderer->mGradients.back().color;
-		color.writeRGB (buffer);
-	}
-}
+        void GradientRenderer::GradientRendererJob::execute() {
+            size_t n;
+            for (int x = 0; x < width; ++x) {
+                Real value = *data++;
+                ColourValue color = renderer->mGradients.front().color;
+                for (n = 0; n < renderer->mGradients.size(); ++n) {
+                    if (renderer->mGradients[n].value > value)
+                        break;
+                }
+                if (n < renderer->mGradients.size()) {
+                    if (n > 0) {
+                        const Gradient &left = renderer->mGradients[n - 1];
+                        const Gradient &right = renderer->mGradients[n];
+                        const float a = (float) ((value - left.value) / (right.value - left.value));
+                        color = left.color * (1.0f - a) + right.color * a;
+                    }
+                } else
+                    color = renderer->mGradients.back().color;
+                color.writeRGB(buffer);
+            }
+        }
 
-void GradientRenderer::GradientRendererJob::finish ()
-{
-	if (renderer->mCallback)
-		renderer->mCallback->callback ();
-}
+        void GradientRenderer::GradientRendererJob::finish() {
+            if (renderer->mCallback)
+                renderer->mCallback->callback();
+        }
 
-};
+    };
 };

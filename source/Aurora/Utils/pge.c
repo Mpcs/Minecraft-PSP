@@ -35,37 +35,32 @@
 //#include "support/pgesupportprx.h"
 
 #ifdef __PSP__
-	PSP_MODULE_INFO("Phoenix Game Engine", PSP_MODULE_USER, 1, PGE_VERSION);
-	PSP_MAIN_THREAD_ATTR(PSP_THREAD_ATTR_USER|PSP_THREAD_ATTR_VFPU);
+PSP_MODULE_INFO("Phoenix Game Engine", PSP_MODULE_USER, 1, PGE_VERSION);
+PSP_MAIN_THREAD_ATTR(PSP_THREAD_ATTR_USER|PSP_THREAD_ATTR_VFPU);
 #endif
 
 static int running = 1;
 
-void pgeExit(void)
-{
-	running = 0;
+void pgeExit(void) {
+    running = 0;
 
-	sceKernelExitGame();
+    sceKernelExitGame();
 }
 
-void pgeDelay(unsigned int delay)
-{
-	sceKernelDelayThread(delay);
+void pgeDelay(unsigned int delay) {
+    sceKernelDelayThread(delay);
 }
 
-void *pgeMalloc(int size)
-{
-	void *ptr = malloc(size);
-	return ptr;
+void *pgeMalloc(int size) {
+    void *ptr = malloc(size);
+    return ptr;
 }
 
-void pgeFree(void *ptr)
-{
-	if(ptr != NULL)
-		free(ptr);
+void pgeFree(void *ptr) {
+    if (ptr != NULL)
+        free(ptr);
 }
 
-void *pgeRealloc(void *ptr, int size)
-{
-	return realloc(ptr, size);
+void *pgeRealloc(void *ptr, int size) {
+    return realloc(ptr, size);
 }

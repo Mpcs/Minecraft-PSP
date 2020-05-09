@@ -36,12 +36,11 @@ extern "C" {
 /**
  * A WAV file struct
  */
-typedef struct
-{
-	unsigned int numvertices;
-	unsigned int drawflag;
-	void *vertices;
-		
+typedef struct {
+    unsigned int numvertices;
+    unsigned int drawflag;
+    void *vertices;
+
 } pgeObj;
 
 /**

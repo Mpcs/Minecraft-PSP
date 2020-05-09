@@ -32,22 +32,22 @@ extern "C" {
 /** @defgroup pgeNet Net/Wifi Library
  *  @{
  */
- 
+
 #include <psptypes.h>
 #include <psputility.h>
 #include <netinet/in.h>
 
 #ifdef __PSP__
-	#include <sys/fd_set.h>
+#include <sys/fd_set.h>
 #endif
 
-#define PGE_SOCKET_TCP SOCK_STREAM	/**< Stream socket */
-#define PGE_SOCKET_UDP SOCK_DGRAM	/**< Datagram socket */
+#define PGE_SOCKET_TCP SOCK_STREAM    /**< Stream socket */
+#define PGE_SOCKET_UDP SOCK_DGRAM    /**< Datagram socket */
 
-#define PGE_LOCAL_IP 0		/**< Local IP ie. 192.168.x.x */
-#define PGE_REAL_IP  1		/**< 'Real' IP */
+#define PGE_LOCAL_IP 0        /**< Local IP ie. 192.168.x.x */
+#define PGE_REAL_IP  1        /**< 'Real' IP */
 
-#define PGE_MAX_CLIENTS 256	/**< Maximum clients that can connect to a server */
+#define PGE_MAX_CLIENTS 256    /**< Maximum clients that can connect to a server */
 
 typedef int pgeSocket;
 

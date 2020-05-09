@@ -28,75 +28,67 @@
 #include "pge.h"
 #include "pgeTimer.h"
 
-pgeTimer* pgeTimerCreate(void)
-{
-	pgeTimer* timer = (pgeTimer*) pgeMalloc(sizeof(pgeTimer));
-	
-	if(!timer)
-		return NULL;
+pgeTimer *pgeTimerCreate(void) {
+    pgeTimer *timer = (pgeTimer *) pgeMalloc(sizeof(pgeTimer));
 
-	sceRtcGetCurrentTick(&timer->timelastask);
-	timer->tickresolution = sceRtcGetTickResolution();
-	timer->totaltime = 0;
-	timer->paused = 0;
-	
-	return timer;
+    if (!timer)
+        return NULL;
+
+    sceRtcGetCurrentTick(&timer->timelastask);
+    timer->tickresolution = sceRtcGetTickResolution();
+    timer->totaltime = 0;
+    timer->paused = 0;
+
+    return timer;
 }
 
-void pgeTimerUpdate(pgeTimer *timer)
-{	
-	sceRtcGetCurrentTick(&timer->timenow);
-	
-	if(timer->paused)
-		timer->deltatime = 0;
-	else
-		timer->deltatime = (timer->timenow - timer->timelastask) / ((float)timer->tickresolution);
-		
-	timer->timelastask = timer->timenow;
-	timer->totaltime += timer->deltatime;
+void pgeTimerUpdate(pgeTimer *timer) {
+    sceRtcGetCurrentTick(&timer->timenow);
+
+    if (timer->paused)
+        timer->deltatime = 0;
+    else
+        timer->deltatime = (timer->timenow - timer->timelastask) / ((float) timer->tickresolution);
+
+    timer->timelastask = timer->timenow;
+    timer->totaltime += timer->deltatime;
 }
 
-float pgeTimerGetDeltaTime(pgeTimer *timer)
-{	   
-	return timer->deltatime;
+float pgeTimerGetDeltaTime(pgeTimer *timer) {
+    return timer->deltatime;
 }
 
-float pgeTimerPeekDeltaTime(pgeTimer *timer)
-{
-	if(timer->paused)
-		return 0.0f;
-	
-	sceRtcGetCurrentTick(&timer->timenow);
-	float time = (timer->timenow - timer->timelastask) / ((float) timer->tickresolution);	
-	timer->totaltime += time;
-	
-	return time;
+float pgeTimerPeekDeltaTime(pgeTimer *timer) {
+    if (timer->paused)
+        return 0.0f;
+
+    sceRtcGetCurrentTick(&timer->timenow);
+    float time = (timer->timenow - timer->timelastask) / ((float) timer->tickresolution);
+    timer->totaltime += time;
+
+    return time;
 }
 
-unsigned long long pgeTimerGetTotalTime(pgeTimer *timer)
-{	   
-	if(timer->paused)
-		return timer->totaltime;
-	
-	sceRtcGetCurrentTick(&timer->timenow);	
-	float time = (timer->timenow - timer->timelastask) / ((float) timer->tickresolution);	
-	timer->totaltime += time;
-	
-	return timer->totaltime;
+unsigned long long pgeTimerGetTotalTime(pgeTimer *timer) {
+    if (timer->paused)
+        return timer->totaltime;
+
+    sceRtcGetCurrentTick(&timer->timenow);
+    float time = (timer->timenow - timer->timelastask) / ((float) timer->tickresolution);
+    timer->totaltime += time;
+
+    return timer->totaltime;
 }
 
-void pgeTimerDestroy(pgeTimer *timer)
-{
-	if(timer)
-		pgeFree(timer);
+void pgeTimerDestroy(pgeTimer *timer) {
+    if (timer)
+        pgeFree(timer);
 }
 
-void pgeTimerPause(pgeTimer *timer)
-{
-	timer->paused = 1;
+void pgeTimerPause(pgeTimer *timer) {
+    timer->paused = 1;
 }
 
-void pgeTimerUnpause(pgeTimer *timer)
-{
-	timer->paused = 0;
+void pgeTimerUnpause(pgeTimer *timer) {
+    timer->paused = 0;
 }

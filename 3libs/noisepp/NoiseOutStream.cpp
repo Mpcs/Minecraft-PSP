@@ -29,102 +29,82 @@
 
 #define BLOCK_SIZE 1024
 
-namespace noisepp
-{
-namespace utils
-{
+namespace noisepp {
+    namespace utils {
 
-OutStream::OutStream()
-{
-}
+        OutStream::OutStream() {
+        }
 
-OutStream::~OutStream()
-{
-}
+        OutStream::~OutStream() {
+        }
 
-FileOutStream::FileOutStream ()
-{
-}
+        FileOutStream::FileOutStream() {
+        }
 
-FileOutStream::FileOutStream(const std::string &filename)
-{
-	open (filename);
-}
+        FileOutStream::FileOutStream(const std::string &filename) {
+            open(filename);
+        }
 
-bool FileOutStream::open (const std::string &filename)
-{
-	mFile.open (filename.c_str(), std::ios::binary);
-	return mFile.is_open ();
-}
+        bool FileOutStream::open(const std::string &filename) {
+            mFile.open(filename.c_str(), std::ios::binary);
+            return mFile.is_open();
+        }
 
-bool FileOutStream::isOpen ()
-{
-	return mFile.is_open ();
-}
+        bool FileOutStream::isOpen() {
+            return mFile.is_open();
+        }
 
-void FileOutStream::close ()
-{
-	mFile.close ();
-}
+        void FileOutStream::close() {
+            mFile.close();
+        }
 
-void FileOutStream::write (const void *buffer, size_t len)
-{
-	mFile.write ((const char*)buffer, (std::streamsize)len);
-}
+        void FileOutStream::write(const void *buffer, size_t len) {
+            mFile.write((const char *) buffer, (std::streamsize) len);
+        }
 
-size_t FileOutStream::tell ()
-{
-	return mFile.tellp ();
-}
+        size_t FileOutStream::tell() {
+            return mFile.tellp();
+        }
 
-void FileOutStream::seek (size_t pos)
-{
-	mFile.seekp ((std::streamoff)pos);
-}
+        void FileOutStream::seek(size_t pos) {
+            mFile.seekp((std::streamoff) pos);
+        }
 
-MemoryOutStream::MemoryOutStream () : mBuffer(NULL), mPosition(0), mSize(0), mRealSize(0)
-{
-}
+        MemoryOutStream::MemoryOutStream() : mBuffer(NULL), mPosition(0), mSize(0), mRealSize(0) {
+        }
 
-MemoryOutStream::~MemoryOutStream ()
-{
-	clear ();
-}
+        MemoryOutStream::~MemoryOutStream() {
+            clear();
+        }
 
-void MemoryOutStream::clear ()
-{
-	if (mBuffer)
-	{
-		std::free (mBuffer);
-		mBuffer = NULL;
-	}
-	mPosition = mSize = mRealSize = 0;
-}
+        void MemoryOutStream::clear() {
+            if (mBuffer) {
+                std::free(mBuffer);
+                mBuffer = NULL;
+            }
+            mPosition = mSize = mRealSize = 0;
+        }
 
-void MemoryOutStream::write (const void *buffer, size_t len)
-{
-	assert (len > 0);
-	if (mPosition+len > mRealSize || mBuffer == NULL)
-	{
-		mRealSize += BLOCK_SIZE;
-		mBuffer = (char *)std::realloc (mBuffer, mRealSize);
-	}
-	std::memcpy (mBuffer+mPosition, buffer, len);
-	mPosition += len;
-	if (mPosition > mSize)
-		mSize = mPosition;
-}
+        void MemoryOutStream::write(const void *buffer, size_t len) {
+            assert (len > 0);
+            if (mPosition + len > mRealSize || mBuffer == NULL) {
+                mRealSize += BLOCK_SIZE;
+                mBuffer = (char *) std::realloc(mBuffer, mRealSize);
+            }
+            std::memcpy(mBuffer + mPosition, buffer, len);
+            mPosition += len;
+            if (mPosition > mSize)
+                mSize = mPosition;
+        }
 
-size_t MemoryOutStream::tell ()
-{
-	return mPosition;
-}
+        size_t MemoryOutStream::tell() {
+            return mPosition;
+        }
 
-void MemoryOutStream::seek (size_t pos)
-{
-	assert (pos < mSize);
-	mPosition = pos;
-}
+        void MemoryOutStream::seek(size_t pos) {
+            assert (pos < mSize);
+            mPosition = pos;
+        }
 
-};
+    };
 };

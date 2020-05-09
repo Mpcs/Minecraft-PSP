@@ -29,63 +29,55 @@
 #include "NoisePipeline.h"
 #include "NoiseModule.h"
 
-namespace noisepp
-{
-	class CheckerboardElement1D : public PipelineElement1D
-	{
-		public:
-			virtual Real getValue (Real x, Cache *cache) const
-			{
-				const int ix = (int)(floor (Math::MakeInt32Range (x)));
-				return (ix & 1)? Real(-1.0) : Real(1.0);
-			}
-	};
+namespace noisepp {
+    class CheckerboardElement1D : public PipelineElement1D {
+    public:
+        virtual Real getValue(Real x, Cache *cache) const {
+            const int ix = (int) (floor(Math::MakeInt32Range(x)));
+            return (ix & 1) ? Real(-1.0) : Real(1.0);
+        }
+    };
 
-	class CheckerboardElement2D : public PipelineElement2D
-	{
-		public:
-			virtual Real getValue (Real x, Real y, Cache *cache) const
-			{
-				const int ix = (int)(floor (Math::MakeInt32Range (x)));
-				const int iy = (int)(floor (Math::MakeInt32Range (y)));
-				return (ix & 1 ^ iy & 1)? Real(-1.0) : Real(1.0);
-			}
-	};
+    class CheckerboardElement2D : public PipelineElement2D {
+    public:
+        virtual Real getValue(Real x, Real y, Cache *cache) const {
+            const int ix = (int) (floor(Math::MakeInt32Range(x)));
+            const int iy = (int) (floor(Math::MakeInt32Range(y)));
+            return (ix & 1 ^ iy & 1) ? Real(-1.0) : Real(1.0);
+        }
+    };
 
-	class CheckerboardElement3D : public PipelineElement3D
-	{
-		public:
-			virtual Real getValue (Real x, Real y, Real z, Cache *cache) const
-			{
-				const int ix = (int)(floor (Math::MakeInt32Range (x)));
-				const int iy = (int)(floor (Math::MakeInt32Range (y)));
-				const int iz = (int)(floor (Math::MakeInt32Range (z)));
-				return (ix & 1 ^ iy & 1 ^ iz & 1)? Real(-1.0) : Real(1.0);
-			}
-	};
+    class CheckerboardElement3D : public PipelineElement3D {
+    public:
+        virtual Real getValue(Real x, Real y, Real z, Cache *cache) const {
+            const int ix = (int) (floor(Math::MakeInt32Range(x)));
+            const int iy = (int) (floor(Math::MakeInt32Range(y)));
+            const int iz = (int) (floor(Math::MakeInt32Range(z)));
+            return (ix & 1 ^ iy & 1 ^ iz & 1) ? Real(-1.0) : Real(1.0);
+        }
+    };
 
-	/// Module for generating a checkerboard pattern.
-	class CheckerboardModule : public Module
-	{
-		public:
-			/// @copydoc noisepp::Module::addToPipeline()
-			ElementID addToPipeline (Pipeline1D *pipe) const
-			{
-				return pipe->addElement (this, new CheckerboardElement1D);
-			}
-			/// @copydoc noisepp::Module::addToPipeline()
-			ElementID addToPipeline (Pipeline2D *pipe) const
-			{
-				return pipe->addElement (this, new CheckerboardElement2D);
-			}
-			/// @copydoc noisepp::Module::addToPipeline()
-			ElementID addToPipeline (Pipeline3D *pipe) const
-			{
-				return pipe->addElement (this, new CheckerboardElement3D);
-			}
-			/// @copydoc noisepp::Module::getType()
-			ModuleTypeId getType() const { return MODULE_CHECKERBOARD; }
-	};
+    /// Module for generating a checkerboard pattern.
+    class CheckerboardModule : public Module {
+    public:
+        /// @copydoc noisepp::Module::addToPipeline()
+        ElementID addToPipeline(Pipeline1D *pipe) const {
+            return pipe->addElement(this, new CheckerboardElement1D);
+        }
+
+        /// @copydoc noisepp::Module::addToPipeline()
+        ElementID addToPipeline(Pipeline2D *pipe) const {
+            return pipe->addElement(this, new CheckerboardElement2D);
+        }
+
+        /// @copydoc noisepp::Module::addToPipeline()
+        ElementID addToPipeline(Pipeline3D *pipe) const {
+            return pipe->addElement(this, new CheckerboardElement3D);
+        }
+
+        /// @copydoc noisepp::Module::getType()
+        ModuleTypeId getType() const { return MODULE_CHECKERBOARD; }
+    };
 };
 
 #endif // NOISEPP_CHECKERBOARD_H

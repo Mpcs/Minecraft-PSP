@@ -34,61 +34,55 @@
 #	include <unistd.h>
 #elif NOISEPP_PLATFORM == NOISEPP_PLATFORM_WINDOWS
 #	define WIN32_LEAN_AND_MEAN
+
 #	include <windows.h>
+
 #endif
 
-namespace noisepp
-{
-namespace utils
-{
+namespace noisepp {
+    namespace utils {
 
-int System::mNumberOfCPUs = System::calculateNumberOfCPUs();
+        int System::mNumberOfCPUs = System::calculateNumberOfCPUs();
 
-int System::calculateNumberOfCPUs()
-{
-	return 1;
-}
+        int System::calculateNumberOfCPUs() {
+            return 1;
+        }
 
-int System::getNumberOfCPUs()
-{
-	return mNumberOfCPUs;
-}
+        int System::getNumberOfCPUs() {
+            return mNumberOfCPUs;
+        }
 
-Pipeline1D *System::createOptimalPipeline1D ()
-{
+        Pipeline1D *System::createOptimalPipeline1D() {
 #if NOISEPP_ENABLE_THREADS
-	if (mNumberOfCPUs > 1)
-		return new ThreadedPipeline1D (mNumberOfCPUs);
+            if (mNumberOfCPUs > 1)
+                return new ThreadedPipeline1D (mNumberOfCPUs);
 #endif
-	return new Pipeline1D;
-}
+            return new Pipeline1D;
+        }
 
-Pipeline2D *System::createOptimalPipeline2D ()
-{
+        Pipeline2D *System::createOptimalPipeline2D() {
 #if NOISEPP_ENABLE_THREADS
-	if (mNumberOfCPUs > 1)
-		return new ThreadedPipeline2D (mNumberOfCPUs);
+            if (mNumberOfCPUs > 1)
+                return new ThreadedPipeline2D (mNumberOfCPUs);
 #endif
-	return new Pipeline2D;
-}
+            return new Pipeline2D;
+        }
 
-Pipeline3D *System::createOptimalPipeline3D ()
-{
+        Pipeline3D *System::createOptimalPipeline3D() {
 #if NOISEPP_ENABLE_THREADS
-	if (mNumberOfCPUs > 1)
-		return new ThreadedPipeline3D (mNumberOfCPUs);
+            if (mNumberOfCPUs > 1)
+                return new ThreadedPipeline3D (mNumberOfCPUs);
 #endif
-	return new Pipeline3D;
-}
+            return new Pipeline3D;
+        }
 
-JobQueue *System::createOptimalJobQueue ()
-{
+        JobQueue *System::createOptimalJobQueue() {
 #if NOISEPP_ENABLE_THREADS
-	if (mNumberOfCPUs > 1)
-		return new ThreadedJobQueue (mNumberOfCPUs);
+            if (mNumberOfCPUs > 1)
+                return new ThreadedJobQueue (mNumberOfCPUs);
 #endif
-	return new JobQueue;
-}
+            return new JobQueue;
+        }
 
-};
+    };
 };

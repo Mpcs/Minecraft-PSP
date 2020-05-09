@@ -3,57 +3,59 @@
 
 #include <string>
 
-class InputConection
-{
+class InputConection {
 public:
-	int key;
-	int action;
-	int button;
+    int key;
+    int action;
+    int button;
 
-	InputConection()
-	{
-		key = 0;
-		action = 0;
-		button = 0;
-	}
+    InputConection() {
+        key = 0;
+        action = 0;
+        button = 0;
+    }
 
-	InputConection(int k,int a,int b)
-	{
-		key = k;
-		action = a;
-		button = b;
-	}
+    InputConection(int k, int a, int b) {
+        key = k;
+        action = a;
+        button = b;
+    }
 };
 
-class InputHelper
-{
+class InputHelper {
 public:
-	InputHelper();
-	~InputHelper();
+    InputHelper();
 
-	static InputHelper m_InputHelper;
-	static InputHelper* Instance();
+    ~InputHelper();
 
-	void Init();
+    static InputHelper m_InputHelper;
 
-	std::string getActionName(int number);
-	std::string getButtonName(int number);
-	InputConection getConnection(int number);
+    static InputHelper *Instance();
 
-	void setButtonToAction(int action,int button);
-	int getButtonToAction(int action);
+    void Init();
 
-	float analogXleft,analogXright;
-	float analogYup,analogYdown;
+    std::string getActionName(int number);
 
-	void Save();
-	void Load();
+    std::string getButtonName(int number);
+
+    InputConection getConnection(int number);
+
+    void setButtonToAction(int action, int button);
+
+    int getButtonToAction(int action);
+
+    float analogXleft, analogXright;
+    float analogYup, analogYdown;
+
+    void Save();
+
+    void Load();
 
 private:
 
-	std::string actionNames[16];
-	std::string buttonNames[16];
-	InputConection connections[16];
+    std::string actionNames[16];
+    std::string buttonNames[16];
+    InputConection connections[16];
 };
 
 #endif

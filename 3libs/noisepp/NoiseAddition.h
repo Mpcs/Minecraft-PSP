@@ -29,83 +29,75 @@
 #include "NoisePipeline.h"
 #include "NoiseModule.h"
 
-namespace noisepp
-{
-	class AdditionElement1D : public PipelineElement1D
-	{
-		private:
-			ElementID mLeft, mRight;
-			const PipelineElement1D *mLeftPtr;
-			const PipelineElement1D *mRightPtr;
+namespace noisepp {
+    class AdditionElement1D : public PipelineElement1D {
+    private:
+        ElementID mLeft, mRight;
+        const PipelineElement1D *mLeftPtr;
+        const PipelineElement1D *mRightPtr;
 
-		public:
-			AdditionElement1D (const Pipeline1D *pipe, ElementID left, ElementID right) : mLeft(left), mRight(right)
-			{
-				mLeftPtr = pipe->getElement (mLeft);
-				mRightPtr = pipe->getElement (mRight);
-			}
-			virtual Real getValue (Real x, Cache *cache) const
-			{
-				Real value;
-				value = getElementValue (mLeftPtr, mLeft, x, cache);
-				value += getElementValue (mRightPtr, mRight, x, cache);
-				return value;
-			}
-	};
+    public:
+        AdditionElement1D(const Pipeline1D *pipe, ElementID left, ElementID right) : mLeft(left), mRight(right) {
+            mLeftPtr = pipe->getElement(mLeft);
+            mRightPtr = pipe->getElement(mRight);
+        }
 
-	class AdditionElement2D : public PipelineElement2D
-	{
-		private:
-			ElementID mLeft, mRight;
-			const PipelineElement2D *mLeftPtr;
-			const PipelineElement2D *mRightPtr;
+        virtual Real getValue(Real x, Cache *cache) const {
+            Real value;
+            value = getElementValue(mLeftPtr, mLeft, x, cache);
+            value += getElementValue(mRightPtr, mRight, x, cache);
+            return value;
+        }
+    };
 
-		public:
-			AdditionElement2D (const Pipeline2D *pipe, ElementID left, ElementID right) : mLeft(left), mRight(right)
-			{
-				mLeftPtr = pipe->getElement (mLeft);
-				mRightPtr = pipe->getElement (mRight);
-			}
-			virtual Real getValue (Real x, Real y, Cache *cache) const
-			{
-				Real value;
-				value = getElementValue (mLeftPtr, mLeft, x, y, cache);
-				value += getElementValue (mRightPtr, mRight, x, y, cache);
-				return value;
-			}
-	};
+    class AdditionElement2D : public PipelineElement2D {
+    private:
+        ElementID mLeft, mRight;
+        const PipelineElement2D *mLeftPtr;
+        const PipelineElement2D *mRightPtr;
 
-	class AdditionElement3D : public PipelineElement3D
-	{
-		private:
-			ElementID mLeft, mRight;
-			const PipelineElement3D *mLeftPtr;
-			const PipelineElement3D *mRightPtr;
+    public:
+        AdditionElement2D(const Pipeline2D *pipe, ElementID left, ElementID right) : mLeft(left), mRight(right) {
+            mLeftPtr = pipe->getElement(mLeft);
+            mRightPtr = pipe->getElement(mRight);
+        }
 
-		public:
-			AdditionElement3D (const Pipeline3D *pipe, ElementID left, ElementID right) : mLeft(left), mRight(right)
-			{
-				mLeftPtr = pipe->getElement (mLeft);
-				mRightPtr = pipe->getElement (mRight);
-			}
-			virtual Real getValue (Real x, Real y, Real z, Cache *cache) const
-			{
-				Real value;
-				value = getElementValue (mLeftPtr, mLeft, x, y, z, cache);
-				value += getElementValue (mRightPtr, mRight, x, y, z, cache);
-				return value;
-			}
-	};
+        virtual Real getValue(Real x, Real y, Cache *cache) const {
+            Real value;
+            value = getElementValue(mLeftPtr, mLeft, x, y, cache);
+            value += getElementValue(mRightPtr, mRight, x, y, cache);
+            return value;
+        }
+    };
 
-	/** Module for adding the values of two modules together.
-		Adds the values of the two source modules together.
-	*/
-	class AdditionModule : public DualSourceModule<AdditionElement1D, AdditionElement2D, AdditionElement3D>
-	{
-		public:
-			/// @copydoc noisepp::Module::getType()
-			ModuleTypeId getType() const { return MODULE_ADDITION; }
-	};
+    class AdditionElement3D : public PipelineElement3D {
+    private:
+        ElementID mLeft, mRight;
+        const PipelineElement3D *mLeftPtr;
+        const PipelineElement3D *mRightPtr;
+
+    public:
+        AdditionElement3D(const Pipeline3D *pipe, ElementID left, ElementID right) : mLeft(left), mRight(right) {
+            mLeftPtr = pipe->getElement(mLeft);
+            mRightPtr = pipe->getElement(mRight);
+        }
+
+        virtual Real getValue(Real x, Real y, Real z, Cache *cache) const {
+            Real value;
+            value = getElementValue(mLeftPtr, mLeft, x, y, z, cache);
+            value += getElementValue(mRightPtr, mRight, x, y, z, cache);
+            return value;
+        }
+    };
+
+    /** Module for adding the values of two modules together.
+        Adds the values of the two source modules together.
+    */
+    class AdditionModule : public DualSourceModule<AdditionElement1D, AdditionElement2D, AdditionElement3D> {
+    public:
+        /// @copydoc noisepp::Module::getType()
+        ModuleTypeId getType() const { return MODULE_ADDITION; }
+    };
 };
 
 #endif

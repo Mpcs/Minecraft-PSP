@@ -29,83 +29,75 @@
 #include "NoisePipeline.h"
 #include "NoiseModule.h"
 
-namespace noisepp
-{
-	class MultiplyElement1D : public PipelineElement1D
-	{
-		private:
-			ElementID mLeft, mRight;
-			const PipelineElement1D *mLeftPtr;
-			const PipelineElement1D *mRightPtr;
+namespace noisepp {
+    class MultiplyElement1D : public PipelineElement1D {
+    private:
+        ElementID mLeft, mRight;
+        const PipelineElement1D *mLeftPtr;
+        const PipelineElement1D *mRightPtr;
 
-		public:
-			MultiplyElement1D (const Pipeline1D *pipe, ElementID left, ElementID right) : mLeft(left), mRight(right)
-			{
-				mLeftPtr = pipe->getElement (mLeft);
-				mRightPtr = pipe->getElement (mRight);
-			}
-			virtual Real getValue (Real x, Cache *cache) const
-			{
-				Real value;
-				value = getElementValue (mLeftPtr, mLeft, x, cache);
-				value *= getElementValue (mRightPtr, mRight, x, cache);
-				return value;
-			}
-	};
+    public:
+        MultiplyElement1D(const Pipeline1D *pipe, ElementID left, ElementID right) : mLeft(left), mRight(right) {
+            mLeftPtr = pipe->getElement(mLeft);
+            mRightPtr = pipe->getElement(mRight);
+        }
 
-	class MultiplyElement2D : public PipelineElement2D
-	{
-		private:
-			ElementID mLeft, mRight;
-			const PipelineElement2D *mLeftPtr;
-			const PipelineElement2D *mRightPtr;
+        virtual Real getValue(Real x, Cache *cache) const {
+            Real value;
+            value = getElementValue(mLeftPtr, mLeft, x, cache);
+            value *= getElementValue(mRightPtr, mRight, x, cache);
+            return value;
+        }
+    };
 
-		public:
-			MultiplyElement2D (const Pipeline2D *pipe, ElementID left, ElementID right) : mLeft(left), mRight(right)
-			{
-				mLeftPtr = pipe->getElement (mLeft);
-				mRightPtr = pipe->getElement (mRight);
-			}
-			virtual Real getValue (Real x, Real y, Cache *cache) const
-			{
-				Real value;
-				value = getElementValue (mLeftPtr, mLeft, x, y, cache);
-				value *= getElementValue (mRightPtr, mRight, x, y, cache);
-				return value;
-			}
-	};
+    class MultiplyElement2D : public PipelineElement2D {
+    private:
+        ElementID mLeft, mRight;
+        const PipelineElement2D *mLeftPtr;
+        const PipelineElement2D *mRightPtr;
 
-	class MultiplyElement3D : public PipelineElement3D
-	{
-		private:
-			ElementID mLeft, mRight;
-			const PipelineElement3D *mLeftPtr;
-			const PipelineElement3D *mRightPtr;
+    public:
+        MultiplyElement2D(const Pipeline2D *pipe, ElementID left, ElementID right) : mLeft(left), mRight(right) {
+            mLeftPtr = pipe->getElement(mLeft);
+            mRightPtr = pipe->getElement(mRight);
+        }
 
-		public:
-			MultiplyElement3D (const Pipeline3D *pipe, ElementID left, ElementID right) : mLeft(left), mRight(right)
-			{
-				mLeftPtr = pipe->getElement (mLeft);
-				mRightPtr = pipe->getElement (mRight);
-			}
-			virtual Real getValue (Real x, Real y, Real z, Cache *cache) const
-			{
-				Real value;
-				value = getElementValue (mLeftPtr, mLeft, x, y, z, cache);
-				value *= getElementValue (mRightPtr, mRight, x, y, z, cache);
-				return value;
-			}
-	};
+        virtual Real getValue(Real x, Real y, Cache *cache) const {
+            Real value;
+            value = getElementValue(mLeftPtr, mLeft, x, y, cache);
+            value *= getElementValue(mRightPtr, mRight, x, y, cache);
+            return value;
+        }
+    };
 
-	/** Multiplication module.
-		Returns the product of the two source modules.
-	*/
-	class MultiplyModule : public DualSourceModule<MultiplyElement1D, MultiplyElement2D, MultiplyElement3D>
-	{
-		public:
-			/// @copydoc noisepp::Module::getType()
-			ModuleTypeId getType() const { return MODULE_MULTIPLY; }
-	};
+    class MultiplyElement3D : public PipelineElement3D {
+    private:
+        ElementID mLeft, mRight;
+        const PipelineElement3D *mLeftPtr;
+        const PipelineElement3D *mRightPtr;
+
+    public:
+        MultiplyElement3D(const Pipeline3D *pipe, ElementID left, ElementID right) : mLeft(left), mRight(right) {
+            mLeftPtr = pipe->getElement(mLeft);
+            mRightPtr = pipe->getElement(mRight);
+        }
+
+        virtual Real getValue(Real x, Real y, Real z, Cache *cache) const {
+            Real value;
+            value = getElementValue(mLeftPtr, mLeft, x, y, z, cache);
+            value *= getElementValue(mRightPtr, mRight, x, y, z, cache);
+            return value;
+        }
+    };
+
+    /** Multiplication module.
+        Returns the product of the two source modules.
+    */
+    class MultiplyModule : public DualSourceModule<MultiplyElement1D, MultiplyElement2D, MultiplyElement3D> {
+    public:
+        /// @copydoc noisepp::Module::getType()
+        ModuleTypeId getType() const { return MODULE_MULTIPLY; }
+    };
 };
 
 #endif

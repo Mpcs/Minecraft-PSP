@@ -7,24 +7,23 @@
 #include <Lamecraft/CraftWorld2.h>
 #include <Lamecraft/TextureHelper.h>
 
-namespace Aurora
-{
-	namespace Graphics
-	{
-		class InventoryPlayer
-		{
-		public:
-			InventoryPlayer();
-			~InventoryPlayer();
+namespace Aurora {
+    namespace Graphics {
+        class InventoryPlayer {
+        public:
+            InventoryPlayer();
 
-			void Update();
-			void Render(CraftWorld *world, float dt, float angle, int texNum, int handItemId);
+            ~InventoryPlayer();
 
-			float mainAngle;
-			float scale;
-			float animT;
+            void Update();
 
-		private:
+            void Render(CraftWorld *world, float dt, float angle, int texNum, int handItemId);
+
+            float mainAngle;
+            float scale;
+            float animT;
+
+        private:
 
             float rHandAngle;
             float lHandAngle;
@@ -32,8 +31,8 @@ namespace Aurora
             float lLegAngle;
 
             Vector3 position;
-		};
-	}
+        };
+    }
 }
 
 #endif

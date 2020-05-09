@@ -21,10 +21,8 @@
 #include <pspiofilemgr.h>
 #include <psphprm.h>
 
-#define oslMin(x, y)				(((x)<(y))?(x):(y))
-#define oslMax(x, y)				(((x)>(y))?(x):(y))
-
-
+#define oslMin(x, y)                (((x)<(y))?(x):(y))
+#define oslMax(x, y)                (((x)>(y))?(x):(y))
 
 
 #include "VirtualFile.h"

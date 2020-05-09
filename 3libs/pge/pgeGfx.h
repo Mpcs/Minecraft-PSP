@@ -40,133 +40,119 @@ extern "C" {
 #include "pgeTexture.h"
 #include "pgeObj.h"
 
-#define ARGB(a, r, g, b)		((a << 24) | (r << 16) | (g << 8) | b)
-#define RGBA(r, g, b, a)		((a << 24) | (b << 16) | (g << 8) | r)
-	
-typedef struct
-{
-	float	x, y, z;
-	
+#define ARGB(a, r, g, b)        ((a << 24) | (r << 16) | (g << 8) | b)
+#define RGBA(r, g, b, a)        ((a << 24) | (b << 16) | (g << 8) | r)
+
+typedef struct {
+    float x, y, z;
+
 } pgeVertV;
 
-typedef struct
-{
-	float	nx, ny, nz;
-	float	x, y, z;
-	
+typedef struct {
+    float nx, ny, nz;
+    float x, y, z;
+
 } pgeVertNV;
 
-typedef struct
-{
-	unsigned int	color;
-	float			x, y, z;
-	
+typedef struct {
+    unsigned int color;
+    float x, y, z;
+
 } pgeVertCV;
 
-typedef struct
-{
-	unsigned int	color;
-	float			nx, ny, nz;
-	float			x, y, z;
-	
+typedef struct {
+    unsigned int color;
+    float nx, ny, nz;
+    float x, y, z;
+
 } pgeVertCNV;
 
-typedef struct
-{
-	float	u, v;
-	float	x, y, z;
-	
+typedef struct {
+    float u, v;
+    float x, y, z;
+
 } pgeVertTV;
 
-typedef struct
-{
-	float	u, v;
-	float	nx, ny, nz;
-	float	x, y, z;
-	
+typedef struct {
+    float u, v;
+    float nx, ny, nz;
+    float x, y, z;
+
 } pgeVertTNV;
 
-typedef struct
-{
-	float			u, v;
-	unsigned int	color;
-	float			x, y, z;
-	
+typedef struct {
+    float u, v;
+    unsigned int color;
+    float x, y, z;
+
 } pgeVertTCV;
 
-typedef struct
-{
-	float			u, v;
-	unsigned int	color;
-	float			nx, ny, nz;
-	float			x, y, z;
-	
+typedef struct {
+    float u, v;
+    unsigned int color;
+    float nx, ny, nz;
+    float x, y, z;
+
 } pgeVertTCNV;
 
-typedef struct
-{
-	float	x, y, w, h;
-	
+typedef struct {
+    float x, y, w, h;
+
 } pgeRect;
 
-typedef struct
-{
-	ScePspFVector3 eye;
-	ScePspFVector3 center;
-	ScePspFVector3 up;
-	
+typedef struct {
+    ScePspFVector3 eye;
+    ScePspFVector3 center;
+    ScePspFVector3 up;
+
 } pgeCamera;
 
 /**
  * Enum for vertex types.
  */
-enum pgeGfxVertexType
-{
-	PGE_VERT_V =	GU_VERTEX_32BITF,
-	PGE_VERT_NV =	GU_NORMAL_32BITF|GU_VERTEX_32BITF,
-	PGE_VERT_CV =	GU_COLOR_8888|GU_VERTEX_32BITF,
-	PGE_VERT_CNV =	GU_COLOR_8888|GU_NORMAL_32BITF|GU_VERTEX_32BITF,
-	PGE_VERT_TV =	GU_TEXTURE_32BITF|GU_VERTEX_32BITF,
-	PGE_VERT_TNV =	GU_TEXTURE_32BITF|GU_NORMAL_32BITF|GU_VERTEX_32BITF,
-	PGE_VERT_TCV =	GU_TEXTURE_32BITF|GU_COLOR_8888|GU_VERTEX_32BITF,
-	PGE_VERT_TCNV =	GU_TEXTURE_32BITF|GU_COLOR_8888|GU_NORMAL_32BITF|GU_VERTEX_32BITF
+enum pgeGfxVertexType {
+    PGE_VERT_V = GU_VERTEX_32BITF,
+    PGE_VERT_NV = GU_NORMAL_32BITF | GU_VERTEX_32BITF,
+    PGE_VERT_CV = GU_COLOR_8888 | GU_VERTEX_32BITF,
+    PGE_VERT_CNV = GU_COLOR_8888 | GU_NORMAL_32BITF | GU_VERTEX_32BITF,
+    PGE_VERT_TV = GU_TEXTURE_32BITF | GU_VERTEX_32BITF,
+    PGE_VERT_TNV = GU_TEXTURE_32BITF | GU_NORMAL_32BITF | GU_VERTEX_32BITF,
+    PGE_VERT_TCV = GU_TEXTURE_32BITF | GU_COLOR_8888 | GU_VERTEX_32BITF,
+    PGE_VERT_TCNV = GU_TEXTURE_32BITF | GU_COLOR_8888 | GU_NORMAL_32BITF | GU_VERTEX_32BITF
 };
 
 /**
  * Enum for primitive types.
  */
-enum pgeGfxPrim
-{
-	PGE_PRIM_POINTS,
-	PGE_PRIM_LINES,
-	PGE_PRIM_LINE_STRIP,
-	PGE_PRIM_TRIANGLES,
-	PGE_PRIM_TRIANGLE_STRIP,
-	PGE_PRIM_TRIANGLE_FAN,
-	PGE_PRIM_SPRITES
+enum pgeGfxPrim {
+    PGE_PRIM_POINTS,
+    PGE_PRIM_LINES,
+    PGE_PRIM_LINE_STRIP,
+    PGE_PRIM_TRIANGLES,
+    PGE_PRIM_TRIANGLE_STRIP,
+    PGE_PRIM_TRIANGLE_FAN,
+    PGE_PRIM_SPRITES
 };
 
 /**
  * Enum for blend modes.
  */
-enum pgeBlendMode
-{
-	PGE_BLEND_MODE_TRANSPARENT,
-	PGE_BLEND_MODE_REGULAR
+enum pgeBlendMode {
+    PGE_BLEND_MODE_TRANSPARENT,
+    PGE_BLEND_MODE_REGULAR
 };
 
 /**
  * Enum for vertical sync.
  */
-enum pgeWaitVsync
-{
-	PGE_NO_WAIT_VSYNC = 0,	/**< Don't wait for vblank. */
-	PGE_WAIT_VSYNC			/**< Wait for vblank. */
+enum pgeWaitVsync {
+    PGE_NO_WAIT_VSYNC = 0,    /**< Don't wait for vblank. */
+    PGE_WAIT_VSYNC            /**< Wait for vblank. */
 };
 
-#define PGE_GFX_PROJECTION	GU_PROJECTION
-#define PGE_GFX_VIEW		GU_VIEW
-#define PGE_GFX_MODEL		GU_MODEL
+#define PGE_GFX_PROJECTION    GU_PROJECTION
+#define PGE_GFX_VIEW        GU_VIEW
+#define PGE_GFX_MODEL        GU_MODEL
 
 /**
  * Get current framebuffer
@@ -292,7 +278,8 @@ void pgeGfxDrawLine(float startx, float starty, float endx, float endy, unsigned
  *
  * @param angle - The rotation of the star.
  */
-void pgeGfxDrawStar(float x, float y, float outerradius, float innerradius, unsigned int numpoints, unsigned int color, float angle);
+void pgeGfxDrawStar(float x, float y, float outerradius, float innerradius, unsigned int numpoints, unsigned int color,
+                    float angle);
 
 /**
  * Draw an outline star.
@@ -311,7 +298,8 @@ void pgeGfxDrawStar(float x, float y, float outerradius, float innerradius, unsi
  *
  * @param angle - The rotation of the star.
  */
-void pgeGfxDrawStarOutline(float x, float y, float outerradius, float innerradius, unsigned int numpoints, unsigned int color, float angle);
+void pgeGfxDrawStarOutline(float x, float y, float outerradius, float innerradius, unsigned int numpoints,
+                           unsigned int color, float angle);
 
 /**
  * Draw a circle.
@@ -380,7 +368,8 @@ void pgeGfxDrawRectOutline(pgeRect *destrect, unsigned int color, float angle);
  *
  * @param angle - The rotation of the rectangle.
  */
-void pgeGfxDrawRectGrad(pgeRect *destrect, unsigned int color1, unsigned int color2, unsigned int color3, unsigned int color4, float angle);
+void pgeGfxDrawRectGrad(pgeRect *destrect, unsigned int color1, unsigned int color2, unsigned int color3,
+                        unsigned int color4, float angle);
 
 /**
  * Draw a texture (easy).
@@ -460,7 +449,8 @@ void pgeGfxDrawCustom2D(enum pgeGfxPrim prim, enum pgeGfxVertexType vtype, int c
  *
  * @param vertices - A pointer to the vertex data.
  */
-void pgeGfxDrawCustom3D(ScePspFVector3 *position, ScePspFVector3 *rotation, enum pgeGfxPrim prim, enum pgeGfxVertexType vtype, int count, const void *vertices);
+void pgeGfxDrawCustom3D(ScePspFVector3 *position, ScePspFVector3 *rotation, enum pgeGfxPrim prim,
+                        enum pgeGfxVertexType vtype, int count, const void *vertices);
 
 /**
  * Draw texture (3D).
@@ -488,7 +478,8 @@ void pgeGfxDrawTexture3D(ScePspFVector3 *position, ScePspFVector3 *rotation, flo
 *
 * @param color - pgeColorRGB containing the color and alpha the texture has to be drawn in.
 */
-void pgeGfxDrawTexture3DColored(ScePspFVector3 *position, ScePspFVector3 *rotation, float width, float height, unsigned int color);
+void pgeGfxDrawTexture3DColored(ScePspFVector3 *position, ScePspFVector3 *rotation, float width, float height,
+                                unsigned int color);
 
 /**
  * Draw a cube.
@@ -505,7 +496,8 @@ void pgeGfxDrawTexture3DColored(ScePspFVector3 *position, ScePspFVector3 *rotati
  *
  * @param color - The color of the cube.
  */
-void pgeGfxDrawCube(ScePspFVector3 *position, ScePspFVector3 *rotation, float width, float height, float depth, unsigned int color);
+void pgeGfxDrawCube(ScePspFVector3 *position, ScePspFVector3 *rotation, float width, float height, float depth,
+                    unsigned int color);
 
 /**
  * Draw a textured cube.
@@ -541,7 +533,7 @@ void pgeGfxRotateY(float angle);
 
 void pgeGfxRotateX(float angle);
 
-void pgeGfxLookAt(ScePspFVector3* eye, ScePspFVector3* center, ScePspFVector3* up);
+void pgeGfxLookAt(ScePspFVector3 *eye, ScePspFVector3 *center, ScePspFVector3 *up);
 
 void pgeGfxPerspective(float fovy, float aspect, float near, float far);
 
@@ -558,11 +550,17 @@ void pgeGfxSetTransparent(unsigned int color);
 void pgeGfxUnsetTransparent(void);
 
 unsigned int pgeGfxColorSub(unsigned int color1, unsigned int color2);
+
 unsigned int pgeGfxColorAdd(unsigned int color1, unsigned int color2);
+
 unsigned int pgeGfxColorMul(unsigned int color1, unsigned int color2);
+
 unsigned int pgeGfxColorMulScalar(unsigned int color, float scalar);
+
 unsigned int pgeGfxColorDivScalar(unsigned int color, float scalar);
+
 int pgeGfxColorCompare(unsigned int color1, unsigned int color2);
+
 unsigned int pgeGfxColorClamp(unsigned int color);
 
 #ifdef INCLUDE_HSV

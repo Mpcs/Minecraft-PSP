@@ -29,92 +29,84 @@
 #include "NoisePipeline.h"
 #include "NoiseModule.h"
 
-namespace noisepp
-{
-	class MaximumElement1D : public PipelineElement1D
-	{
-		private:
-			ElementID mLeft, mRight;
-			const PipelineElement1D *mLeftPtr;
-			const PipelineElement1D *mRightPtr;
+namespace noisepp {
+    class MaximumElement1D : public PipelineElement1D {
+    private:
+        ElementID mLeft, mRight;
+        const PipelineElement1D *mLeftPtr;
+        const PipelineElement1D *mRightPtr;
 
-		public:
-			MaximumElement1D (const Pipeline1D *pipe, ElementID left, ElementID right) : mLeft(left), mRight(right)
-			{
-				mLeftPtr = pipe->getElement (mLeft);
-				mRightPtr = pipe->getElement (mRight);
-			}
-			virtual Real getValue (Real x, Cache *cache) const
-			{
-				Real left, right;
-				left = getElementValue (mLeftPtr, mLeft, x, cache);
-				right = getElementValue (mRightPtr, mRight, x, cache);
-				if (left > right)
-					return left;
-				else
-					return right;
-			}
-	};
+    public:
+        MaximumElement1D(const Pipeline1D *pipe, ElementID left, ElementID right) : mLeft(left), mRight(right) {
+            mLeftPtr = pipe->getElement(mLeft);
+            mRightPtr = pipe->getElement(mRight);
+        }
 
-	class MaximumElement2D : public PipelineElement2D
-	{
-		private:
-			ElementID mLeft, mRight;
-			const PipelineElement2D *mLeftPtr;
-			const PipelineElement2D *mRightPtr;
+        virtual Real getValue(Real x, Cache *cache) const {
+            Real left, right;
+            left = getElementValue(mLeftPtr, mLeft, x, cache);
+            right = getElementValue(mRightPtr, mRight, x, cache);
+            if (left > right)
+                return left;
+            else
+                return right;
+        }
+    };
 
-		public:
-			MaximumElement2D (const Pipeline2D *pipe, ElementID left, ElementID right) : mLeft(left), mRight(right)
-			{
-				mLeftPtr = pipe->getElement (mLeft);
-				mRightPtr = pipe->getElement (mRight);
-			}
-			virtual Real getValue (Real x, Real y, Cache *cache) const
-			{
-				Real left, right;
-				left = getElementValue (mLeftPtr, mLeft, x, y, cache);
-				right = getElementValue (mRightPtr, mRight, x, y, cache);
-				if (left > right)
-					return left;
-				else
-					return right;
-			}
-	};
+    class MaximumElement2D : public PipelineElement2D {
+    private:
+        ElementID mLeft, mRight;
+        const PipelineElement2D *mLeftPtr;
+        const PipelineElement2D *mRightPtr;
 
-	class MaximumElement3D : public PipelineElement3D
-	{
-		private:
-			ElementID mLeft, mRight;
-			const PipelineElement3D *mLeftPtr;
-			const PipelineElement3D *mRightPtr;
+    public:
+        MaximumElement2D(const Pipeline2D *pipe, ElementID left, ElementID right) : mLeft(left), mRight(right) {
+            mLeftPtr = pipe->getElement(mLeft);
+            mRightPtr = pipe->getElement(mRight);
+        }
 
-		public:
-			MaximumElement3D (const Pipeline3D *pipe, ElementID left, ElementID right) : mLeft(left), mRight(right)
-			{
-				mLeftPtr = pipe->getElement (mLeft);
-				mRightPtr = pipe->getElement (mRight);
-			}
-			virtual Real getValue (Real x, Real y, Real z, Cache *cache) const
-			{
-				Real left, right;
-				left = getElementValue (mLeftPtr, mLeft, x, y, z, cache);
-				right = getElementValue (mRightPtr, mRight, x, y, z, cache);
-				if (left > right)
-					return left;
-				else
-					return right;
-			}
-	};
+        virtual Real getValue(Real x, Real y, Cache *cache) const {
+            Real left, right;
+            left = getElementValue(mLeftPtr, mLeft, x, y, cache);
+            right = getElementValue(mRightPtr, mRight, x, y, cache);
+            if (left > right)
+                return left;
+            else
+                return right;
+        }
+    };
 
-	/** Maximum module.
-		Returns the maximum of the two source modules.
-	*/
-	class MaximumModule : public DualSourceModule<MaximumElement1D, MaximumElement2D, MaximumElement3D>
-	{
-		public:
-			/// @copydoc noisepp::Module::getType()
-			ModuleTypeId getType() const { return MODULE_MAXIMUM; }
-	};
+    class MaximumElement3D : public PipelineElement3D {
+    private:
+        ElementID mLeft, mRight;
+        const PipelineElement3D *mLeftPtr;
+        const PipelineElement3D *mRightPtr;
+
+    public:
+        MaximumElement3D(const Pipeline3D *pipe, ElementID left, ElementID right) : mLeft(left), mRight(right) {
+            mLeftPtr = pipe->getElement(mLeft);
+            mRightPtr = pipe->getElement(mRight);
+        }
+
+        virtual Real getValue(Real x, Real y, Real z, Cache *cache) const {
+            Real left, right;
+            left = getElementValue(mLeftPtr, mLeft, x, y, z, cache);
+            right = getElementValue(mRightPtr, mRight, x, y, z, cache);
+            if (left > right)
+                return left;
+            else
+                return right;
+        }
+    };
+
+    /** Maximum module.
+        Returns the maximum of the two source modules.
+    */
+    class MaximumModule : public DualSourceModule<MaximumElement1D, MaximumElement2D, MaximumElement3D> {
+    public:
+        /// @copydoc noisepp::Module::getType()
+        ModuleTypeId getType() const { return MODULE_MAXIMUM; }
+    };
 };
 
 #endif

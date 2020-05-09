@@ -2,145 +2,131 @@
 #include <Aurora/System/FileManager.h>
 
 #define STB_IMAGE_WRITE_IMPLEMENTATION
+
 #include "stb/stb_image.h"
 
-namespace Aurora
-{
-	namespace Graphics
-	{
-		Image::Image()
-		{
-			_width = 0;
-			_height = 0;
-			_textureHeight = 0;
-			_textureWidth = 0;
-			_id = 0;
-			_pixels = 0;
+namespace Aurora {
+    namespace Graphics {
+        Image::Image() {
+            _width = 0;
+            _height = 0;
+            _textureHeight = 0;
+            _textureWidth = 0;
+            _id = 0;
+            _pixels = 0;
 
-			_fileName = "";
-		}
+            _fileName = "";
+        }
 
-		Image::~Image()
-		{
-			if(_pixels != 0)
-			{
-				delete [] _pixels;
-			}
-		}
+        Image::~Image() {
+            if (_pixels != 0) {
+                delete[] _pixels;
+            }
+        }
 
-		void Image::getColour(int x,int y,unsigned char &r,unsigned char &g,unsigned char &b,unsigned char &a)
-		{
-			r = _pixels[(x * 4) + ((y * (_width*4)))];
-			g = _pixels[(1+(x * 4)) + ((y * (_width*4)))];
-			b = _pixels[(2+(x * 4)) + ((y * (_width*4)))];
-			a = _pixels[(3+(x * 4)) + ((y * (_width*4)))];
-		}
+        void Image::getColour(int x, int y, unsigned char &r, unsigned char &g, unsigned char &b, unsigned char &a) {
+            r = _pixels[(x * 4) + ((y * (_width * 4)))];
+            g = _pixels[(1 + (x * 4)) + ((y * (_width * 4)))];
+            b = _pixels[(2 + (x * 4)) + ((y * (_width * 4)))];
+            a = _pixels[(3 + (x * 4)) + ((y * (_width * 4)))];
+        }
 
-		unsigned int Image::getColour(int x,int y)
-		{
-			unsigned char r = _pixels[(x * 4) + ((y * (_width*4)))];
-			unsigned char g = _pixels[(1+(x * 4)) + ((y * (_width*4)))];
-			unsigned char b = _pixels[(2+(x * 4)) + ((y * (_width*4)))];
-			unsigned char a = _pixels[(3+(x * 4)) + ((y * (_width*4)))];
+        unsigned int Image::getColour(int x, int y) {
+            unsigned char r = _pixels[(x * 4) + ((y * (_width * 4)))];
+            unsigned char g = _pixels[(1 + (x * 4)) + ((y * (_width * 4)))];
+            unsigned char b = _pixels[(2 + (x * 4)) + ((y * (_width * 4)))];
+            unsigned char a = _pixels[(3 + (x * 4)) + ((y * (_width * 4)))];
 
-			return (r) | (g << 8) | (b << 16) | (a << 24);
-		}
-		
-		void Image::setColour(int x,int y, unsigned int color)
-		{
-			_pixels[(x * 4) + ((y * (_width*4)))] = color;
-			_pixels[(1+(x * 4)) + ((y * (_width*4)))] = color >> 8;
-			_pixels[(2+(x * 4)) + ((y * (_width*4)))] = color >> 16;
-			_pixels[(3+(x * 4)) + ((y * (_width*4)))] = color >> 24;
-		}
+            return (r) | (g << 8) | (b << 16) | (a << 24);
+        }
 
-		bool Image::loadImageFromFile(std::string fileName)
-		{
-			_fileName = fileName;
+        void Image::setColour(int x, int y, unsigned int color) {
+            _pixels[(x * 4) + ((y * (_width * 4)))] = color;
+            _pixels[(1 + (x * 4)) + ((y * (_width * 4)))] = color >> 8;
+            _pixels[(2 + (x * 4)) + ((y * (_width * 4)))] = color >> 16;
+            _pixels[(3 + (x * 4)) + ((y * (_width * 4)))] = color >> 24;
+        }
 
-			if(_pixels != 0)
-			{
-				delete [] _pixels;
-			}
-			
-			System::File* file = System::FileManager::Instance()->GetFile(_fileName);
+        bool Image::loadImageFromFile(std::string fileName) {
+            _fileName = fileName;
 
-			if(file == 0)
-				return false;
+            if (_pixels != 0) {
+                delete[] _pixels;
+            }
 
-			file->Open();
+            System::File *file = System::FileManager::Instance()->GetFile(_fileName);
 
-			int dataSize = 0;
-			unsigned char* _buffer = file->GetData(dataSize);
+            if (file == 0)
+                return false;
 
-			file->Close();
-			delete file;
+            file->Open();
 
-			return loadImageFromMemory(fileName,_buffer,dataSize);
+            int dataSize = 0;
+            unsigned char *_buffer = file->GetData(dataSize);
 
-			/*int imgWidth, imgHeight, imgChannels;
-			unsigned char* ptr = stbi_load(fileName.c_str(), &imgWidth, &imgHeight, &imgChannels, STBI_rgb_alpha);
+            file->Close();
+            delete file;
 
-			if (ptr && imgWidth && imgHeight)
-			{
-				// Assign the image properties
-				_width  = imgWidth;
-				_height = imgHeight;
+            return loadImageFromMemory(fileName, _buffer, dataSize);
 
-				// Copy the loaded pixels to the pixel buffer
-				_pixels = new unsigned char[_width * _height * 4];
-				memcpy(_pixels, ptr, _width * _height * 4);
+            /*int imgWidth, imgHeight, imgChannels;
+            unsigned char* ptr = stbi_load(fileName.c_str(), &imgWidth, &imgHeight, &imgChannels, STBI_rgb_alpha);
 
-				// Free the loaded pixels (they are now in our own pixel buffer)
-				stbi_image_free(ptr);
+            if (ptr && imgWidth && imgHeight)
+            {
+                // Assign the image properties
+                _width  = imgWidth;
+                _height = imgHeight;
 
-				return true;
-			}
-			else
-			{
-				return false;//error
-			}*/
-		}
+                // Copy the loaded pixels to the pixel buffer
+                _pixels = new unsigned char[_width * _height * 4];
+                memcpy(_pixels, ptr, _width * _height * 4);
 
-		bool Image::loadImageFromMemory(std::string newName,void *data,std::size_t size)
-		{
-			if (data && size)
-			{
-				_fileName = newName;
+                // Free the loaded pixels (they are now in our own pixel buffer)
+                stbi_image_free(ptr);
 
-				if(_pixels != 0)
-				{
-					delete [] _pixels;
-				}
+                return true;
+            }
+            else
+            {
+                return false;//error
+            }*/
+        }
 
-				// Load the image and get a pointer to the pixels in memory
-				int imgWidth, imgHeight, imgChannels;
-				const unsigned char* buffer = static_cast<const unsigned char*>(data);
-				unsigned char* ptr = stbi_load_from_memory(buffer, static_cast<int>(size), &imgWidth, &imgHeight, &imgChannels, STBI_rgb_alpha);
+        bool Image::loadImageFromMemory(std::string newName, void *data, std::size_t size) {
+            if (data && size) {
+                _fileName = newName;
 
-				if (ptr && imgWidth && imgHeight)
-				{
-					// Assign the image properties
-					_width  = imgWidth;
-					_height = imgHeight;
+                if (_pixels != 0) {
+                    delete[] _pixels;
+                }
 
-					// Copy the loaded pixels to the pixel buffer
-					_pixels = new unsigned char[_width * _height * 4];
-					memcpy(_pixels, ptr, _width * _height * 4);
+                // Load the image and get a pointer to the pixels in memory
+                int imgWidth, imgHeight, imgChannels;
+                const unsigned char *buffer = static_cast<const unsigned char *>(data);
+                unsigned char *ptr = stbi_load_from_memory(buffer, static_cast<int>(size), &imgWidth, &imgHeight,
+                                                           &imgChannels, STBI_rgb_alpha);
 
-					// Free the loaded pixels (they are now in our own pixel buffer)
-					stbi_image_free(ptr);
-					delete [] data;
+                if (ptr && imgWidth && imgHeight) {
+                    // Assign the image properties
+                    _width = imgWidth;
+                    _height = imgHeight;
 
-					return true;
-				}
-				else
-				{
-					return false;//error
-				}
-			}
+                    // Copy the loaded pixels to the pixel buffer
+                    _pixels = new unsigned char[_width * _height * 4];
+                    memcpy(_pixels, ptr, _width * _height * 4);
 
-			return false;
-		}
-	}
+                    // Free the loaded pixels (they are now in our own pixel buffer)
+                    stbi_image_free(ptr);
+                    delete[] data;
+
+                    return true;
+                } else {
+                    return false;//error
+                }
+            }
+
+            return false;
+        }
+    }
 }

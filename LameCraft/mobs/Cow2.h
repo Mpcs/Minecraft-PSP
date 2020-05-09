@@ -15,17 +15,21 @@
 
 class CraftWorld;
 
-class Cow : public LameMob
-{
+class Cow : public LameMob {
 public:
 
     Cow(Vector3 position1, int number1);
+
     ~Cow();
 
     void BoxCollision();
+
     void Update(CraftWorld *myWorld, Vector3 playerPos, float dt);
+
     void Render(Frustum &camFrustum, float dt);
+
     void TakeDamage(float damage, float power, float dt);
+
     void TakeDamageFromPointExplosion(float damage, float power, float dt, Vector3 point);
 
     bool rotate1;

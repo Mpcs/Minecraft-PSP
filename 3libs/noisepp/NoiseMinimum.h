@@ -29,92 +29,84 @@
 #include "NoisePipeline.h"
 #include "NoiseModule.h"
 
-namespace noisepp
-{
-	class MinimumElement1D : public PipelineElement1D
-	{
-		private:
-			ElementID mLeft, mRight;
-			const PipelineElement1D *mLeftPtr;
-			const PipelineElement1D *mRightPtr;
+namespace noisepp {
+    class MinimumElement1D : public PipelineElement1D {
+    private:
+        ElementID mLeft, mRight;
+        const PipelineElement1D *mLeftPtr;
+        const PipelineElement1D *mRightPtr;
 
-		public:
-			MinimumElement1D (const Pipeline1D *pipe, ElementID left, ElementID right) : mLeft(left), mRight(right)
-			{
-				mLeftPtr = pipe->getElement (mLeft);
-				mRightPtr = pipe->getElement (mRight);
-			}
-			virtual Real getValue (Real x, Cache *cache) const
-			{
-				Real left, right;
-				left = getElementValue (mLeftPtr, mLeft, x, cache);
-				right = getElementValue (mRightPtr, mRight, x, cache);
-				if (left < right)
-					return left;
-				else
-					return right;
-			}
-	};
+    public:
+        MinimumElement1D(const Pipeline1D *pipe, ElementID left, ElementID right) : mLeft(left), mRight(right) {
+            mLeftPtr = pipe->getElement(mLeft);
+            mRightPtr = pipe->getElement(mRight);
+        }
 
-	class MinimumElement2D : public PipelineElement2D
-	{
-		private:
-			ElementID mLeft, mRight;
-			const PipelineElement2D *mLeftPtr;
-			const PipelineElement2D *mRightPtr;
+        virtual Real getValue(Real x, Cache *cache) const {
+            Real left, right;
+            left = getElementValue(mLeftPtr, mLeft, x, cache);
+            right = getElementValue(mRightPtr, mRight, x, cache);
+            if (left < right)
+                return left;
+            else
+                return right;
+        }
+    };
 
-		public:
-			MinimumElement2D (const Pipeline2D *pipe, ElementID left, ElementID right) : mLeft(left), mRight(right)
-			{
-				mLeftPtr = pipe->getElement (mLeft);
-				mRightPtr = pipe->getElement (mRight);
-			}
-			virtual Real getValue (Real x, Real y, Cache *cache) const
-			{
-				Real left, right;
-				left = getElementValue (mLeftPtr, mLeft, x, y, cache);
-				right = getElementValue (mRightPtr, mRight, x, y, cache);
-				if (left < right)
-					return left;
-				else
-					return right;
-			}
-	};
+    class MinimumElement2D : public PipelineElement2D {
+    private:
+        ElementID mLeft, mRight;
+        const PipelineElement2D *mLeftPtr;
+        const PipelineElement2D *mRightPtr;
 
-	class MinimumElement3D : public PipelineElement3D
-	{
-		private:
-			ElementID mLeft, mRight;
-			const PipelineElement3D *mLeftPtr;
-			const PipelineElement3D *mRightPtr;
+    public:
+        MinimumElement2D(const Pipeline2D *pipe, ElementID left, ElementID right) : mLeft(left), mRight(right) {
+            mLeftPtr = pipe->getElement(mLeft);
+            mRightPtr = pipe->getElement(mRight);
+        }
 
-		public:
-			MinimumElement3D (const Pipeline3D *pipe, ElementID left, ElementID right) : mLeft(left), mRight(right)
-			{
-				mLeftPtr = pipe->getElement (mLeft);
-				mRightPtr = pipe->getElement (mRight);
-			}
-			virtual Real getValue (Real x, Real y, Real z, Cache *cache) const
-			{
-				Real left, right;
-				left = getElementValue (mLeftPtr, mLeft, x, y, z, cache);
-				right = getElementValue (mRightPtr, mRight, x, y, z, cache);
-				if (left < right)
-					return left;
-				else
-					return right;
-			}
-	};
+        virtual Real getValue(Real x, Real y, Cache *cache) const {
+            Real left, right;
+            left = getElementValue(mLeftPtr, mLeft, x, y, cache);
+            right = getElementValue(mRightPtr, mRight, x, y, cache);
+            if (left < right)
+                return left;
+            else
+                return right;
+        }
+    };
 
-	/** Minimum module.
-		Returns the minimum of the two source modules.
-	*/
-	class MinimumModule : public DualSourceModule<MinimumElement1D, MinimumElement2D, MinimumElement3D>
-	{
-		public:
-			/// @copydoc noisepp::Module::getType()
-			ModuleTypeId getType() const { return MODULE_MINIMUM; }
-	};
+    class MinimumElement3D : public PipelineElement3D {
+    private:
+        ElementID mLeft, mRight;
+        const PipelineElement3D *mLeftPtr;
+        const PipelineElement3D *mRightPtr;
+
+    public:
+        MinimumElement3D(const Pipeline3D *pipe, ElementID left, ElementID right) : mLeft(left), mRight(right) {
+            mLeftPtr = pipe->getElement(mLeft);
+            mRightPtr = pipe->getElement(mRight);
+        }
+
+        virtual Real getValue(Real x, Real y, Real z, Cache *cache) const {
+            Real left, right;
+            left = getElementValue(mLeftPtr, mLeft, x, y, z, cache);
+            right = getElementValue(mRightPtr, mRight, x, y, z, cache);
+            if (left < right)
+                return left;
+            else
+                return right;
+        }
+    };
+
+    /** Minimum module.
+        Returns the minimum of the two source modules.
+    */
+    class MinimumModule : public DualSourceModule<MinimumElement1D, MinimumElement2D, MinimumElement3D> {
+    public:
+        /// @copydoc noisepp::Module::getType()
+        ModuleTypeId getType() const { return MODULE_MINIMUM; }
+    };
 };
 
 #endif

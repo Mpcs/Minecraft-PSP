@@ -28,74 +28,74 @@
 
 #include "NoisePrerequisites.h"
 
-namespace noisepp
-{
-namespace utils
-{
+namespace noisepp {
+    namespace utils {
 
 /// A job which can be added to a job queue for multi-threaded execution.
-class Job
-{
-	public:
-		/// Destructor.
-		virtual ~Job () {}
-		/// This function is called when the job is executed. You must overwrite this.
-		/// Don't do anything thread unsafe in there!
-		virtual void execute () = 0;
-		/// This function is called when the job is finished. It is always called in the main thread,
-		/// so you can update a progress bar here or whatever.
-		virtual void finish () {}
-};
+        class Job {
+        public:
+            /// Destructor.
+            virtual ~Job() {}
+
+            /// This function is called when the job is executed. You must overwrite this.
+            /// Don't do anything thread unsafe in there!
+            virtual void execute() = 0;
+
+            /// This function is called when the job is finished. It is always called in the main thread,
+            /// so you can update a progress bar here or whatever.
+            virtual void finish() {}
+        };
 
 /// A job queue.
 /// You can add jobs to this queue which will be executed when you call the executeJobs() function.
-class JobQueue
-{
-	protected:
-		/// The job queue
-		std::queue<Job*> mJobs;
+        class JobQueue {
+        protected:
+            /// The job queue
+            std::queue<Job *> mJobs;
 
-	public:
-		/// Adds a job to the queue.
-		virtual void addJob (Job *job);
-		/// executes the jobs in queue
-		virtual void executeJobs ();
-		/// Destructor.
-		virtual ~JobQueue ();
-};
+        public:
+            /// Adds a job to the queue.
+            virtual void addJob(Job *job);
+
+            /// executes the jobs in queue
+            virtual void executeJobs();
+
+            /// Destructor.
+            virtual ~JobQueue();
+        };
 
 #if NOISEPP_ENABLE_THREADS
-/// A threaded job queue.
-/// You can add jobs to this queue which will be executed in several threads when you call the executeJobs() function.
-class ThreadedJobQueue : public JobQueue
-{
-	private:
-		/// A queue for done jobs
-		std::queue<Job*> mJobsDone;
+        /// A threaded job queue.
+        /// You can add jobs to this queue which will be executed in several threads when you call the executeJobs() function.
+        class ThreadedJobQueue : public JobQueue
+        {
+            private:
+                /// A queue for done jobs
+                std::queue<Job*> mJobsDone;
 
-		threadpp::ThreadGroup mThreads;
-		threadpp::Mutex mMutex;
-		threadpp::Condition mCond, mMainCond;
+                threadpp::ThreadGroup mThreads;
+                threadpp::Mutex mMutex;
+                threadpp::Condition mCond, mMainCond;
 
-		bool mThreadsDone;
-		unsigned mWorkingThreads;
+                bool mThreadsDone;
+                unsigned mWorkingThreads;
 
-		void threadFunction ();
-		static void *threadEntry (void *queue);
-	public:
-		/// Constructor.
-		/// @param numberOfThreads The number of threads
-		ThreadedJobQueue (size_t numberOfThreads);
-		/// @copydoc noisepp::utils::JobQueue::executeJobs()
-		virtual void executeJobs ();
-		/// @copydoc noisepp::utils::JobQueue::addJob()
-		virtual void addJob (Job *job);
-		/// Destructor.
-		virtual ~ThreadedJobQueue ();
-};
+                void threadFunction ();
+                static void *threadEntry (void *queue);
+            public:
+                /// Constructor.
+                /// @param numberOfThreads The number of threads
+                ThreadedJobQueue (size_t numberOfThreads);
+                /// @copydoc noisepp::utils::JobQueue::executeJobs()
+                virtual void executeJobs ();
+                /// @copydoc noisepp::utils::JobQueue::addJob()
+                virtual void addJob (Job *job);
+                /// Destructor.
+                virtual ~ThreadedJobQueue ();
+        };
 #endif
 
-};
+    };
 };
 
 #endif // NOISEJOBQUEUE_H

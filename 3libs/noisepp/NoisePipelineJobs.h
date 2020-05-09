@@ -28,86 +28,80 @@
 
 #include "NoisePipeline.h"
 
-namespace noisepp
-{
+namespace noisepp {
 
 /// A 2D pipeline job that builds a line along the x-axis.
-class LineJob2D : public PipelineJob
-{
-	private:
-		Pipeline2D *mPipe;
-		PipelineElement2D *mElement;
-		Real x, y;
-		int n;
-		Real xDelta;
-		Real *buffer;
+    class LineJob2D : public PipelineJob {
+    private:
+        Pipeline2D *mPipe;
+        PipelineElement2D *mElement;
+        Real x, y;
+        int n;
+        Real xDelta;
+        Real *buffer;
 
-	public:
-		/// Constructor.
-		/// @param pipe The pipeline.
-		/// @param element A pointer to the pipeline element.
-		/// @param x The start x-coordinate.
-		/// @param y The y-coordinate.
-		/// @param n The number of pixels to build.
-		/// @param xDelta The delta value the x-coordinate will change each pixel.
-		/// @param buffer A pointer to the output buffer.
-		LineJob2D (Pipeline2D *pipe, PipelineElement2D *element, Real x, Real y, int n, Real xDelta, Real *buffer) :
-			mPipe(pipe), mElement(element), x(x), y(y), n(n), xDelta(xDelta), buffer(buffer)
-		{
-		}
-		/// @copydoc noisepp::PipelineJob::execute()
-		void execute (Cache *cache)
-		{
-			for (int i=0;i<n;++i)
-			{
-				// cleans the cache
-				mPipe->cleanCache (cache);
-				// calculates the value
-				buffer[i] = mElement->getValue(x, y, cache);
-				// move on
-				x += xDelta;
-			}
-		}
-};
+    public:
+        /// Constructor.
+        /// @param pipe The pipeline.
+        /// @param element A pointer to the pipeline element.
+        /// @param x The start x-coordinate.
+        /// @param y The y-coordinate.
+        /// @param n The number of pixels to build.
+        /// @param xDelta The delta value the x-coordinate will change each pixel.
+        /// @param buffer A pointer to the output buffer.
+        LineJob2D(Pipeline2D *pipe, PipelineElement2D *element, Real x, Real y, int n, Real xDelta, Real *buffer) :
+                mPipe(pipe), mElement(element), x(x), y(y), n(n), xDelta(xDelta), buffer(buffer) {
+        }
+
+        /// @copydoc noisepp::PipelineJob::execute()
+        void execute(Cache *cache) {
+            for (int i = 0; i < n; ++i) {
+                // cleans the cache
+                mPipe->cleanCache(cache);
+                // calculates the value
+                buffer[i] = mElement->getValue(x, y, cache);
+                // move on
+                x += xDelta;
+            }
+        }
+    };
 
 /// A 3D pipeline job that builds a line along the x-axis.
-class LineJob3D : public PipelineJob
-{
-	private:
-		Pipeline3D *mPipe;
-		PipelineElement3D *mElement;
-		Real x, y, z;
-		int n;
-		Real xDelta;
-		Real *buffer;
+    class LineJob3D : public PipelineJob {
+    private:
+        Pipeline3D *mPipe;
+        PipelineElement3D *mElement;
+        Real x, y, z;
+        int n;
+        Real xDelta;
+        Real *buffer;
 
-	public:
-		/// Constructor.
-		/// @param pipe The pipeline.
-		/// @param element A pointer to the pipeline element.
-		/// @param x The start x-coordinate.
-		/// @param y The y-coordinate.
-		/// @param z The z-coordinate.
-		/// @param n The number of pixels to build.
-		/// @param xDelta The delta value the x-coordinate will change each pixel.
-		/// @param buffer A pointer to the output buffer.
-		LineJob3D (noisepp::Pipeline3D *pipe, noisepp::PipelineElement3D *element, Real x, Real y, Real z, int n, Real xDelta, Real *buffer) :
-			mPipe(pipe), mElement(element), x(x), y(y), z(z), n(n), xDelta(xDelta), buffer(buffer)
-		{}
-		/// @copydoc noisepp::PipelineJob::execute()
-		void execute (noisepp::Cache *cache)
-		{
-			for (int i=0;i<n;++i)
-			{
-				// cleans the cache
-				mPipe->cleanCache (cache);
-				// calculates the value
-				buffer[i] = mElement->getValue(x, y, z, cache);
-				// move on
-				x += xDelta;
-			}
-		}
-};
+    public:
+        /// Constructor.
+        /// @param pipe The pipeline.
+        /// @param element A pointer to the pipeline element.
+        /// @param x The start x-coordinate.
+        /// @param y The y-coordinate.
+        /// @param z The z-coordinate.
+        /// @param n The number of pixels to build.
+        /// @param xDelta The delta value the x-coordinate will change each pixel.
+        /// @param buffer A pointer to the output buffer.
+        LineJob3D(noisepp::Pipeline3D *pipe, noisepp::PipelineElement3D *element, Real x, Real y, Real z, int n,
+                  Real xDelta, Real *buffer) :
+                mPipe(pipe), mElement(element), x(x), y(y), z(z), n(n), xDelta(xDelta), buffer(buffer) {}
+
+        /// @copydoc noisepp::PipelineJob::execute()
+        void execute(noisepp::Cache *cache) {
+            for (int i = 0; i < n; ++i) {
+                // cleans the cache
+                mPipe->cleanCache(cache);
+                // calculates the value
+                buffer[i] = mElement->getValue(x, y, z, cache);
+                // move on
+                x += xDelta;
+            }
+        }
+    };
 
 };
 

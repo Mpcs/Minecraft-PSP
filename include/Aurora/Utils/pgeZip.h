@@ -43,11 +43,10 @@ typedef void pgeZip;
 /**
  * A file within a zip
  */
-typedef struct
-{
-	unsigned char *data;	/**<  The file data */
-	int size;				/**<  Size of the data */
-	
+typedef struct {
+    unsigned char *data;    /**<  The file data */
+    int size;                /**<  Size of the data */
+
 } pgeZipFile;
 
 /**
@@ -57,7 +56,7 @@ typedef struct
  *
  * @returns A pointer to a ::pgeZip struct or NULL on error.
  */
-pgeZip* pgeZipOpen(const char *filename);
+pgeZip *pgeZipOpen(const char *filename);
 
 /**
  * Close a Zip file
@@ -79,7 +78,7 @@ int pgeZipClose(pgeZip *zip);
  *
  * @returns A ::pgeZipFile struct containing the file
  */
-pgeZipFile* pgeZipFileRead(pgeZip *zip, const char *filename, const char *password);
+pgeZipFile *pgeZipFileRead(pgeZip *zip, const char *filename, const char *password);
 
 /**
  * Extract all files from a zip

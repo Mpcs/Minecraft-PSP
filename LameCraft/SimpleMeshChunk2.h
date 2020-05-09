@@ -12,51 +12,58 @@
 using namespace Aurora::Math;
 using namespace Aurora::Graphics;
 
-class SimpleMeshChunk
-{
+class SimpleMeshChunk {
 public:
 
-	//unsigned short id;
+    //unsigned short id;
     bool inFrustum;
 
-	unsigned char chunkStartZ;
-	unsigned char chunkStartY;
-	unsigned char chunkStartX;
+    unsigned char chunkStartZ;
+    unsigned char chunkStartY;
+    unsigned char chunkStartX;
 
-	bool periodicallyUpadted;
-	bool haveTransparentVerts;
+    bool periodicallyUpadted;
+    bool haveTransparentVerts;
 
-	BoundingBox bBox;
+    BoundingBox bBox;
 
-	SimpleMeshChunk();
-	SimpleMeshChunk(int _chunkSize);
-	~SimpleMeshChunk();
+    SimpleMeshChunk();
 
-	int trienglesCount;
-	bool created;
-	bool needUpdate;
+    SimpleMeshChunk(int _chunkSize);
 
-	void position(float x,float y,float z);
-	void textureCoord(float u,float v);
-	void triangle(int x,int y,int z);
-	void colour(float x,float y,float z);
+    ~SimpleMeshChunk();
 
-	void info(float x,float y,float z,float u,float v,float r,float g,float b);
-	void vert(float x,float y,float z,float u,float v,float r,float g,float b);
+    int trienglesCount;
+    bool created;
+    bool needUpdate;
 
-	void start();
-	void end();
+    void position(float x, float y, float z);
 
-	void end2();
+    void textureCoord(float u, float v);
 
-	void drawChunk();
-	void reset();
+    void triangle(int x, int y, int z);
 
-	CraftPSPVertex *meshVertices;
+    void colour(float x, float y, float z);
+
+    void info(float x, float y, float z, float u, float v, float r, float g, float b);
+
+    void vert(float x, float y, float z, float u, float v, float r, float g, float b);
+
+    void start();
+
+    void end();
+
+    void end2();
+
+    void drawChunk();
+
+    void reset();
+
+    CraftPSPVertex *meshVertices;
 
 private:
     std::vector<CraftPSPVertex> mVertices;
-	std::vector<Vector3> mTriangle;
+    std::vector<Vector3> mTriangle;
 };
 
 #endif

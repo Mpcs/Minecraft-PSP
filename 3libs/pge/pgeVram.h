@@ -42,7 +42,7 @@ extern "C" {
  *
  * @returns relative pointer matching ptr
  */
-void* pgeVramRelativePointer(void *ptr);
+void *pgeVramRelativePointer(void *ptr);
 
 /**
  * Make a pointer absolute (usable by CPU).
@@ -53,7 +53,7 @@ void* pgeVramRelativePointer(void *ptr);
  *
  * @returns absolute pointer matching ptr
  */
-void* pgeVramAbsolutePointer(void *ptr);
+void *pgeVramAbsolutePointer(void *ptr);
 
 /**
  * Allocate memory from VRAM.
@@ -62,14 +62,14 @@ void* pgeVramAbsolutePointer(void *ptr);
  *
  * @returns Absolute pointer on success, NULL on failure
  */
-void* pgeVramAlloc(unsigned long size);
+void *pgeVramAlloc(unsigned long size);
 
 /**
  * Free allocated memory from VRAM.
  *
  * @param ptr - Previously allocated pointer
  */
-void pgeVramFree(void* ptr);
+void pgeVramFree(void *ptr);
 
 /**
  * Return remaining unallocated VRAM.

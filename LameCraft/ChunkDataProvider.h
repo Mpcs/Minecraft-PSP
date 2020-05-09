@@ -12,19 +12,20 @@
 
 #include <algorithm>
 
-class ChunkDataProvider
-{
+class ChunkDataProvider {
 
 protected:
     static int ChunkDataDealer(SceSize args, void *argp); //static int
-	SceUID thid_2;
+    SceUID thid_2;
 
 public:
-	ChunkDataProvider();
-	void KillDealer();
-	static bool writeChunk;
-	static bool busy;
-	static int so;
+    ChunkDataProvider();
+
+    void KillDealer();
+
+    static bool writeChunk;
+    static bool busy;
+    static int so;
 };
 
 #endif

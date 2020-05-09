@@ -28,62 +28,63 @@
 
 #include <cassert>
 
-namespace noisepp
-{
-namespace utils
-{
+namespace noisepp {
+    namespace utils {
 
 /// Class representing an 24-bit image.
-class Image
-{
-	public:
-		/// Constructor.
-		Image();
-		/// Creates the image with the specified parameters.
-		/// @param width Width of the image.
-		/// @param height Height of the image.
-		void create (int width, int height);
-		/// Clears the image data.
-		void clear ();
+        class Image {
+        public:
+            /// Constructor.
+            Image();
 
-		/// Returns a pointer to the pixel data.
-		unsigned char *getPixelData () const
-		{
-			return mData;
-		}
-		/// Returns a pointer to the pixel data at the specified row.
-		/// @param i The row number.
-		unsigned char *getPixelData (int i) const
-		{
-			assert (i < mWidth*mHeight);
-			return mData+i*3;
-		}
-		/// Returns a pointer to the pixel data at the specified position.
-		unsigned char *getPixelData (int x, int y) const
-		{
-			return mData+(y*mWidth+x)*3;
-		}
-		/// Returns the width of the image.
-		int getWidth () const
-		{
-			return mWidth;
-		}
-		/// Returns the height of the image.
-		int getHeight () const
-		{
-			return mHeight;
-		}
-		/// Destructor.
-		~Image();
-		/// Writes the image to the specified bitmap file.
-		bool saveBMP (const char *filename);
-	protected:
-	private:
-		unsigned char *mData;
-		int mWidth, mHeight;
-};
+            /// Creates the image with the specified parameters.
+            /// @param width Width of the image.
+            /// @param height Height of the image.
+            void create(int width, int height);
 
-};
+            /// Clears the image data.
+            void clear();
+
+            /// Returns a pointer to the pixel data.
+            unsigned char *getPixelData() const {
+                return mData;
+            }
+
+            /// Returns a pointer to the pixel data at the specified row.
+            /// @param i The row number.
+            unsigned char *getPixelData(int i) const {
+                assert (i < mWidth * mHeight);
+                return mData + i * 3;
+            }
+
+            /// Returns a pointer to the pixel data at the specified position.
+            unsigned char *getPixelData(int x, int y) const {
+                return mData + (y * mWidth + x) * 3;
+            }
+
+            /// Returns the width of the image.
+            int getWidth() const {
+                return mWidth;
+            }
+
+            /// Returns the height of the image.
+            int getHeight() const {
+                return mHeight;
+            }
+
+            /// Destructor.
+            ~Image();
+
+            /// Writes the image to the specified bitmap file.
+            bool saveBMP(const char *filename);
+
+        protected:
+        private:
+            unsigned char *mData;
+            int mWidth, mHeight;
+        };
+
+    };
 };
 
 #endif // NOISEIMAGE_H

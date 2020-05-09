@@ -37,183 +37,166 @@
 #include <psppower.h>
 
 #ifdef __PSP__
-	#include <malloc.h>
+#include <malloc.h>
 #endif
 
 #include "pgeSystem.h"
 #include "pgeMath.h"
 #include "pge.h"
 
-typedef struct
-{
-	unsigned long		maxclusters;
-	unsigned long		freeclusters;
-	int					unk1;
-	unsigned int		sectorsize;
-	u64					sectorcount;
-	
+typedef struct {
+    unsigned long maxclusters;
+    unsigned long freeclusters;
+    int unk1;
+    unsigned int sectorsize;
+    u64 sectorcount;
+
 } pgeSystemDevCtl;
 
-typedef struct
-{
-	pgeSystemDevCtl *pdevinf;
-	
+typedef struct {
+    pgeSystemDevCtl *pdevinf;
+
 } pgeSystemDevCommand;
 
-void pgeSystemGetNickname(char *nickname)
-{
-	sceUtilityGetSystemParamString(PSP_SYSTEMPARAM_ID_STRING_NICKNAME, nickname, 128);
+void pgeSystemGetNickname(char *nickname) {
+    sceUtilityGetSystemParamString(PSP_SYSTEMPARAM_ID_STRING_NICKNAME, nickname, 128);
 }
 
-void pgeSystemGetPsid(unsigned char *psid)
-{
-	PspOpenPSID thepsid;
-	
-	sceOpenPSIDGetOpenPSID(&thepsid);
-	
-	memcpy(psid, &thepsid, 16);
+void pgeSystemGetPsid(unsigned char *psid) {
+    PspOpenPSID thepsid;
+
+    sceOpenPSIDGetOpenPSID(&thepsid);
+
+    memcpy(psid, &thepsid, 16);
 }
 
-int pgeSystemGetLanguage(void)
-{
-	int language;
-	
-	sceUtilityGetSystemParamInt(PSP_SYSTEMPARAM_ID_INT_LANGUAGE, &language);
-	
-	return language;
+int pgeSystemGetLanguage(void) {
+    int language;
+
+    sceUtilityGetSystemParamInt(PSP_SYSTEMPARAM_ID_INT_LANGUAGE, &language);
+
+    return language;
 }
 
-void pgeSystemGetMac(unsigned char *mac)
-{
-	sceWlanGetEtherAddr(mac);
+void pgeSystemGetMac(unsigned char *mac) {
+    sceWlanGetEtherAddr(mac);
 }
 
-float pgeSystemMsSize(void)
-{
-	pgeSystemDevCtl devctl;
-	
-	memset(&devctl, 0, sizeof(pgeSystemDevCtl));
-	
-	pgeSystemDevCommand command;
-	
-	command.pdevinf = &devctl;
-	
-	sceIoDevctl("ms0:", 0x02425818, &command, sizeof(pgeSystemDevCommand), NULL, 0);
-	
-	u64 mssize = (devctl.maxclusters * devctl.sectorcount) * devctl.sectorsize; 
-	
-	return (float)mssize/1048576.0f;
+float pgeSystemMsSize(void) {
+    pgeSystemDevCtl devctl;
+
+    memset(&devctl, 0, sizeof(pgeSystemDevCtl));
+
+    pgeSystemDevCommand command;
+
+    command.pdevinf = &devctl;
+
+    sceIoDevctl("ms0:", 0x02425818, &command, sizeof(pgeSystemDevCommand), NULL, 0);
+
+    u64 mssize = (devctl.maxclusters * devctl.sectorcount) * devctl.sectorsize;
+
+    return (float) mssize / 1048576.0f;
 }
 
-float pgeSystemMsFreeSize(void)
-{
-	pgeSystemDevCtl devctl;
-	
-	memset(&devctl, 0, sizeof(pgeSystemDevCtl));
-	
-	pgeSystemDevCommand command;
-	
-	command.pdevinf = &devctl;
-	
-	sceIoDevctl("ms0:", 0x02425818, &command, sizeof(pgeSystemDevCommand), NULL, 0);
-	
-	u64 freesize = (devctl.freeclusters * devctl.sectorcount) * devctl.sectorsize; 
-	
-	return (float)freesize/1048576.0f;
+float pgeSystemMsFreeSize(void) {
+    pgeSystemDevCtl devctl;
+
+    memset(&devctl, 0, sizeof(pgeSystemDevCtl));
+
+    pgeSystemDevCommand command;
+
+    command.pdevinf = &devctl;
+
+    sceIoDevctl("ms0:", 0x02425818, &command, sizeof(pgeSystemDevCommand), NULL, 0);
+
+    u64 freesize = (devctl.freeclusters * devctl.sectorcount) * devctl.sectorsize;
+
+    return (float) freesize / 1048576.0f;
 }
 
-unsigned int pgeSystemGetFreeRam(void)
-{
-	void* buf[128];
-	
-	int i = 0;
-	
-	for(i = 0; i < 128; i++)
-	{
-		buf[i] = pgeMalloc(512 * 1024);
-		
-		if(!buf[i])
-			break;
-	}
-	
-	int result = i;
-	
-	for(; i >= 0; i--)
-	{
-		pgeFree(buf[i]);
-	}
-	
-	return (result * 512 * 1024);
+unsigned int pgeSystemGetFreeRam(void) {
+    void *buf[128];
+
+    int i = 0;
+
+    for (i = 0; i < 128; i++) {
+        buf[i] = pgeMalloc(512 * 1024);
+
+        if (!buf[i])
+            break;
+    }
+
+    int result = i;
+
+    for (; i >= 0; i--) {
+        pgeFree(buf[i]);
+    }
+
+    return (result * 512 * 1024);
 }
 
-int pgeSystemSetCpu(unsigned int freq)
-{
-	int cpu = freq;
-	
-	if(cpu > 333)
-		cpu = 333;
-		
-	int pll = cpu;
-	
-	if(pll < 190)
-		pll = 190;
-		
-	int bus = pgeMathFloor(pll/2);
-	
-	int result = scePowerSetClockFrequency(pll, cpu, bus);
-	
-	if(result < 0)
-		return 0;
-		
-	return 1;
+int pgeSystemSetCpu(unsigned int freq) {
+    int cpu = freq;
+
+    if (cpu > 333)
+        cpu = 333;
+
+    int pll = cpu;
+
+    if (pll < 190)
+        pll = 190;
+
+    int bus = pgeMathFloor(pll / 2);
+
+    int result = scePowerSetClockFrequency(pll, cpu, bus);
+
+    if (result < 0)
+        return 0;
+
+    return 1;
 }
 
-int pgeSystemGetBatteryPercent(void)
-{
-	int percent = scePowerGetBatteryLifePercent();
-	
-	if(percent < 0)
-		return 0;
-		
-	return percent;
+int pgeSystemGetBatteryPercent(void) {
+    int percent = scePowerGetBatteryLifePercent();
+
+    if (percent < 0)
+        return 0;
+
+    return percent;
 }
 
-int pgeSystemGetBatteryTime(void)
-{
-	int mins = scePowerGetBatteryLifeTime();
-	
-	if(mins < 0)
-		return 0;
-		
-	return mins;
+int pgeSystemGetBatteryTime(void) {
+    int mins = scePowerGetBatteryLifeTime();
+
+    if (mins < 0)
+        return 0;
+
+    return mins;
 }
 
-int pgeSystemGetBatteryCharging(void)
-{
-	int charging = scePowerIsBatteryCharging();
-	
-	if(charging < 0)
-		return 0;
-		
-	return charging;
+int pgeSystemGetBatteryCharging(void) {
+    int charging = scePowerIsBatteryCharging();
+
+    if (charging < 0)
+        return 0;
+
+    return charging;
 }
 
-int pgeSystemGetBatteryExists(void)
-{
-	int exist = scePowerIsBatteryExist();
-	
-	if(exist < 0)
-		return 0;
-		
-	return exist;
+int pgeSystemGetBatteryExists(void) {
+    int exist = scePowerIsBatteryExist();
+
+    if (exist < 0)
+        return 0;
+
+    return exist;
 }
 
-int pgeSystemGetBatteryIsLow(void)
-{
-	int low = scePowerIsLowBattery();
-	
-	if(low < 0)
-		return 0;
-		
-	return low;
+int pgeSystemGetBatteryIsLow(void) {
+    int low = scePowerIsLowBattery();
+
+    if (low < 0)
+        return 0;
+
+    return low;
 }

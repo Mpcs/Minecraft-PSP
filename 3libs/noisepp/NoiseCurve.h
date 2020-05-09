@@ -29,208 +29,199 @@
 #include "NoisePipeline.h"
 #include "NoiseModule.h"
 
-namespace noisepp
-{
-	/// Curve control point.
-	struct CurveControlPoint
-	{
-		/// Input value.
-		Real inValue;
-		/// Output value.
-		Real outValue;
-		/// Compare operator for sorting.
-		bool operator< (const CurveControlPoint &p) const
-		{
-			return inValue < p.inValue;
-		}
-	};
+namespace noisepp {
+    /// Curve control point.
+    struct CurveControlPoint {
+        /// Input value.
+        Real inValue;
+        /// Output value.
+        Real outValue;
 
-	typedef std::vector<CurveControlPoint> CurveControlPointVector;
+        /// Compare operator for sorting.
+        bool operator<(const CurveControlPoint &p) const {
+            return inValue < p.inValue;
+        }
+    };
 
-	template <class PipelineElement>
-	class CurveElementBase : public PipelineElement
-	{
-		protected:
-			ElementID mElement;
-			const PipelineElement *mElementPtr;
-			CurveControlPoint *mControlPoints;
-			int mControlPointCount;
+    typedef std::vector<CurveControlPoint> CurveControlPointVector;
 
-			NOISEPP_INLINE int clampValue (int i, int lo, int hi) const
-			{
-				if (i < lo)
-					return lo;
-				else if (i > hi)
-					return hi;
-				else
-					return i;
-			}
+    template<class PipelineElement>
+    class CurveElementBase : public PipelineElement {
+    protected:
+        ElementID mElement;
+        const PipelineElement *mElementPtr;
+        CurveControlPoint *mControlPoints;
+        int mControlPointCount;
 
-			NOISEPP_INLINE Real mapValue (Real value) const
-			{
-				int index;
-				for (index=0;index<mControlPointCount;++index)
-				{
-					if (value < mControlPoints[index].inValue)
-					{
-						break;
-					}
-				}
+        NOISEPP_INLINE int clampValue(int i, int lo, int hi) const {
+            if (i < lo)
+                return lo;
+            else if (i > hi)
+                return hi;
+            else
+                return i;
+        }
 
-				const int index0 = clampValue (index-2, 0, mControlPointCount-1);
-				const int index1 = clampValue (index-1, 0, mControlPointCount-1);
-				const int index2 = clampValue (index, 0, mControlPointCount-1);
-				const int index3 = clampValue (index+1, 0, mControlPointCount-1);
+        NOISEPP_INLINE Real mapValue(Real value) const {
+            int index;
+            for (index = 0; index < mControlPointCount; ++index) {
+                if (value < mControlPoints[index].inValue) {
+                    break;
+                }
+            }
 
-				if (index1 == index2)
-				{
-					return mControlPoints[index1].outValue;
-				}
+            const int index0 = clampValue(index - 2, 0, mControlPointCount - 1);
+            const int index1 = clampValue(index - 1, 0, mControlPointCount - 1);
+            const int index2 = clampValue(index, 0, mControlPointCount - 1);
+            const int index3 = clampValue(index + 1, 0, mControlPointCount - 1);
 
-				const Real in0 = mControlPoints[index1].inValue;
-				const Real in1 = mControlPoints[index2].inValue;
-				const Real a = (value - in0) / (in1 - in0);
-				return Math::InterpCubic (mControlPoints[index0].outValue, mControlPoints[index1].outValue, mControlPoints[index2].outValue, mControlPoints[index3].outValue, a);
-			}
-		public:
-			CurveElementBase (const Pipeline<PipelineElement> *pipe, ElementID element, CurveControlPoint *points, int count) : mElement(element), mControlPoints(points), mControlPointCount(count)
-			{
-				//NoiseAssert (points != NULL, points);
-				//NoiseAssert (count >= 4, count);
-				mElementPtr = pipe->getElement (mElement);
-			}
-			virtual ~CurveElementBase ()
-			{
-				delete[] mControlPoints;
-				mControlPoints = NULL;
-			}
-	};
+            if (index1 == index2) {
+                return mControlPoints[index1].outValue;
+            }
 
-	class CurveElement1D : public CurveElementBase<PipelineElement1D>
-	{
-		public:
-			CurveElement1D (const Pipeline1D *pipe, ElementID element, CurveControlPoint *points, int count) : CurveElementBase<PipelineElement1D>(pipe, element, points, count)
-			{
-			}
-			virtual Real getValue (Real x, Cache *cache) const
-			{
-				Real value;
-				value = getElementValue (mElementPtr, mElement, x, cache);
-				return CurveElementBase<PipelineElement1D>::mapValue(value);
-			}
-	};
+            const Real in0 = mControlPoints[index1].inValue;
+            const Real in1 = mControlPoints[index2].inValue;
+            const Real a = (value - in0) / (in1 - in0);
+            return Math::InterpCubic(mControlPoints[index0].outValue, mControlPoints[index1].outValue,
+                                     mControlPoints[index2].outValue, mControlPoints[index3].outValue, a);
+        }
 
-	class CurveElement2D : public CurveElementBase<PipelineElement2D>
-	{
-		public:
-			CurveElement2D (const Pipeline2D *pipe, ElementID element, CurveControlPoint *points, int count) : CurveElementBase<PipelineElement2D>(pipe, element, points, count)
-			{
-			}
-			virtual Real getValue (Real x, Real y, Cache *cache) const
-			{
-				Real value;
-				value = getElementValue (mElementPtr, mElement, x, y, cache);
-				return CurveElementBase<PipelineElement2D>::mapValue(value);
-			}
-	};
+    public:
+        CurveElementBase(const Pipeline <PipelineElement> *pipe, ElementID element, CurveControlPoint *points,
+                         int count) : mElement(element), mControlPoints(points), mControlPointCount(count) {
+            //NoiseAssert (points != NULL, points);
+            //NoiseAssert (count >= 4, count);
+            mElementPtr = pipe->getElement(mElement);
+        }
 
-	class CurveElement3D : public CurveElementBase<PipelineElement3D>
-	{
-		public:
-			CurveElement3D (const Pipeline3D *pipe, ElementID element, CurveControlPoint *points, int count) : CurveElementBase<PipelineElement3D>(pipe, element, points, count)
-			{
-			}
-			virtual Real getValue (Real x, Real y, Real z, Cache *cache) const
-			{
-				Real value;
-				value = getElementValue (mElementPtr, mElement, x, y, z, cache);
-				return CurveElementBase<PipelineElement3D>::mapValue(value);
-			}
-	};
+        virtual ~CurveElementBase() {
+            delete[] mControlPoints;
+            mControlPoints = NULL;
+        }
+    };
 
-	/** Module that maps the values from the source module onto a curve.
-		Maps the values from the source modules onto the curve defined by the specified control points (at least 4)
-	*/
-	class CurveModule : public Module
-	{
-		private:
-			CurveControlPointVector mControlPoints;
+    class CurveElement1D : public CurveElementBase<PipelineElement1D> {
+    public:
+        CurveElement1D(const Pipeline1D *pipe, ElementID element, CurveControlPoint *points, int count)
+                : CurveElementBase<PipelineElement1D>(pipe, element, points, count) {
+        }
 
-		public:
-			/// Constructor.
-			CurveModule() : Module(1)
-			{
-			}
-			/// Adds a control point.
-			void addControlPoint (Real inValue, Real outValue)
-			{
-				CurveControlPoint point;
-				point.inValue = inValue;
-				point.outValue = outValue;
-				mControlPoints.push_back (point);
-				std::sort (mControlPoints.begin(), mControlPoints.end());
-			}
-			/// Clears all control points.
-			void clearControlPoints ()
-			{
-				mControlPoints.clear ();
-			}
-			/// Returns a reference to the control point vector.
-			CurveControlPointVector &getControlPoints ()
-			{
-				return mControlPoints;
-			}
-			/// @copydoc noisepp::Module::addToPipeline()
-			ElementID addToPipeline (Pipeline1D *pipe) const
-			{
-				//NoiseModuleCheckSourceModules;
-				ElementID first = getSourceModule(0)->addToPipeline(pipe);
-				int count = (int)mControlPoints.size ();
-				//NoiseAssert (count >= 4, count);
-				CurveControlPoint *points = new CurveControlPoint[count];
-				for (int i=0;i<count;++i)
-				{
-					points[i] = mControlPoints[i];
-				}
-				return pipe->addElement (this, new CurveElement1D(pipe, first, points, count));
-			}
-			/// @copydoc noisepp::Module::addToPipeline()
-			ElementID addToPipeline (Pipeline2D *pipe) const
-			{
-				//NoiseModuleCheckSourceModules;
-				ElementID first = getSourceModule(0)->addToPipeline(pipe);
-				int count = (int)mControlPoints.size ();
-				//NoiseAssert (count >= 4, count);
-				CurveControlPoint *points = new CurveControlPoint[count];
-				for (int i=0;i<count;++i)
-				{
-					points[i] = mControlPoints[i];
-				}
-				return pipe->addElement (this, new CurveElement2D(pipe, first, points, count));
-			}
-			/// @copydoc noisepp::Module::addToPipeline()
-			ElementID addToPipeline (Pipeline3D *pipe) const
-			{
-				//NoiseModuleCheckSourceModules;
-				ElementID first = getSourceModule(0)->addToPipeline(pipe);
-				int count = (int)mControlPoints.size ();
-				//NoiseAssert (count >= 4, count);
-				CurveControlPoint *points = new CurveControlPoint[count];
-				for (int i=0;i<count;++i)
-				{
-					points[i] = mControlPoints[i];
-				}
-				return pipe->addElement (this, new CurveElement3D(pipe, first, points, count));
-			}
-			/// @copydoc noisepp::Module::getType()
-			ModuleTypeId getType() const { return MODULE_CURVE; }
+        virtual Real getValue(Real x, Cache *cache) const {
+            Real value;
+            value = getElementValue(mElementPtr, mElement, x, cache);
+            return CurveElementBase<PipelineElement1D>::mapValue(value);
+        }
+    };
+
+    class CurveElement2D : public CurveElementBase<PipelineElement2D> {
+    public:
+        CurveElement2D(const Pipeline2D *pipe, ElementID element, CurveControlPoint *points, int count)
+                : CurveElementBase<PipelineElement2D>(pipe, element, points, count) {
+        }
+
+        virtual Real getValue(Real x, Real y, Cache *cache) const {
+            Real value;
+            value = getElementValue(mElementPtr, mElement, x, y, cache);
+            return CurveElementBase<PipelineElement2D>::mapValue(value);
+        }
+    };
+
+    class CurveElement3D : public CurveElementBase<PipelineElement3D> {
+    public:
+        CurveElement3D(const Pipeline3D *pipe, ElementID element, CurveControlPoint *points, int count)
+                : CurveElementBase<PipelineElement3D>(pipe, element, points, count) {
+        }
+
+        virtual Real getValue(Real x, Real y, Real z, Cache *cache) const {
+            Real value;
+            value = getElementValue(mElementPtr, mElement, x, y, z, cache);
+            return CurveElementBase<PipelineElement3D>::mapValue(value);
+        }
+    };
+
+    /** Module that maps the values from the source module onto a curve.
+        Maps the values from the source modules onto the curve defined by the specified control points (at least 4)
+    */
+    class CurveModule : public Module {
+    private:
+        CurveControlPointVector mControlPoints;
+
+    public:
+        /// Constructor.
+        CurveModule() : Module(1) {
+        }
+
+        /// Adds a control point.
+        void addControlPoint(Real inValue, Real outValue) {
+            CurveControlPoint point;
+            point.inValue = inValue;
+            point.outValue = outValue;
+            mControlPoints.push_back(point);
+            std::sort(mControlPoints.begin(), mControlPoints.end());
+        }
+
+        /// Clears all control points.
+        void clearControlPoints() {
+            mControlPoints.clear();
+        }
+
+        /// Returns a reference to the control point vector.
+        CurveControlPointVector &getControlPoints() {
+            return mControlPoints;
+        }
+
+        /// @copydoc noisepp::Module::addToPipeline()
+        ElementID addToPipeline(Pipeline1D *pipe) const {
+            //NoiseModuleCheckSourceModules;
+            ElementID first = getSourceModule(0)->addToPipeline(pipe);
+            int count = (int) mControlPoints.size();
+            //NoiseAssert (count >= 4, count);
+            CurveControlPoint *points = new CurveControlPoint[count];
+            for (int i = 0; i < count; ++i) {
+                points[i] = mControlPoints[i];
+            }
+            return pipe->addElement(this, new CurveElement1D(pipe, first, points, count));
+        }
+
+        /// @copydoc noisepp::Module::addToPipeline()
+        ElementID addToPipeline(Pipeline2D *pipe) const {
+            //NoiseModuleCheckSourceModules;
+            ElementID first = getSourceModule(0)->addToPipeline(pipe);
+            int count = (int) mControlPoints.size();
+            //NoiseAssert (count >= 4, count);
+            CurveControlPoint *points = new CurveControlPoint[count];
+            for (int i = 0; i < count; ++i) {
+                points[i] = mControlPoints[i];
+            }
+            return pipe->addElement(this, new CurveElement2D(pipe, first, points, count));
+        }
+
+        /// @copydoc noisepp::Module::addToPipeline()
+        ElementID addToPipeline(Pipeline3D *pipe) const {
+            //NoiseModuleCheckSourceModules;
+            ElementID first = getSourceModule(0)->addToPipeline(pipe);
+            int count = (int) mControlPoints.size();
+            //NoiseAssert (count >= 4, count);
+            CurveControlPoint *points = new CurveControlPoint[count];
+            for (int i = 0; i < count; ++i) {
+                points[i] = mControlPoints[i];
+            }
+            return pipe->addElement(this, new CurveElement3D(pipe, first, points, count));
+        }
+
+        /// @copydoc noisepp::Module::getType()
+        ModuleTypeId getType() const { return MODULE_CURVE; }
+
 #if NOISEPP_ENABLE_UTILS
-			/// @copydoc noisepp::Module::write()
-			virtual void write (utils::OutStream &stream) const;
-			/// @copydoc noisepp::Module::read()
-			virtual void read (utils::InStream &stream);
+
+        /// @copydoc noisepp::Module::write()
+        virtual void write(utils::OutStream &stream) const;
+
+        /// @copydoc noisepp::Module::read()
+        virtual void read(utils::InStream &stream);
+
 #endif
-	};
+    };
 };
 
 #endif

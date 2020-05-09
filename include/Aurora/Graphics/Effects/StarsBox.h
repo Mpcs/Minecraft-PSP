@@ -6,32 +6,32 @@
 #include <pspmath.h>
 #include <Aurora/Math/Frustum.h>
 
-namespace Aurora
-{
-	namespace Graphics
-	{
-		class StarsBox
-		{
-		public:
-			StarsBox();
-			~StarsBox();
+namespace Aurora {
+    namespace Graphics {
+        class StarsBox {
+        public:
+            StarsBox();
+
+            ~StarsBox();
 
             void Build();
-			void Update();
-			void Render(float alpha);
 
-		private:
+            void Update();
 
-			TexturesPSPVertex *boxVertices;
-			TexturesPSPVertex *boxVertices2;
-			TexturesPSPVertex *boxVertices3;
-			TexturesPSPVertex *boxVertices4;
-			TexturesPSPVertex *boxVertices5;
-			TexturesPSPVertex *boxVertices6;
+            void Render(float alpha);
 
-			float size;
-		};
-	}
+        private:
+
+            TexturesPSPVertex *boxVertices;
+            TexturesPSPVertex *boxVertices2;
+            TexturesPSPVertex *boxVertices3;
+            TexturesPSPVertex *boxVertices4;
+            TexturesPSPVertex *boxVertices5;
+            TexturesPSPVertex *boxVertices6;
+
+            float size;
+        };
+    }
 }
 
 #endif

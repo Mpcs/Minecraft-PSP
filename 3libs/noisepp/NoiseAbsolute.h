@@ -29,74 +29,66 @@
 #include "NoisePipeline.h"
 #include "NoiseModule.h"
 
-namespace noisepp
-{
-	class AbsoluteElement1D : public PipelineElement1D
-	{
-		private:
-			ElementID mElement;
-			const PipelineElement1D *mElementPtr;
+namespace noisepp {
+    class AbsoluteElement1D : public PipelineElement1D {
+    private:
+        ElementID mElement;
+        const PipelineElement1D *mElementPtr;
 
-		public:
-			AbsoluteElement1D (const Pipeline1D *pipe, ElementID element) : mElement(element)
-			{
-				mElementPtr = pipe->getElement (element);
-			}
-			virtual Real getValue (Real x, Cache *cache) const
-			{
-				Real value;
-				value = getElementValue (mElementPtr, mElement, x, cache);
-				return std::fabs(value);
-			}
-	};
+    public:
+        AbsoluteElement1D(const Pipeline1D *pipe, ElementID element) : mElement(element) {
+            mElementPtr = pipe->getElement(element);
+        }
 
-	class AbsoluteElement2D : public PipelineElement2D
-	{
-		private:
-			ElementID mElement;
-			const PipelineElement2D *mElementPtr;
+        virtual Real getValue(Real x, Cache *cache) const {
+            Real value;
+            value = getElementValue(mElementPtr, mElement, x, cache);
+            return std::fabs(value);
+        }
+    };
 
-		public:
-			AbsoluteElement2D (const Pipeline2D *pipe, ElementID element) : mElement(element)
-			{
-				mElementPtr = pipe->getElement (element);
-			}
-			virtual Real getValue (Real x, Real y, Cache *cache) const
-			{
-				Real value;
-				value = getElementValue (mElementPtr, mElement, x, y, cache);
-				return std::fabs(value);
-			}
-	};
+    class AbsoluteElement2D : public PipelineElement2D {
+    private:
+        ElementID mElement;
+        const PipelineElement2D *mElementPtr;
 
-	class AbsoluteElement3D : public PipelineElement3D
-	{
-		private:
-			ElementID mElement;
-			const PipelineElement3D *mElementPtr;
+    public:
+        AbsoluteElement2D(const Pipeline2D *pipe, ElementID element) : mElement(element) {
+            mElementPtr = pipe->getElement(element);
+        }
 
-		public:
-			AbsoluteElement3D (const Pipeline3D *pipe, ElementID element) : mElement(element)
-			{
-				mElementPtr = pipe->getElement (element);
-			}
-			virtual Real getValue (Real x, Real y, Real z, Cache *cache) const
-			{
-				Real value;
-				value = getElementValue (mElementPtr, mElement, x, y, z, cache);
-				return std::fabs(value);
-			}
-	};
+        virtual Real getValue(Real x, Real y, Cache *cache) const {
+            Real value;
+            value = getElementValue(mElementPtr, mElement, x, y, cache);
+            return std::fabs(value);
+        }
+    };
 
-	/** Module that outputs the absolute value of the input value from the source module.
-		Calculates the absolute value of the value from the source module.
-	*/
-	class AbsoluteModule : public SingleSourceModule<AbsoluteElement1D, AbsoluteElement2D, AbsoluteElement3D>
-	{
-		public:
-			/// @copydoc noisepp::Module::getType()
-			ModuleTypeId getType() const { return MODULE_ABSOLUTE; }
-	};
+    class AbsoluteElement3D : public PipelineElement3D {
+    private:
+        ElementID mElement;
+        const PipelineElement3D *mElementPtr;
+
+    public:
+        AbsoluteElement3D(const Pipeline3D *pipe, ElementID element) : mElement(element) {
+            mElementPtr = pipe->getElement(element);
+        }
+
+        virtual Real getValue(Real x, Real y, Real z, Cache *cache) const {
+            Real value;
+            value = getElementValue(mElementPtr, mElement, x, y, z, cache);
+            return std::fabs(value);
+        }
+    };
+
+    /** Module that outputs the absolute value of the input value from the source module.
+        Calculates the absolute value of the value from the source module.
+    */
+    class AbsoluteModule : public SingleSourceModule<AbsoluteElement1D, AbsoluteElement2D, AbsoluteElement3D> {
+    public:
+        /// @copydoc noisepp::Module::getType()
+        ModuleTypeId getType() const { return MODULE_ABSOLUTE; }
+    };
 };
 
 #endif

@@ -12,20 +12,24 @@
 
 class CraftWorld;
 
-class ItemFrameEntity : public BlockEntity
-{
+class ItemFrameEntity : public BlockEntity {
 public:
-	ItemFrameEntity(int create_x, int create_y, int create_z, unsigned int create_facing);
-	virtual ~ItemFrameEntity();
+    ItemFrameEntity(int create_x, int create_y, int create_z, unsigned int create_facing);
+
+    virtual ~ItemFrameEntity();
 
     void SetFacing(unsigned int new_facing);
+
     unsigned int GetFacing();
 
     void SetItem(unsigned int new_itemID);
+
     void ResetItem();
+
     unsigned int GetItem();
 
     void SetAmount(int new_amount);
+
     int GetAmount();
 
     void Render(CraftWorld *mWorld, Frustum &camFrustum, float dt);

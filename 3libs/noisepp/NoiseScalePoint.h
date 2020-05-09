@@ -29,146 +29,142 @@
 #include "NoisePipeline.h"
 #include "NoiseModule.h"
 
-namespace noisepp
-{
-	class ScalePointElement1D : public PipelineElement1D
-	{
-		private:
-			ElementID mElement;
-			const PipelineElement1D *mElementPtr;
-			Real mScaleX;
+namespace noisepp {
+    class ScalePointElement1D : public PipelineElement1D {
+    private:
+        ElementID mElement;
+        const PipelineElement1D *mElementPtr;
+        Real mScaleX;
 
-		public:
-			ScalePointElement1D (const Pipeline1D *pipe, ElementID element, Real scaleX) :
-				mElement(element), mScaleX(scaleX)
-			{
-				mElementPtr = pipe->getElement (mElement);
-			}
-			virtual Real getValue (Real x, Cache *cache) const
-			{
-				return getElementValue (mElementPtr, mElement, x*mScaleX, cache);
-			}
+    public:
+        ScalePointElement1D(const Pipeline1D *pipe, ElementID element, Real scaleX) :
+                mElement(element), mScaleX(scaleX) {
+            mElementPtr = pipe->getElement(mElement);
+        }
 
-	};
+        virtual Real getValue(Real x, Cache *cache) const {
+            return getElementValue(mElementPtr, mElement, x * mScaleX, cache);
+        }
 
-	class ScalePointElement2D : public PipelineElement2D
-	{
-		private:
-			ElementID mElement;
-			const PipelineElement2D *mElementPtr;
-			Real mScaleX;
-			Real mScaleY;
+    };
 
-		public:
-			ScalePointElement2D (const Pipeline2D *pipe, ElementID element, Real scaleX, Real scaleY) :
-				mElement(element), mScaleX(scaleX), mScaleY(scaleY)
-			{
-				mElementPtr = pipe->getElement (mElement);
-			}
-			virtual Real getValue (Real x, Real y, Cache *cache) const
-			{
-				return getElementValue (mElementPtr, mElement, x*mScaleX, y*mScaleY, cache);
-			}
+    class ScalePointElement2D : public PipelineElement2D {
+    private:
+        ElementID mElement;
+        const PipelineElement2D *mElementPtr;
+        Real mScaleX;
+        Real mScaleY;
 
-	};
+    public:
+        ScalePointElement2D(const Pipeline2D *pipe, ElementID element, Real scaleX, Real scaleY) :
+                mElement(element), mScaleX(scaleX), mScaleY(scaleY) {
+            mElementPtr = pipe->getElement(mElement);
+        }
 
-	class ScalePointElement3D : public PipelineElement3D
-	{
-		private:
-			ElementID mElement;
-			const PipelineElement3D *mElementPtr;
-			Real mScaleX;
-			Real mScaleY;
-			Real mScaleZ;
+        virtual Real getValue(Real x, Real y, Cache *cache) const {
+            return getElementValue(mElementPtr, mElement, x * mScaleX, y * mScaleY, cache);
+        }
 
-		public:
-			ScalePointElement3D (const Pipeline3D *pipe, ElementID element, Real scaleX, Real scaleY, Real scaleZ) :
-				mElement(element), mScaleX(scaleX), mScaleY(scaleY), mScaleZ(scaleZ)
-			{
-				mElementPtr = pipe->getElement (mElement);
-			}
-			virtual Real getValue (Real x, Real y, Real z, Cache *cache) const
-			{
-				return getElementValue (mElementPtr, mElement, x*mScaleX, y*mScaleY, z*mScaleZ, cache);
-			}
+    };
 
-	};
+    class ScalePointElement3D : public PipelineElement3D {
+    private:
+        ElementID mElement;
+        const PipelineElement3D *mElementPtr;
+        Real mScaleX;
+        Real mScaleY;
+        Real mScaleZ;
 
-	/** Transform module for scaling.
-		Transforms the source module by scaling the coordinates.
-	*/
-	class ScalePointModule : public Module
-	{
-		private:
-			Real mScaleX;
-			Real mScaleY;
-			Real mScaleZ;
+    public:
+        ScalePointElement3D(const Pipeline3D *pipe, ElementID element, Real scaleX, Real scaleY, Real scaleZ) :
+                mElement(element), mScaleX(scaleX), mScaleY(scaleY), mScaleZ(scaleZ) {
+            mElementPtr = pipe->getElement(mElement);
+        }
 
-		public:
-			/// Constructor.
-			ScalePointModule() : Module(1), mScaleX(1.0), mScaleY(1.0), mScaleZ(1.0)
-			{
-			}
-			/// Sets the scaling applied to the x coordinate.
-			void setScaleX (Real v)
-			{
-				mScaleX = v;
-			}
-			/// Returns the scaling applied to the x coordinate.
-			Real getScaleX () const
-			{
-				return mScaleX;
-			}
-			/// Sets the scaling applied to the y coordinate.
-			void setScaleY (Real v)
-			{
-				mScaleY = v;
-			}
-			/// Returns the scaling applied to the y coordinate.
-			Real getScaleY () const
-			{
-				return mScaleY;
-			}
-			/// Sets the scaling applied to the z coordinate.
-			void setScaleZ (Real v)
-			{
-				mScaleZ = v;
-			}
-			/// Returns the scaling applied to the z coordinate.
-			Real getScaleZ () const
-			{
-				return mScaleZ;
-			}
-			/// @copydoc noisepp::Module::addToPipeline()
-			virtual ElementID addToPipeline (Pipeline1D *pipe) const
-			{
-				//NoiseModuleCheckSourceModules;
-				ElementID first = getSourceModule(0)->addToPipeline(pipe);
-				return pipe->addElement (this, new ScalePointElement1D(pipe, first, mScaleX));
-			}
-			/// @copydoc noisepp::Module::addToPipeline()
-			virtual ElementID addToPipeline (Pipeline2D *pipe) const
-			{
-				//NoiseModuleCheckSourceModules;
-				ElementID first = getSourceModule(0)->addToPipeline(pipe);
-				return pipe->addElement (this, new ScalePointElement2D(pipe, first, mScaleX, mScaleY));
-			}
-			/// @copydoc noisepp::Module::addToPipeline()
-			virtual ElementID addToPipeline (Pipeline3D *pipe) const
-			{
-				//NoiseModuleCheckSourceModules;
-				ElementID first = getSourceModule(0)->addToPipeline(pipe);
-				return pipe->addElement (this, new ScalePointElement3D(pipe, first, mScaleX, mScaleY, mScaleZ));
-			}
-			/// @copydoc noisepp::Module::getType()
-			ModuleTypeId getType() const { return MODULE_SCALEPOINT; }
+        virtual Real getValue(Real x, Real y, Real z, Cache *cache) const {
+            return getElementValue(mElementPtr, mElement, x * mScaleX, y * mScaleY, z * mScaleZ, cache);
+        }
+
+    };
+
+    /** Transform module for scaling.
+        Transforms the source module by scaling the coordinates.
+    */
+    class ScalePointModule : public Module {
+    private:
+        Real mScaleX;
+        Real mScaleY;
+        Real mScaleZ;
+
+    public:
+        /// Constructor.
+        ScalePointModule() : Module(1), mScaleX(1.0), mScaleY(1.0), mScaleZ(1.0) {
+        }
+
+        /// Sets the scaling applied to the x coordinate.
+        void setScaleX(Real v) {
+            mScaleX = v;
+        }
+
+        /// Returns the scaling applied to the x coordinate.
+        Real getScaleX() const {
+            return mScaleX;
+        }
+
+        /// Sets the scaling applied to the y coordinate.
+        void setScaleY(Real v) {
+            mScaleY = v;
+        }
+
+        /// Returns the scaling applied to the y coordinate.
+        Real getScaleY() const {
+            return mScaleY;
+        }
+
+        /// Sets the scaling applied to the z coordinate.
+        void setScaleZ(Real v) {
+            mScaleZ = v;
+        }
+
+        /// Returns the scaling applied to the z coordinate.
+        Real getScaleZ() const {
+            return mScaleZ;
+        }
+
+        /// @copydoc noisepp::Module::addToPipeline()
+        virtual ElementID addToPipeline(Pipeline1D *pipe) const {
+            //NoiseModuleCheckSourceModules;
+            ElementID first = getSourceModule(0)->addToPipeline(pipe);
+            return pipe->addElement(this, new ScalePointElement1D(pipe, first, mScaleX));
+        }
+
+        /// @copydoc noisepp::Module::addToPipeline()
+        virtual ElementID addToPipeline(Pipeline2D *pipe) const {
+            //NoiseModuleCheckSourceModules;
+            ElementID first = getSourceModule(0)->addToPipeline(pipe);
+            return pipe->addElement(this, new ScalePointElement2D(pipe, first, mScaleX, mScaleY));
+        }
+
+        /// @copydoc noisepp::Module::addToPipeline()
+        virtual ElementID addToPipeline(Pipeline3D *pipe) const {
+            //NoiseModuleCheckSourceModules;
+            ElementID first = getSourceModule(0)->addToPipeline(pipe);
+            return pipe->addElement(this, new ScalePointElement3D(pipe, first, mScaleX, mScaleY, mScaleZ));
+        }
+
+        /// @copydoc noisepp::Module::getType()
+        ModuleTypeId getType() const { return MODULE_SCALEPOINT; }
+
 #if NOISEPP_ENABLE_UTILS
-			/// @copydoc noisepp::Module::write()
-			virtual void write (utils::OutStream &stream) const;
-			/// @copydoc noisepp::Module::read()
-			virtual void read (utils::InStream &stream);
+
+        /// @copydoc noisepp::Module::write()
+        virtual void write(utils::OutStream &stream) const;
+
+        /// @copydoc noisepp::Module::read()
+        virtual void read(utils::InStream &stream);
+
 #endif
-	};
+    };
 };
 
 #endif

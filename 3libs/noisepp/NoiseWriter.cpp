@@ -26,81 +26,70 @@
 #include "NoiseWriter.h"
 #include "NoiseUtils.h"
 
-namespace noisepp
-{
-namespace utils
-{
+namespace noisepp {
+    namespace utils {
 
-Writer::Writer (OutStream &stream) : mStream(stream), mModuleCount(0)
-{
-}
+        Writer::Writer(OutStream &stream) : mStream(stream), mModuleCount(0) {
+        }
 
-unsigned short Writer::getModuleID (const Module *module)
-{
+        unsigned short Writer::getModuleID(const Module *module) {
 //	NoiseAssert (module != NULL, module);
-	ModuleMap::iterator it = mModules.find(module);
+            ModuleMap::iterator it = mModules.find(module);
 //	NoiseAssert (it != mModules.end(), module);
-	return it->second;
-}
+            return it->second;
+        }
 
-unsigned short Writer::addModule (const Module *module)
-{
-	//NoiseAssert (module != NULL, module);
-	ModuleMap::iterator it = mModules.find (module);
-	if (it == mModules.end())
-	{
-		unsigned short id = mModuleCount++;
-		mModules.insert(std::make_pair(module, id));
-		mModuleVec.push_back (module);
+        unsigned short Writer::addModule(const Module *module) {
+            //NoiseAssert (module != NULL, module);
+            ModuleMap::iterator it = mModules.find(module);
+            if (it == mModules.end()) {
+                unsigned short id = mModuleCount++;
+                mModules.insert(std::make_pair(module, id));
+                mModuleVec.push_back(module);
 
-		// add child modules
-		for (size_t i=0;i<module->getSourceModuleCount();++i)
-		{
-			const Module *child = module->getSourceModule(i);
-		//	assert (child);
-			addModule (child);
-		}
+                // add child modules
+                for (size_t i = 0; i < module->getSourceModuleCount(); ++i) {
+                    const Module *child = module->getSourceModule(i);
+                    //	assert (child);
+                    addModule(child);
+                }
 
-		return id;
-	}
-	return it->second;
-}
+                return id;
+            }
+            return it->second;
+        }
 
-void Writer::writeModule (const Module *module)
-{
-	//NoiseAssert (module != NULL, module);
-	unsigned short typeID = module->getType();
-	mStream.write (typeID);
-	module->write (mStream);
-}
+        void Writer::writeModule(const Module *module) {
+            //NoiseAssert (module != NULL, module);
+            unsigned short typeID = module->getType();
+            mStream.write(typeID);
+            module->write(mStream);
+        }
 
-void Writer::writeModuleRel (const Module *module)
-{
-	//NoiseAssert (module != NULL, module);
-	for (size_t i=0;i<module->getSourceModuleCount();++i)
-	{
-		const Module *child = module->getSourceModule(i);
-		unsigned short id = getModuleID(child);
-		mStream.write (id);
-	}
-}
+        void Writer::writeModuleRel(const Module *module) {
+            //NoiseAssert (module != NULL, module);
+            for (size_t i = 0; i < module->getSourceModuleCount(); ++i) {
+                const Module *child = module->getSourceModule(i);
+                unsigned short id = getModuleID(child);
+                mStream.write(id);
+            }
+        }
 
-void Writer::writePipeline ()
-{
-	//NoiseAssert (!mModuleVec.empty(), mModuleVec);
-	//NoiseAssert (mModuleCount == mModules.size(), mModuleCount);
-	//NoiseAssert (mModuleCount == mModuleVec.size(), mModuleCount);
+        void Writer::writePipeline() {
+            //NoiseAssert (!mModuleVec.empty(), mModuleVec);
+            //NoiseAssert (mModuleCount == mModules.size(), mModuleCount);
+            //NoiseAssert (mModuleCount == mModuleVec.size(), mModuleCount);
 
-	unsigned char ver = NOISE_FILE_VERSION;
-	mStream.write (ver);
-	mStream.write (mModuleCount);
-	// writing module properties
-	for (ModuleVector::iterator it=mModuleVec.begin();it!=mModuleVec.end();++it)
-		writeModule(*it);
-	// writing module relations
-	for (ModuleVector::iterator it=mModuleVec.begin();it!=mModuleVec.end();++it)
-		writeModuleRel(*it);
-}
+            unsigned char ver = NOISE_FILE_VERSION;
+            mStream.write(ver);
+            mStream.write(mModuleCount);
+            // writing module properties
+            for (ModuleVector::iterator it = mModuleVec.begin(); it != mModuleVec.end(); ++it)
+                writeModule(*it);
+            // writing module relations
+            for (ModuleVector::iterator it = mModuleVec.begin(); it != mModuleVec.end(); ++it)
+                writeModuleRel(*it);
+        }
 
-};
+    };
 };

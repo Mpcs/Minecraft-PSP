@@ -6,28 +6,28 @@
 #include <pspmath.h>
 #include <Aurora/Math/Frustum.h>
 
-namespace Aurora
-{
-	namespace Graphics
-	{
-		class SkyBox
-		{
-		public:
-			SkyBox();
-			~SkyBox();
+namespace Aurora {
+    namespace Graphics {
+        class SkyBox {
+        public:
+            SkyBox();
+
+            ~SkyBox();
 
             void BuildVertexObject();
-			void Update();
-			void Render(Vector3 color, Vector3 playerPos, float camAngle);
 
-		private:
+            void Update();
 
-			SimplePSPVertex2 *skyBoxVertices;
+            void Render(Vector3 color, Vector3 playerPos, float camAngle);
 
-			float size;
-			int vertsNum;
-		};
-	}
+        private:
+
+            SimplePSPVertex2 *skyBoxVertices;
+
+            float size;
+            int vertsNum;
+        };
+    }
 }
 
 #endif

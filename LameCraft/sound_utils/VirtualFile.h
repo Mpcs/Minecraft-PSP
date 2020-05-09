@@ -19,112 +19,112 @@ extern "C" {
 */
 
 /** Virtual File type. */
-typedef struct		{
-	void *ioPtr;				//!< User data for IO processing (usually a pointer to data, FILE*, usw.)
-	unsigned short type;		//!< Virtual file type (source number).
-	unsigned long userData;		//!< Additional data
-	int offset, maxSize;		//!< Internal variables for memory-based (RAM / ROM) sources
+typedef struct {
+    void *ioPtr;                //!< User data for IO processing (usually a pointer to data, FILE*, usw.)
+    unsigned short type;        //!< Virtual file type (source number).
+    unsigned long userData;        //!< Additional data
+    int offset, maxSize;        //!< Internal variables for memory-based (RAM / ROM) sources
 } VIRTUAL_FILE;
 
 /** Enumeration describing the available file open modes. Please note that some sources do not support some modes like READWRITE or WRITE, in
 this case they'll fail when an attempt to open a file in one of these modes is made. The resulting file returned by VirtualFileOpen will be NULL. */
 enum VF_OPEN_MODES {
-	VF_O_READ,					//!< Read only
-	VF_O_READWRITE,				//!< Read & Write
-	VF_O_WRITE					//!< Write only
+    VF_O_READ,                    //!< Read only
+    VF_O_READWRITE,                //!< Read & Write
+    VF_O_WRITE                    //!< Write only
 };
 //enum {SEEK_SET, SEEK_CUR, SEEK_END};
 
 /** Structure of a Virtual File Source. */
-typedef struct			{
-	/**
-		Open a file.
-		
-		Return 1 if anything went well, or 0 to throw an error (the opening will be cancelled and NULL will be returned to the user).
-	*/
-	int (*fOpen)(void *param1, int param2, int type, int mode, VIRTUAL_FILE* f);
+typedef struct {
+    /**
+        Open a file.
 
-	/**
-		Close a file.
-		
-		Return 1 if anything went well, 0 to throw an error.
-	*/
-	int (*fClose)(VIRTUAL_FILE *f);
+        Return 1 if anything went well, or 0 to throw an error (the opening will be cancelled and NULL will be returned to the user).
+    */
+    int (*fOpen)(void *param1, int param2, int type, int mode, VIRTUAL_FILE *f);
 
-	/**
-		Read in a file.
-		
-		Returns the number of bytes effectively read.
-	*/
-	int (*fRead)(void *ptr, size_t size, size_t n, VIRTUAL_FILE* f);
+    /**
+        Close a file.
 
-	/**
-		Write in a file
-		
-		Returns the number of bytes effectively written.
-	*/
-	int (*fWrite)(const void *ptr, size_t size, size_t n, VIRTUAL_FILE* f);
+        Return 1 if anything went well, 0 to throw an error.
+    */
+    int (*fClose)(VIRTUAL_FILE *f);
 
-	/**
-		Read a single character.
+    /**
+        Read in a file.
 
-		Returns the next character (byte) in the file.
-	*/
-	int (*fGetc)(VIRTUAL_FILE *f);
+        Returns the number of bytes effectively read.
+    */
+    int (*fRead)(void *ptr, size_t size, size_t n, VIRTUAL_FILE *f);
 
-	/**
-		Write a single character
-		
-		Writes a single character. Returns the character value if anything went well, -1 else.
-	*/
-	int (*fPutc)(int caractere, VIRTUAL_FILE *f);
+    /**
+        Write in a file
 
-	/**
-		Read a string
-		
-		Reads a string to the buffer pointed to by str, of a maximum size of maxLen. Returns a pointer to the read string (str in general).
-		Reading stops to the next carriage return found (\\n). The routine should handle correctly the following sequences by reading them
-		entirely: \\r, \\r\\n, \\n. If a \\r is found, you should read the following byte and rewind one byte behind if it's not a \\n.
-		If you cannot afford a rewind, then keep the next character in cache and return it to the next read.
-	*/
-	char* (*fGets)(char *str, int maxLen, VIRTUAL_FILE *f);
+        Returns the number of bytes effectively written.
+    */
+    int (*fWrite)(const void *ptr, size_t size, size_t n, VIRTUAL_FILE *f);
 
-	/**
-		Write a string
+    /**
+        Read a single character.
 
-		Writes an entire string to the file.
-	*/
-	void (*fPuts)(const char *s, VIRTUAL_FILE *f);
+        Returns the next character (byte) in the file.
+    */
+    int (*fGetc)(VIRTUAL_FILE *f);
 
-	/**
-		Moving in the file
-		
-		Sets the current file position and returns the old one. The whence parameter uses the same values as stdio (SEEK_SET, SEEK_CUR, SEEK_END).
-	*/
-	void (*fSeek)(VIRTUAL_FILE *f, int offset, int whence);
+    /**
+        Write a single character
 
-	/**
-		Get current file position
+        Writes a single character. Returns the character value if anything went well, -1 else.
+    */
+    int (*fPutc)(int caractere, VIRTUAL_FILE *f);
 
-		Returns the current pointer position in the file. You can then use VirtualFileSeek(f, position, SEEK_SET) to return to it.
-	*/
-	int (*fTell)(VIRTUAL_FILE *f);
+    /**
+        Read a string
 
-	/**
-		End of file
+        Reads a string to the buffer pointed to by str, of a maximum size of maxLen. Returns a pointer to the read string (str in general).
+        Reading stops to the next carriage return found (\\n). The routine should handle correctly the following sequences by reading them
+        entirely: \\r, \\r\\n, \\n. If a \\r is found, you should read the following byte and rewind one byte behind if it's not a \\n.
+        If you cannot afford a rewind, then keep the next character in cache and return it to the next read.
+    */
+    char *(*fGets)(char *str, int maxLen, VIRTUAL_FILE *f);
 
-		Returns true (1) if it's the end of the file, false (0) else.
-	*/
-	int (*fEof)(VIRTUAL_FILE *f);
+    /**
+        Write a string
+
+        Writes an entire string to the file.
+    */
+    void (*fPuts)(const char *s, VIRTUAL_FILE *f);
+
+    /**
+        Moving in the file
+
+        Sets the current file position and returns the old one. The whence parameter uses the same values as stdio (SEEK_SET, SEEK_CUR, SEEK_END).
+    */
+    void (*fSeek)(VIRTUAL_FILE *f, int offset, int whence);
+
+    /**
+        Get current file position
+
+        Returns the current pointer position in the file. You can then use VirtualFileSeek(f, position, SEEK_SET) to return to it.
+    */
+    int (*fTell)(VIRTUAL_FILE *f);
+
+    /**
+        End of file
+
+        Returns true (1) if it's the end of the file, false (0) else.
+    */
+    int (*fEof)(VIRTUAL_FILE *f);
 
 } VIRTUAL_FILE_SOURCE;
 
 /** Virtual file list item. Used for RAM based devices. */
-typedef struct			{
-   const char *name;						//!< Virtual file name
-   void *data;								//!< RAM data block
-   int size;								//!< Block data size
-   int *type;								//!< Associated source (e.g. &VF_MEMORY). Don't forget the &, which is there so you can pass a variable which is not known at compile time (virtual file sources are registered upon start, so the compiler doesn't know the ID it will be given in advance).
+typedef struct {
+    const char *name;                        //!< Virtual file name
+    void *data;                                //!< RAM data block
+    int size;                                //!< Block data size
+    int *type;                                //!< Associated source (e.g. &VF_MEMORY). Don't forget the &, which is there so you can pass a variable which is not known at compile time (virtual file sources are registered upon start, so the compiler doesn't know the ID it will be given in advance).
 } OSL_VIRTUALFILENAME;
 
 /** Initializes the virtual filesystem. Done by default by OSLib, so there is no need to call it by yourself. */
@@ -139,8 +139,9 @@ void VirtualFileInit();
 			- VF_FILE: read from standard stdio routines.
 	\param mode
 		One of VF_OPEN_MODES.
-*/	
+*/
 VIRTUAL_FILE *VirtualFileOpen(void *param1, int param2, int type, int mode);
+
 /** Closes an open file. */
 int VirtualFileClose(VIRTUAL_FILE *f);
 
@@ -152,25 +153,25 @@ int VirtualFileClose(VIRTUAL_FILE *f);
 */
 
 /** Writes in a file and returns the number of bytes effectively written. */
-#define VirtualFileWrite(ptr, size, n, f)	(VirtualFileGetSource(f)->fWrite(ptr, size, n, f))
+#define VirtualFileWrite(ptr, size, n, f)    (VirtualFileGetSource(f)->fWrite(ptr, size, n, f))
 /** Reads in a file and returns the number of bytes effectively read. */
-#define VirtualFileRead(ptr, size, n, f)	(VirtualFileGetSource(f)->fRead(ptr, size, n, f))
+#define VirtualFileRead(ptr, size, n, f)    (VirtualFileGetSource(f)->fRead(ptr, size, n, f))
 /** Reads a single character. Returns the next character (byte) in the file. */
-#define VirtualFileGetc(f)					(VirtualFileGetSource(f)->fGetc(f))
+#define VirtualFileGetc(f)                    (VirtualFileGetSource(f)->fGetc(f))
 /** Writes a single character. Returns the character value if anything went well, -1 else. */
-#define VirtualFilePutc(caractere, f)		(VirtualFileGetSource(f)->fPutc(caractere, f))
+#define VirtualFilePutc(caractere, f)        (VirtualFileGetSource(f)->fPutc(caractere, f))
 /** Reads a string to the buffer pointed to by str, of a maximum size of maxLen. Returns a pointer to the read string (str in general).
 
 Reading stops to the next carriage return found (\\n, \\r\\n or \\r), supporting files created by every OS (I think). */
-#define VirtualFileGets(str, maxLen, f)		(VirtualFileGetSource(f)->fGets(str, maxLen, f))
+#define VirtualFileGets(str, maxLen, f)        (VirtualFileGetSource(f)->fGets(str, maxLen, f))
 /** Writes a string to the file. */
-#define VirtualFilePuts(s, f)				(VirtualFileGetSource(f)->fPuts(s, f))
+#define VirtualFilePuts(s, f)                (VirtualFileGetSource(f)->fPuts(s, f))
 /** Sets the current file position and returns the old one. The whence parameter uses the same values as stdio (SEEK_SET, SEEK_CUR, SEEK_END). */
-#define VirtualFileSeek(f, offset, whence)	(VirtualFileGetSource(f)->fSeek(f, offset, whence))
+#define VirtualFileSeek(f, offset, whence)    (VirtualFileGetSource(f)->fSeek(f, offset, whence))
 /** Returns the current file pointer. */
-#define VirtualFileTell(f)					(VirtualFileGetSource(f)->fTell(f))
+#define VirtualFileTell(f)                    (VirtualFileGetSource(f)->fTell(f))
 /** Returns true (1) if it's the end of the file, false (0) else. */
-#define VirtualFileEof(f)					(VirtualFileGetSource(f)->fEof(f))
+#define VirtualFileEof(f)                    (VirtualFileGetSource(f)->fEof(f))
 
 /** @} */ // end of virtualfile_io
 
@@ -198,7 +199,7 @@ OSL_VIRTUALFILENAME *oslFindFileInVirtualFilenameList(const char *fname, int typ
 //Maximum number of sources
 #define VF_MAX_SOURCES 16
 //Gets a pointer to the virtual file source associated to a file
-#define VirtualFileGetSource(vf)		(VirtualFileSources[(vf)->type])
+#define VirtualFileGetSource(vf)        (VirtualFileSources[(vf)->type])
 //List of virtual file sources
 extern VIRTUAL_FILE_SOURCE *VirtualFileSources[VF_MAX_SOURCES];
 extern int VirtualFileSourcesNb;
@@ -228,21 +229,31 @@ for (i=0;i<size;i++)
 extern void *oslReadEntireFileToMemory(VIRTUAL_FILE *f, int *size);
 
 
-
 /*
-	Source par défaut: mémoire
+	Source par dï¿½faut: mï¿½moire
 */
-extern int vfsMemOpen(void *param1, int param2, int type, int mode, VIRTUAL_FILE* f);
+extern int vfsMemOpen(void *param1, int param2, int type, int mode, VIRTUAL_FILE *f);
+
 extern int vfsMemClose(VIRTUAL_FILE *f);
-extern int vfsMemWrite(const void *ptr, size_t size, size_t n, VIRTUAL_FILE* f);
-extern int vfsMemRead(void *ptr, size_t size, size_t n, VIRTUAL_FILE* f);
+
+extern int vfsMemWrite(const void *ptr, size_t size, size_t n, VIRTUAL_FILE *f);
+
+extern int vfsMemRead(void *ptr, size_t size, size_t n, VIRTUAL_FILE *f);
+
 extern int vfsMemGetc(VIRTUAL_FILE *f);
+
 extern int vfsMemPutc(int caractere, VIRTUAL_FILE *f);
+
 extern char *vfsMemGets(char *str, int maxLen, VIRTUAL_FILE *f);
+
 extern void vfsMemPuts(const char *s, VIRTUAL_FILE *f);
+
 extern void vfsMemSeek(VIRTUAL_FILE *f, int offset, int whence);
+
 extern int vfsMemTell(VIRTUAL_FILE *f);
+
 extern int vfsMemEof(VIRTUAL_FILE *f);
+
 extern VIRTUAL_FILE_SOURCE vfsMemory;
 
 
@@ -264,8 +275,8 @@ int oslInitVfsFile();
 	\param source
 		Can be VF_FILE, VF_MEMORY or any virtual file device registered by you.
 */
-extern inline void oslSetDefaultVirtualFileSource(int source)		{
-	osl_defaultVirtualFileSource = source;
+extern inline void oslSetDefaultVirtualFileSource(int source) {
+    osl_defaultVirtualFileSource = source;
 }
 
 /** Read and write from memory. Automatically registered when initializing OSLib. */
@@ -286,8 +297,8 @@ extern int VF_FILE;
 
 
 /** Gets the name of the temporary file. See #oslSetTempFileData for a code sample. */
-extern inline char *oslGetTempFileName()		{
-	return (char*)osl_tempFileName;
+extern inline char *oslGetTempFileName() {
+    return (char *) osl_tempFileName;
 }
 
 /** Sets the data associated to a temporary file.

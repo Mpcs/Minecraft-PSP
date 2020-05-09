@@ -26,99 +26,89 @@
 #include "NoiseImage.h"
 #include "NoiseOutStream.h"
 
-namespace noisepp
-{
-namespace utils
-{
+namespace noisepp {
+    namespace utils {
 
-Image::Image() : mData(0), mWidth(0), mHeight(0)
-{
-}
+        Image::Image() : mData(0), mWidth(0), mHeight(0) {
+        }
 
-void Image::create (int width, int height)
-{
+        void Image::create(int width, int height) {
 //	NoiseAssert (width > 0, width);
-	//NoiseAssert (height > 0, height);
-	mWidth = width;
-	mHeight = height;
+            //NoiseAssert (height > 0, height);
+            mWidth = width;
+            mHeight = height;
 
-	mData = new unsigned char [mWidth*mHeight*3];
-}
+            mData = new unsigned char[mWidth * mHeight * 3];
+        }
 
-void Image::clear ()
-{
-	if (mData)
-	{
-		delete[] mData;
-		mData = 0;
-	}
-	mWidth = 0;
-	mHeight = 0;
-}
+        void Image::clear() {
+            if (mData) {
+                delete[] mData;
+                mData = 0;
+            }
+            mWidth = 0;
+            mHeight = 0;
+        }
 
-bool Image::saveBMP (const char *filename)
-{//
-	//NoiseAssert (mData != NULL, mData);
-	//NoiseAssert (mWidth > 0, mWidth);
-	//NoiseAssert (mHeight > 0, mHeight);
-	FileOutStream stream(filename);
-	if (!stream.isOpen())
-		return false;
-	// BMP Header
-	stream.write ("BM", 2);
-	unsigned size = 14 + 40 + mWidth * mHeight * 3;
-	stream.write (size);
-	unsigned res = 0;
-	stream.write (res);
-	unsigned offset = 54;
-	stream.write (offset);
+        bool Image::saveBMP(const char *filename) {//
+            //NoiseAssert (mData != NULL, mData);
+            //NoiseAssert (mWidth > 0, mWidth);
+            //NoiseAssert (mHeight > 0, mHeight);
+            FileOutStream stream(filename);
+            if (!stream.isOpen())
+                return false;
+            // BMP Header
+            stream.write("BM", 2);
+            unsigned size = 14 + 40 + mWidth * mHeight * 3;
+            stream.write(size);
+            unsigned res = 0;
+            stream.write(res);
+            unsigned offset = 54;
+            stream.write(offset);
 
-	// BMP properties
-	unsigned psize = 40;
-	stream.write (psize);
-	int w = mWidth;
-	stream.write (w);
-	int h = mHeight;
-	stream.write (h);
-	unsigned short planes = 1;
-	stream.write (planes);
-	unsigned short bpp = 24;
-	stream.write (bpp);
-	unsigned compression = 0;
-	stream.write (compression);
-	unsigned sizeImage = mWidth * mHeight * 3;
-	stream.write (sizeImage);
-	int ppm = 0;
-	stream.write (ppm);
-	stream.write (ppm);
-	unsigned clrUsed = 0;
-	stream.write (clrUsed);
-	unsigned clrImportant = 0;
-	stream.write (clrImportant);
-	assert (stream.tell() == offset);
+            // BMP properties
+            unsigned psize = 40;
+            stream.write(psize);
+            int w = mWidth;
+            stream.write(w);
+            int h = mHeight;
+            stream.write(h);
+            unsigned short planes = 1;
+            stream.write(planes);
+            unsigned short bpp = 24;
+            stream.write(bpp);
+            unsigned compression = 0;
+            stream.write(compression);
+            unsigned sizeImage = mWidth * mHeight * 3;
+            stream.write(sizeImage);
+            int ppm = 0;
+            stream.write(ppm);
+            stream.write(ppm);
+            unsigned clrUsed = 0;
+            stream.write(clrUsed);
+            unsigned clrImportant = 0;
+            stream.write(clrImportant);
+            assert (stream.tell() == offset);
 
-	for (int y=mHeight-1;y>=0;--y)
-	{
-		unsigned char *buffer = mData+y*mWidth*3;
-		for (int x=0;x<mWidth;++x)
-		{
-			unsigned char r = *buffer++;
-			unsigned char g = *buffer++;
-			unsigned char b = *buffer++;
-			stream.write (b);
-			stream.write (g);
-			stream.write (r);
-		}
-	}
+            for (int y = mHeight - 1; y >= 0; --y) {
+                unsigned char *buffer = mData + y * mWidth * 3;
+                for (int x = 0; x < mWidth; ++x) {
+                    unsigned char r = *buffer++;
+                    unsigned char g = *buffer++;
+                    unsigned char b = *buffer++;
+                    stream.write(b);
+                    stream.write(g);
+                    stream.write(r);
+                }
+            }
 
-	stream.close ();
-	return true;
-}
+            stream.close();
+            return true;
+        }
 
-Image::~Image()
-{
-	clear ();
-}
+        Image::~Image() {
+            clear();
+        }
 
-};
+    };
 };

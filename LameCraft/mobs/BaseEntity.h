@@ -10,23 +10,28 @@
 
 using namespace Aurora::Graphics;
 
-class BaseEntity
-{
+class BaseEntity {
 public:
 
-	BaseEntity();
-	virtual ~BaseEntity();
+    BaseEntity();
+
+    virtual ~BaseEntity();
 
     void SetPosition(Vector3 position2);
+
     void SetScale(Vector3 scale2);
+
     void SetAngle(Vector3 angle2);
+
     void SetCollisionBox(Vector3 colB2);
+
     void SetColour(float red, float green, float blue, float alpha2);
 
     void BuildEntity();
+
     void RenderEntity();
 
-    bool CheckCollisionPoint(CraftWorld* crtf);
+    bool CheckCollisionPoint(CraftWorld *crtf);
 
 private:
 

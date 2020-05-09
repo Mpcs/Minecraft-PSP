@@ -1,11 +1,11 @@
 #ifndef LAMEPLAYER_H_
 #define LAMEPLAYER_H_
 
-class LamePlayer
-{
+class LamePlayer {
 public:
-	LamePlayer();
-	virtual ~LamePlayer();
+    LamePlayer();
+
+    virtual ~LamePlayer();
 };
 
 #endif /* LAMEPLAYER_H_ */

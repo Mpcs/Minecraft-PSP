@@ -29,32 +29,35 @@
 #include "NoisePipeline.h"
 #include "NoiseJobQueue.h"
 
-namespace noisepp
-{
-namespace utils
-{
+namespace noisepp {
+    namespace utils {
 
 /// Class providing some system specific functions.
-class System
-{
-	public:
-		/// Returns the number of CPU cores avaible on the running system.
-		static int getNumberOfCPUs();
-		/// Creates an optimal 1D pipeline using as many threads as there are CPU cores avaible.
-		static Pipeline1D *createOptimalPipeline1D ();
-		/// Creates an optimal 2D pipeline using as many threads as there are CPU cores avaible.
-		static Pipeline2D *createOptimalPipeline2D ();
-		/// Creates an optimal 3D pipeline using as many threads as there are CPU cores avaible.
-		static Pipeline3D *createOptimalPipeline3D ();
-		/// Creates an optimal job queue using as many threads as there are CPU cores avaible.
-		static JobQueue *createOptimalJobQueue ();
-	protected:
-	private:
-		static int mNumberOfCPUs;
-		static int calculateNumberOfCPUs();
-};
+        class System {
+        public:
+            /// Returns the number of CPU cores avaible on the running system.
+            static int getNumberOfCPUs();
 
-};
+            /// Creates an optimal 1D pipeline using as many threads as there are CPU cores avaible.
+            static Pipeline1D *createOptimalPipeline1D();
+
+            /// Creates an optimal 2D pipeline using as many threads as there are CPU cores avaible.
+            static Pipeline2D *createOptimalPipeline2D();
+
+            /// Creates an optimal 3D pipeline using as many threads as there are CPU cores avaible.
+            static Pipeline3D *createOptimalPipeline3D();
+
+            /// Creates an optimal job queue using as many threads as there are CPU cores avaible.
+            static JobQueue *createOptimalJobQueue();
+
+        protected:
+        private:
+            static int mNumberOfCPUs;
+
+            static int calculateNumberOfCPUs();
+        };
+
+    };
 };
 
 #endif // NOISESYSTEM_H

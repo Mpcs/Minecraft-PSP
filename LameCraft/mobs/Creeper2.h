@@ -13,17 +13,21 @@
 
 class CraftWorld;
 
-class Creeper : public LameMob
-{
+class Creeper : public LameMob {
 public:
 
     Creeper(Vector3 position1, int number1);
+
     ~Creeper();
 
     void BoxCollision();
+
     void Update(CraftWorld *myWorld, Vector3 playerPos, float dt);
+
     void Render(Frustum &camFrustum, float dt);
+
     void TakeDamage(float damage, float power, float dt);
+
     void TakeDamageFromPointExplosion(float damage, float power, float dt, Vector3 point);
 
     bool exploded;
@@ -35,7 +39,6 @@ private:
     float timeBeforeExplosion;
     float blowingScale;
     float animationTime;
-
 
 
     bool boredom;

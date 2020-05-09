@@ -1,17 +1,17 @@
 #ifndef DIRECTIONBLOCK_H
 #define DIRECTIONBLOCK_H
 
-class DirectionBlock
-{
+class DirectionBlock {
 public:
-	DirectionBlock(int x, int y, int z, char dir);
-	virtual ~DirectionBlock();
+    DirectionBlock(int x, int y, int z, char dir);
 
-	int X;
-	int Y;
-	int Z;
+    virtual ~DirectionBlock();
 
-	char direction;
+    int X;
+    int Y;
+    int Z;
+
+    char direction;
 };
 
 #endif

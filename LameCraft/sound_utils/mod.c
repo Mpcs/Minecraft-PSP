@@ -7,9 +7,8 @@ static int osl_modPlaying = 0;
 static int osl_modInitialized = 0;
 static int osl_modFrequency = 44100, osl_modShift = 0, osl_modStereo = 1;
 
-static BOOL PSP_IsThere(void)
-{
-	return 1;
+static BOOL PSP_IsThere(void) {
+    return 1;
 }
 
 /*static void sound_callback(void *buf, unsigned int reqn)
@@ -24,95 +23,89 @@ static BOOL PSP_IsThere(void)
 	}
 }*/
 
-static BOOL PSP_Init(void)
-{
-	if (VC_Init())
-		return 1;
+static BOOL PSP_Init(void) {
+    if (VC_Init())
+        return 1;
 
 //	pspAudioInit();
 //	pspAudioSetChannelCallback(0, (void *)sound_callback);
 
-	return 0;
+    return 0;
 }
 
-static void PSP_Exit(void)
-{
+static void PSP_Exit(void) {
 //	pspAudioEndPre();
 //	pspAudioEnd();
-	VC_Exit();
+    VC_Exit();
 }
 
-static void PSP_Update(void)
-{
+static void PSP_Update(void) {
 }
 
-static BOOL PSP_Reset(void)
-{
-	VC_Exit();
-	return VC_Init();
+static BOOL PSP_Reset(void) {
+    VC_Exit();
+    return VC_Init();
 }
 
-static BOOL PSP_PlayStart(void)
-{
-	VC_PlayStart();
-	osl_modPlaying = 1;
-	return 0;
+static BOOL PSP_PlayStart(void) {
+    VC_PlayStart();
+    osl_modPlaying = 1;
+    return 0;
 }
 
-static void PSP_PlayStop(void)
-{
-	osl_modPlaying = 0;
-	VC_PlayStop();
+static void PSP_PlayStop(void) {
+    osl_modPlaying = 0;
+    VC_PlayStop();
 }
 
 MDRIVER drv_psp =
-{
-	NULL,
-	"PSP Audio",
-	"PSP Output Driver v1.0 - by Jim Shaw",
-	0,255,
-	PSP_IsThere,
-	(void*)VC_SampleLoad,
-	VC_SampleUnload,
-	VC_SampleSpace,
-	VC_SampleLength,
-	PSP_Init,
-	PSP_Exit,
-	PSP_Reset,
-	VC_SetNumVoices,
-	PSP_PlayStart,
-	PSP_PlayStop,
-	PSP_Update,
-	VC_VoiceSetVolume,
-	VC_VoiceSetFrequency,
-	VC_VoiceSetPanning,
-	VC_VoicePlay,
-	VC_VoiceStop,
-	VC_VoiceStopped,
-	VC_VoiceReleaseSustain,
-	VC_VoiceGetPosition,
-	VC_VoiceRealVolume
-};
+        {
+                NULL,
+                "PSP Audio",
+                "PSP Output Driver v1.0 - by Jim Shaw",
+                0, 255,
+                PSP_IsThere,
+                (void *) VC_SampleLoad,
+                VC_SampleUnload,
+                VC_SampleSpace,
+                VC_SampleLength,
+                PSP_Init,
+                PSP_Exit,
+                PSP_Reset,
+                VC_SetNumVoices,
+                PSP_PlayStart,
+                PSP_PlayStop,
+                PSP_Update,
+                VC_VoiceSetVolume,
+                VC_VoiceSetFrequency,
+                VC_VoiceSetPanning,
+                VC_VoicePlay,
+                VC_VoiceStop,
+                VC_VoiceStopped,
+                VC_VoiceReleaseSustain,
+                VC_VoiceGetPosition,
+                VC_VoiceRealVolume
+        };
 
 #if 0
 static void MODStop(OSL_SOUND *s)		{
-	UNIMOD *mod = (UNIMOD*)s->data;
+    UNIMOD *mod = (UNIMOD*)s->data;
 //	osl_numberOfModsPlaying--;
 //    if (osl_numberOfModsPlaying <= 0) MikMod_DisableOutput();
     mod->forbid = 1;
 }
 
 static int MODActive(OSL_SOUND *s)		{
-	UNIMOD *mod = (UNIMOD*)s->data;
-	return (!(mod->sngpos >= mod->numpos));
+    UNIMOD *mod = (UNIMOD*)s->data;
+    return (!(mod->sngpos >= mod->numpos));
 }
 
 static void MODStart(OSL_SOUND *s)		{
-	UNIMOD *mod = (UNIMOD*)s->data;
+    UNIMOD *mod = (UNIMOD*)s->data;
 
     if(!MikMod_Active())
     {
-		//isfirst = 2;
+        //isfirst = 2;
         MikMod_EnableOutput();
     }
 
@@ -130,10 +123,10 @@ static void MODStart(OSL_SOUND *s)		{
 /*
 	Callbacks standard
 */
-void oslAudioCallback_PlaySound_MOD(OSL_SOUND *s)		{
-	//Stereo only, mono doesn't work yet (and the speedup wouldn't be worth it)
-	//md_mode = DMODE_16BITS|DMODE_STEREO|DMODE_SOFT_MUSIC;
-	s->mono = 0;
+void oslAudioCallback_PlaySound_MOD(OSL_SOUND *s) {
+    //Stereo only, mono doesn't work yet (and the speedup wouldn't be worth it)
+    //md_mode = DMODE_16BITS|DMODE_STEREO|DMODE_SOFT_MUSIC;
+    s->mono = 0;
 
 /*	int oldmode = md_mode;
 	if (osl_modStereo)		{
@@ -152,48 +145,47 @@ void oslAudioCallback_PlaySound_MOD(OSL_SOUND *s)		{
 			oslAudioRecreateChannel(voice, s->mono);
 	}*/
 
-	Player_Stop();
-	Player_Start((UNIMOD*)s->data);
-	Player_SetPosition(0);
+    Player_Stop();
+    Player_Start((UNIMOD *) s->data);
+    Player_SetPosition(0);
 }
 
-void oslAudioCallback_StopSound_MOD(OSL_SOUND *s)		{
-	Player_Stop();
+void oslAudioCallback_StopSound_MOD(OSL_SOUND *s) {
+    Player_Stop();
 }
 
-int oslAudioCallback_AudioCallback_MOD(unsigned int i, void* buf, unsigned int length)			{
-	//Set up playback
-	//md_mixfreq = osl_modFrequency;
-	//md_mixshift = osl_modShift;
+int oslAudioCallback_AudioCallback_MOD(unsigned int i, void *buf, unsigned int length) {
+    //Set up playback
+    //md_mixfreq = osl_modFrequency;
+    //md_mixshift = osl_modShift;
 
-	if (osl_modPlaying)
-		VC_WriteBytes(buf, length << 2);
-	else
-		memset(buf, 0, length << 2);
+    if (osl_modPlaying)
+        VC_WriteBytes(buf, length << 2);
+    else
+        memset(buf, 0, length << 2);
 
-	//Fin de la chanson ^^
-	if (!Player_Active())
-		return 0;
-	return 1;
+    //Fin de la chanson ^^
+    if (!Player_Active())
+        return 0;
+    return 1;
 }
 
-VIRTUAL_FILE **oslAudioCallback_ReactiveSound_MOD(OSL_SOUND *s, VIRTUAL_FILE *f)			{
-	return NULL;
+VIRTUAL_FILE **oslAudioCallback_ReactiveSound_MOD(OSL_SOUND *s, VIRTUAL_FILE *f) {
+    return NULL;
 }
 
-VIRTUAL_FILE *oslAudioCallback_StandBy_MOD(OSL_SOUND *s)		{
-	return NULL;
+VIRTUAL_FILE *oslAudioCallback_StandBy_MOD(OSL_SOUND *s) {
+    return NULL;
 }
 
-void oslAudioCallback_DeleteSound_MOD(OSL_SOUND *s)		{
+void oslAudioCallback_DeleteSound_MOD(OSL_SOUND *s) {
 //	Player_Stop();
-	MikMod_FreeSong((UNIMOD*)s->data);
+    MikMod_FreeSong((UNIMOD *) s->data);
 }
 
-void my_error_handler(void)
-{
-	//oslDebug("_mm_critical %i\nmm_errno %i\n%s", _mm_critical, _mm_errno, _mm_errmsg[_mm_errno]);
-	return;
+void my_error_handler(void) {
+    //oslDebug("_mm_critical %i\nmm_errno %i\n%s", _mm_critical, _mm_errno, _mm_errmsg[_mm_errno]);
+    return;
 }
 
 /*
@@ -204,82 +196,80 @@ void my_error_handler(void)
 
 	oslSetModSampleRate(22050, 0);				//Twice the normal speed
 */
-void oslSetModSampleRate(int freq, int stereo, int shift)		{
-	osl_modFrequency = freq;
-	osl_modStereo = stereo;
-	osl_modShift = shift;
+void oslSetModSampleRate(int freq, int stereo, int shift) {
+    osl_modFrequency = freq;
+    osl_modStereo = stereo;
+    osl_modShift = shift;
 }
 
-OSL_SOUND *oslLoadSoundFileMOD(const char *filename, int stream)		{
-	OSL_SOUND *s;
-	UNIMOD *mf;
+OSL_SOUND *oslLoadSoundFileMOD(const char *filename, int stream) {
+    OSL_SOUND *s;
+    UNIMOD *mf;
 
-	if (!osl_modInitialized)		{
+    if (!osl_modInitialized) {
 //		_mm_RegisterErrorHandler(my_error_handler);
-		MikMod_RegisterAllLoaders();
-		MikMod_RegisterDriver(drv_psp);
+        MikMod_RegisterAllLoaders();
+        MikMod_RegisterDriver(drv_psp);
 
-		//md_mode = DMODE_16BITS|DMODE_STEREO|DMODE_SOFT_MUSIC;
-		MikMod_Init();
+        //md_mode = DMODE_16BITS|DMODE_STEREO|DMODE_SOFT_MUSIC;
+        MikMod_Init();
 
-		osl_modInitialized = 1;
-	}
+        osl_modInitialized = 1;
+    }
 
-	s = (OSL_SOUND*)malloc(sizeof(OSL_SOUND));
-	if (s)			{
-		//Never forget that! If any member is added to OSL_SOUND, it is assumed to be zero!
-		memset(s, 0, sizeof(OSL_SOUND));
-		mf = MikMod_LoadSong((char*)filename, 128);
-		if (mf)		{
-			s->data = (void*)mf;
+    s = (OSL_SOUND *) malloc(sizeof(OSL_SOUND));
+    if (s) {
+        //Never forget that! If any member is added to OSL_SOUND, it is assumed to be zero!
+        memset(s, 0, sizeof(OSL_SOUND));
+        mf = MikMod_LoadSong((char *) filename, 128);
+        if (mf) {
+            s->data = (void *) mf;
 
-			s->endCallback = NULL;
-			s->volumeLeft = s->volumeRight = OSL_VOLUME_MAX;
-			//No special format
-			s->format = 0;
-			//Always stereo output
-			s->mono = 0;
-			s->divider = OSL_FMT_44K;
-			//MOD files are never streamed
-			s->isStreamed = 0;
-			//Use the default value
-			s->numSamples = 0;
+            s->endCallback = NULL;
+            s->volumeLeft = s->volumeRight = OSL_VOLUME_MAX;
+            //No special format
+            s->format = 0;
+            //Always stereo output
+            s->mono = 0;
+            s->divider = OSL_FMT_44K;
+            //MOD files are never streamed
+            s->isStreamed = 0;
+            //Use the default value
+            s->numSamples = 0;
 
-		/*	if (wav->fmt.sample_rate >= 44100)
-				s->divider = OSL_FMT_44K;
-			else if (wav->fmt.sample_rate >= 22050)
-				s->divider = OSL_FMT_22K;
-			else
-				s->divider = OSL_FMT_11K;*/
+            /*	if (wav->fmt.sample_rate >= 44100)
+                    s->divider = OSL_FMT_44K;
+                else if (wav->fmt.sample_rate >= 22050)
+                    s->divider = OSL_FMT_22K;
+                else
+                    s->divider = OSL_FMT_11K;*/
 
-			s->audioCallback = oslAudioCallback_AudioCallback_MOD;
-			s->playSound = oslAudioCallback_PlaySound_MOD;
-			s->stopSound = oslAudioCallback_StopSound_MOD;
-			s->standBySound = oslAudioCallback_StandBy_MOD;
-			s->reactiveSound = oslAudioCallback_ReactiveSound_MOD;
-			s->deleteSound = oslAudioCallback_DeleteSound_MOD;
-		}
-		else		{
-			free(s);
-			s = NULL;
-		}
-	}
+            s->audioCallback = oslAudioCallback_AudioCallback_MOD;
+            s->playSound = oslAudioCallback_PlaySound_MOD;
+            s->stopSound = oslAudioCallback_StopSound_MOD;
+            s->standBySound = oslAudioCallback_StandBy_MOD;
+            s->reactiveSound = oslAudioCallback_ReactiveSound_MOD;
+            s->deleteSound = oslAudioCallback_DeleteSound_MOD;
+        } else {
+            free(s);
+            s = NULL;
+        }
+    }
 
-	if (!s)
-	{
-		//oslHandleLoadNoFailError(filename);
-		}
-	return s;
+    if (!s) {
+        //oslHandleLoadNoFailError(filename);
+    }
+    return s;
 
 /*	VirtualFileRead(&bfh, sizeof(bfh), 1, f);
-	//Vérifie l'en-tête
+	//Vï¿½rifie l'en-tï¿½te
 	if (strcmp(bfh.strVersion, "OSLBGM v01"))		{
 		free(s);
 		VirtualFileClose(f);
 		return NULL;
 	}
 	if (bfh.format == 1)		{
-		//Pour l'adpcm, dataplus contient la structure définissant les données
+		//Pour l'adpcm, dataplus contient la structure dï¿½finissant les donnï¿½es
 		ad = (OSL_ADGlobals*)malloc(sizeof(OSL_ADGlobals));
 		if (!ad)		{
 			free(s);

@@ -51,191 +51,169 @@
 #define __BLOCK_GET_PREV(x)    ((x >> 15) & 0x7FFF)
 #define __BLOCK_GET_FREE(x)    ((x >> 31))
 #define __BLOCK_GET_BLOCK(x)   ((x >> 30) & 0x1)
-#define __BLOCK_SET_SIZE(x,y)  x=((x & ~0x7FFF) | ((y) & 0x7FFF))
-#define __BLOCK_ADD_SIZE(x,y)  x=((x & ~0x7FFF) | (((x & 0x7FFF)+((y) & 0x7FFF)) & 0x7FFF))
-#define __BLOCK_SET_PREV(x,y)  x=((x & ~0x3FFF8000) | (((y) & 0x7FFF)<<15))
-#define __BLOCK_SET_FREE(x,y)  x=((x & 0x7FFFFFFF) | (((y) & 0x1)<<31))
-#define __BLOCK_SET_BLOCK(x,y) x=((x & 0xBFFFFFFF) | (((y) & 0x1)<<30))
-#define __BLOCK_MAKE(s,p,f,n)   (((f & 0x1)<<31) | ((n & 0x1)<<30) | (((p) & 0x7FFF)<<15) | ((s) & 0x7FFF))
-#define __BLOCK_GET_FREEBLOCK(x) ((x>>30) & 0x3)		// returns 11b if block is a starting block and free, 10b if block is a starting block and allocated, 0xb if it is a non-starting block (don't change)
+#define __BLOCK_SET_SIZE(x, y)  x=((x & ~0x7FFF) | ((y) & 0x7FFF))
+#define __BLOCK_ADD_SIZE(x, y)  x=((x & ~0x7FFF) | (((x & 0x7FFF)+((y) & 0x7FFF)) & 0x7FFF))
+#define __BLOCK_SET_PREV(x, y)  x=((x & ~0x3FFF8000) | (((y) & 0x7FFF)<<15))
+#define __BLOCK_SET_FREE(x, y)  x=((x & 0x7FFFFFFF) | (((y) & 0x1)<<31))
+#define __BLOCK_SET_BLOCK(x, y) x=((x & 0xBFFFFFFF) | (((y) & 0x1)<<30))
+#define __BLOCK_MAKE(s, p, f, n)   (((f & 0x1)<<31) | ((n & 0x1)<<30) | (((p) & 0x7FFF)<<15) | ((s) & 0x7FFF))
+#define __BLOCK_GET_FREEBLOCK(x) ((x>>30) & 0x3)        // returns 11b if block is a starting block and free, 10b if block is a starting block and allocated, 0xb if it is a non-starting block (don't change)
 #define __BLOCK0 ((__MEM_BLOCKS) | (1<<31) | (1<<30))
 
-static long __mem_blocks[__MEM_BLOCKS] = { 0 };
+static long __mem_blocks[__MEM_BLOCKS] = {0};
 
 static long __largest_update = 0;
 static long __largest_block = __MEM_BLOCKS;
 static long __mem_free = __MEM_BLOCKS;
 
-inline void* pgeVramRelativePointer(void *ptr)
-{
-	return (void*)((unsigned long)ptr & ~__MEM_START);
+inline void *pgeVramRelativePointer(void *ptr) {
+    return (void *) ((unsigned long) ptr & ~__MEM_START);
 }
 
-inline void* pgeVramAbsolutePointer(void *ptr)
-{
-	return (void*)((unsigned long)ptr | __MEM_START);
+inline void *pgeVramAbsolutePointer(void *ptr) {
+    return (void *) ((unsigned long) ptr | __MEM_START);
 }
 
-static void __find_largest_block()
-{
-	long i = 0;
-	__largest_block = 0;
+static void __find_largest_block() {
+    long i = 0;
+    __largest_block = 0;
 
-	while (i < __MEM_BLOCKS)
-	{
-		long csize = __BLOCK_GET_SIZE(__mem_blocks[i]);
-		if (__BLOCK_GET_FREEBLOCK(__mem_blocks[i]) == 3 && csize > __largest_block)
-			__largest_block = csize;
-		i += csize;
-	}
-	__largest_update = 0;
+    while (i < __MEM_BLOCKS) {
+        long csize = __BLOCK_GET_SIZE(__mem_blocks[i]);
+        if (__BLOCK_GET_FREEBLOCK(__mem_blocks[i]) == 3 && csize > __largest_block)
+            __largest_block = csize;
+        i += csize;
+    }
+    __largest_update = 0;
 }
 
-void* pgeVramAlloc(unsigned long size)
-{
-	// Initialize memory block, if not yet done
-	if (__mem_blocks[0]==0) __mem_blocks[0] = __BLOCK0;
-	
-	long i = 0;
-	long j = 0;
-	long bsize = __BLOCKS(size);
-	
-	if (__largest_update == 0 && __largest_block < bsize)
-	{
-		return(0);
-	}
+void *pgeVramAlloc(unsigned long size) {
+    // Initialize memory block, if not yet done
+    if (__mem_blocks[0] == 0) __mem_blocks[0] = __BLOCK0;
 
-	// Find smallest block that still fits the requested size
-	long bestblock = -1;
-	long bestblock_prev = 0;
-	long bestblock_size = __MEM_BLOCKS + 1;
+    long i = 0;
+    long j = 0;
+    long bsize = __BLOCKS(size);
 
-	while (i < __MEM_BLOCKS)
-	{
-		long csize = __BLOCK_GET_SIZE(__mem_blocks[i]);
-		if (__BLOCK_GET_FREEBLOCK(__mem_blocks[i]) == 3 && csize >= bsize)
-		{
-			if (csize < bestblock_size)
-			{
-				bestblock = i;
-				bestblock_prev = j;
-				bestblock_size = csize;
-			}
-			
-			if (csize == bsize)
-				break;
-		}
-		j = i;
-		i += csize;
-	}
-	
-	if (bestblock < 0)
-	{
-		return(0);
-	}
-	
-	i = bestblock;
-	j = bestblock_prev;	
-	long csize = bestblock_size;
-	__mem_blocks[i] = __BLOCK_MAKE(bsize, j, 0, 1);
-	
-	long next = i + bsize;
+    if (__largest_update == 0 && __largest_block < bsize) {
+        return (0);
+    }
 
-	if (csize > bsize && next < __MEM_BLOCKS)
-	{
-		__mem_blocks[next] = __BLOCK_MAKE(csize-bsize, i, 1, 1);
-		long nextnext = i + csize;
+    // Find smallest block that still fits the requested size
+    long bestblock = -1;
+    long bestblock_prev = 0;
+    long bestblock_size = __MEM_BLOCKS + 1;
 
-		if (nextnext < __MEM_BLOCKS)
-		{
-			__BLOCK_SET_PREV(__mem_blocks[nextnext], next);
-		}
-	}
+    while (i < __MEM_BLOCKS) {
+        long csize = __BLOCK_GET_SIZE(__mem_blocks[i]);
+        if (__BLOCK_GET_FREEBLOCK(__mem_blocks[i]) == 3 && csize >= bsize) {
+            if (csize < bestblock_size) {
+                bestblock = i;
+                bestblock_prev = j;
+                bestblock_size = csize;
+            }
 
-	__mem_free -= bsize;
+            if (csize == bsize)
+                break;
+        }
+        j = i;
+        i += csize;
+    }
 
-	if (__largest_block == csize)		// if we just allocated from one of the largest blocks
-	{
-		if ((csize-bsize) > (__mem_free>>1))
-			__largest_block = (csize - bsize);		// there can't be another largest block
-		else
-			__largest_update = 1;
-	}
+    if (bestblock < 0) {
+        return (0);
+    }
 
-	return ((void*)(__MEM_START + (i * __BLOCK_SIZE)));
+    i = bestblock;
+    j = bestblock_prev;
+    long csize = bestblock_size;
+    __mem_blocks[i] = __BLOCK_MAKE(bsize, j, 0, 1);
+
+    long next = i + bsize;
+
+    if (csize > bsize && next < __MEM_BLOCKS) {
+        __mem_blocks[next] = __BLOCK_MAKE(csize - bsize, i, 1, 1);
+        long nextnext = i + csize;
+
+        if (nextnext < __MEM_BLOCKS) {
+            __BLOCK_SET_PREV(__mem_blocks[nextnext], next);
+        }
+    }
+
+    __mem_free -= bsize;
+
+    if (__largest_block == csize)        // if we just allocated from one of the largest blocks
+    {
+        if ((csize - bsize) > (__mem_free >> 1))
+            __largest_block = (csize - bsize);        // there can't be another largest block
+        else
+            __largest_update = 1;
+    }
+
+    return ((void *) (__MEM_START + (i * __BLOCK_SIZE)));
 }
 
 
-void pgeVramFree(void* ptr)
-{
-	if (ptr == 0) return;
+void pgeVramFree(void *ptr) {
+    if (ptr == 0) return;
 
-	long block = ((long)ptr - __MEM_START)/__BLOCK_SIZE;
+    long block = ((long) ptr - __MEM_START) / __BLOCK_SIZE;
 
-	if (block < 0 || block > __MEM_BLOCKS)
-	{
-		return;
-	}
+    if (block < 0 || block > __MEM_BLOCKS) {
+        return;
+    }
 
-	long csize = __BLOCK_GET_SIZE(__mem_blocks[block]);
+    long csize = __BLOCK_GET_SIZE(__mem_blocks[block]);
 
-	if (__BLOCK_GET_FREEBLOCK(__mem_blocks[block]) != 1 || csize == 0)
-	{
-		return;
-	}
-	
-	// Mark block as free
-	__BLOCK_SET_FREE(__mem_blocks[block], 1);
-	__mem_free += csize;
-	
-	long next = block+csize;
-	// Merge with previous block if possible
-	long prev = __BLOCK_GET_PREV(__mem_blocks[block]);
+    if (__BLOCK_GET_FREEBLOCK(__mem_blocks[block]) != 1 || csize == 0) {
+        return;
+    }
 
-	if (prev < block)
-	{
-		if (__BLOCK_GET_FREEBLOCK(__mem_blocks[prev]) == 3)
-		{
-			__BLOCK_ADD_SIZE(__mem_blocks[prev], csize);
-			__BLOCK_SET_BLOCK(__mem_blocks[block], 0);	// mark current block as inter block
+    // Mark block as free
+    __BLOCK_SET_FREE(__mem_blocks[block], 1);
+    __mem_free += csize;
 
-			if (next < __MEM_BLOCKS)
-				__BLOCK_SET_PREV(__mem_blocks[next], prev);
+    long next = block + csize;
+    // Merge with previous block if possible
+    long prev = __BLOCK_GET_PREV(__mem_blocks[block]);
 
-			block = prev;
-		}
-	}
+    if (prev < block) {
+        if (__BLOCK_GET_FREEBLOCK(__mem_blocks[prev]) == 3) {
+            __BLOCK_ADD_SIZE(__mem_blocks[prev], csize);
+            __BLOCK_SET_BLOCK(__mem_blocks[block], 0);    // mark current block as inter block
 
-	// Merge with next block if possible
-	if (next < __MEM_BLOCKS)
-	{
-		if (__BLOCK_GET_FREEBLOCK(__mem_blocks[next]) == 3)
-		{
-			__BLOCK_ADD_SIZE(__mem_blocks[block], __BLOCK_GET_SIZE(__mem_blocks[next]));
-			__BLOCK_SET_BLOCK(__mem_blocks[next], 0);	// mark next block as inter block
-			long nextnext = next + __BLOCK_GET_SIZE(__mem_blocks[next]);
+            if (next < __MEM_BLOCKS)
+                __BLOCK_SET_PREV(__mem_blocks[next], prev);
 
-			if (nextnext < __MEM_BLOCKS)
-				__BLOCK_SET_PREV(__mem_blocks[nextnext], block);
-		}
-	}
+            block = prev;
+        }
+    }
 
-	// Update if a new largest block emerged
-	if (__largest_block < __BLOCK_GET_SIZE(__mem_blocks[block]))
-	{
-		__largest_block = __BLOCK_GET_SIZE(__mem_blocks[block]);
-		__largest_update = 0;		// No update necessary any more, because update only necessary when largest has shrinked at most
-	}
+    // Merge with next block if possible
+    if (next < __MEM_BLOCKS) {
+        if (__BLOCK_GET_FREEBLOCK(__mem_blocks[next]) == 3) {
+            __BLOCK_ADD_SIZE(__mem_blocks[block], __BLOCK_GET_SIZE(__mem_blocks[next]));
+            __BLOCK_SET_BLOCK(__mem_blocks[next], 0);    // mark next block as inter block
+            long nextnext = next + __BLOCK_GET_SIZE(__mem_blocks[next]);
+
+            if (nextnext < __MEM_BLOCKS)
+                __BLOCK_SET_PREV(__mem_blocks[nextnext], block);
+        }
+    }
+
+    // Update if a new largest block emerged
+    if (__largest_block < __BLOCK_GET_SIZE(__mem_blocks[block])) {
+        __largest_block = __BLOCK_GET_SIZE(__mem_blocks[block]);
+        __largest_update = 0;        // No update necessary any more, because update only necessary when largest has shrinked at most
+    }
 }
 
 
-unsigned long pgeVramAvailable()
-{
-	return __mem_free * __BLOCK_SIZE;
+unsigned long pgeVramAvailable() {
+    return __mem_free * __BLOCK_SIZE;
 }
 
-unsigned long pgeVramLargestBlock()
-{
-	if (__largest_update) __find_largest_block();
-	return __largest_block * __BLOCK_SIZE;
+unsigned long pgeVramLargestBlock() {
+    if (__largest_update) __find_largest_block();
+    return __largest_block * __BLOCK_SIZE;
 }

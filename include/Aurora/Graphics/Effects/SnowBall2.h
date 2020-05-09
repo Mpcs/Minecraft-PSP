@@ -8,36 +8,37 @@
 #include <math.h>
 #include <psptypes.h>
 
-namespace Aurora
-{
-	namespace Graphics
-	{
-		class SnowBall2
-		{
-		public:
-			SnowBall2(float pos2x, float pos2y, float pos2z);
-			~SnowBall2();
+namespace Aurora {
+    namespace Graphics {
+        class SnowBall2 {
+        public:
+            SnowBall2(float pos2x, float pos2y, float pos2z);
 
-			void SetTexture(int texture);
-			void SetVeloc(float verAngle, float horAngle);
-			void Update(CraftWorld* crtf, float dt);
-			bool CheckCollision(CraftWorld* crtf);
+            ~SnowBall2();
 
-			void Render();
+            void SetTexture(int texture);
 
-			Vector3 position;
-			Vector3 velocity;
+            void SetVeloc(float verAngle, float horAngle);
 
-		private:
+            void Update(CraftWorld *crtf, float dt);
 
-			CraftPSPVertex *ballVertices;
-			int textureNumber;
-			float snowHScale;
-			float snowVScale;
+            bool CheckCollision(CraftWorld *crtf);
 
-			float startSpeed;
-		};
-	}
+            void Render();
+
+            Vector3 position;
+            Vector3 velocity;
+
+        private:
+
+            CraftPSPVertex *ballVertices;
+            int textureNumber;
+            float snowHScale;
+            float snowVScale;
+
+            float startSpeed;
+        };
+    }
 }
 
 #endif

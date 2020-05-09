@@ -3,11 +3,10 @@
 
 #include "mobs/LameMob.h"
 
-class Zombie : public LameMob
-{
+class Zombie : public LameMob {
 public:
 
-Zombie(float x, float y, float z);
+    Zombie(float x, float y, float z);
 
 };
 

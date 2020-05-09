@@ -28,52 +28,45 @@
 
 #include "NoisePrerequisites.h"
 
-namespace noisepp
-{
-	/** Provides some math functions used by Noise++
-	*/
-	class Math
-	{
-		public:
-			/// Performs linear interpolation
-			static NOISEPP_INLINE Real InterpLinear (Real left, Real right, Real a)
-			{
-				return ((Real(1) - a) * left) + (a * right);
-			}
-			/// Performs cubic interpolation
-			static NOISEPP_INLINE Real InterpCubic (Real v0, Real v1, Real v2, Real v3, Real a)
-			{
-				const Real x = v3 - v2 - v0 + v1;
-				return x * a * a * a + (v0 - v1 - x) * a * a + (v2 - v0) * a + v1;
-			}
-			/// Calculates a third-order interpolant
-			static NOISEPP_INLINE Real CubicCurve3 (Real a)
-			{
-				return (a * a * (Real(3) - Real(2) * a));
-			}
-			/// Calculates a fifth-order interpolant
-			static NOISEPP_INLINE Real CubicCurve5 (Real a)
-			{
-				const Real a3 = a * a * a;
-				const Real a4 = a3 * a;
-				const Real a5 = a4 * a;
-				return Real(10) * a3 - Real(15) * a4 + Real(6) * a5;
-			}
-			/// Clamps the parameter into integer range
-			static NOISEPP_INLINE Real MakeInt32Range (Real n)
-			{
-				if (n >= Real(1073741824.0))
-				{
-					return (Real(2.0) * fmod (n, Real(1073741824.0))) - Real(1073741824.0);
-				}
-				else if (n <= Real(-1073741824.0))
-				{
-					return (Real(2.0) * fmod (n, Real(1073741824.0))) + Real(1073741824.0);
-				}
-				else
-					return n;
-			}
-	};
+namespace noisepp {
+    /** Provides some math functions used by Noise++
+    */
+    class Math {
+    public:
+        /// Performs linear interpolation
+        static NOISEPP_INLINE Real InterpLinear(Real left, Real right, Real a) {
+            return ((Real(1) - a) * left) + (a * right);
+        }
+
+        /// Performs cubic interpolation
+        static NOISEPP_INLINE Real InterpCubic(Real v0, Real v1, Real v2, Real v3, Real a) {
+            const Real x = v3 - v2 - v0 + v1;
+            return x * a * a * a + (v0 - v1 - x) * a * a + (v2 - v0) * a + v1;
+        }
+
+        /// Calculates a third-order interpolant
+        static NOISEPP_INLINE Real CubicCurve3(Real a) {
+            return (a * a * (Real(3) - Real(2) * a));
+        }
+
+        /// Calculates a fifth-order interpolant
+        static NOISEPP_INLINE Real CubicCurve5(Real a) {
+            const Real a3 = a * a * a;
+            const Real a4 = a3 * a;
+            const Real a5 = a4 * a;
+            return Real(10) * a3 - Real(15) * a4 + Real(6) * a5;
+        }
+
+        /// Clamps the parameter into integer range
+        static NOISEPP_INLINE Real MakeInt32Range(Real n) {
+            if (n >= Real(1073741824.0)) {
+                return (Real(2.0) * fmod(n, Real(1073741824.0))) - Real(1073741824.0);
+            } else if (n <= Real(-1073741824.0)) {
+                return (Real(2.0) * fmod(n, Real(1073741824.0))) + Real(1073741824.0);
+            } else
+                return n;
+        }
+    };
 };
 
 #endif

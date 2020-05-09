@@ -1,35 +1,32 @@
 #include "BaseItem.h"
 
-BaseItem::BaseItem()
-{
-	textureRow = 0;
-	plane = 0;
+BaseItem::BaseItem() {
+    textureRow = 0;
+    plane = 0;
 
-	points = 0;
-	addPoints = 0;
+    points = 0;
+    addPoints = 0;
 
-	furnItem = -1;
-	durabilityPoints = -1;
-	itemType = ItemType::normal;
+    furnItem = -1;
+    durabilityPoints = -1;
+    itemType = ItemType::normal;
 
-	vertices = NULL;
-	addVertices = NULL;
+    vertices = NULL;
+    addVertices = NULL;
 
-	terrainTexture = false;
-	stackable = true;
+    terrainTexture = false;
+    stackable = true;
 
-	name = "00";
+    name = "00";
 }
 
-BaseItem::~BaseItem()
-{
-	if(vertices != NULL)
-	{
-		free(vertices);
-		free(addVertices);
-		free(add2Vertices);
-		free(dropVertices);
-	}
+BaseItem::~BaseItem() {
+    if (vertices != NULL) {
+        free(vertices);
+        free(addVertices);
+        free(add2Vertices);
+        free(dropVertices);
+    }
 }
 
-item_id BaseItem::getBaseID(){	return 0;}
+item_id BaseItem::getBaseID() { return 0; }

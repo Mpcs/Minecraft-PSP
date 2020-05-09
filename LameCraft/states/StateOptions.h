@@ -21,54 +21,60 @@ using namespace Aurora::Utils;
 using namespace Aurora::System;
 using namespace Aurora;
 
-class StateOptions : public CGameState
-{
+class StateOptions : public CGameState {
 public:
-	StateOptions();
-	virtual ~StateOptions();
+    StateOptions();
 
-	void Init();
-	void Enter();
-	void CleanUp();
+    virtual ~StateOptions();
 
-	void Pause();
-	void Resume();
+    void Init();
 
-	void HandleEvents(StateManager* sManager);
-	void Update(StateManager* sManager);
-	void Draw(StateManager* sManager);
-	void DrawText(int x,int y, unsigned int color, float size, const char *message, ...);
+    void Enter();
+
+    void CleanUp();
+
+    void Pause();
+
+    void Resume();
+
+    void HandleEvents(StateManager *sManager);
+
+    void Update(StateManager *sManager);
+
+    void Draw(StateManager *sManager);
+
+    void DrawText(int x, int y, unsigned int color, float size, const char *message, ...);
 
 private:
-	Sprite *buttonSprite;
-	Sprite *sbuttonSprite;
-	Sprite *nbuttonSprite;
-	Sprite *halfbuttonSprite;
-	Sprite *halfsbuttonSprite;
-	Sprite *moverSprite;
-	Sprite *smoverSprite;
-	Sprite *backSprite;
+    Sprite *buttonSprite;
+    Sprite *sbuttonSprite;
+    Sprite *nbuttonSprite;
+    Sprite *halfbuttonSprite;
+    Sprite *halfsbuttonSprite;
+    Sprite *moverSprite;
+    Sprite *smoverSprite;
+    Sprite *backSprite;
 
-	RenderManager *mRender;
-	SystemManager *mSystemMgr;
-	SoundManager *mSoundMgr;
+    RenderManager *mRender;
+    SystemManager *mSystemMgr;
+    SoundManager *mSoundMgr;
 
-	int selectPos;
-	int menuState;//0 main,1 load,2 options
+    int selectPos;
+    int menuState;//0 main,1 load,2 options
 
-	//controls
-	int controlPos;
-	int controlStart;
-	int controlEnd;
+    //controls
+    int controlPos;
+    int controlStart;
+    int controlEnd;
 
-	//choosing key
-	bool chooseKeyState;
-	bool configChanged;
-	int currentKey;
-	int newKey;
+    //choosing key
+    bool chooseKeyState;
+    bool configChanged;
+    int currentKey;
+    int newKey;
 
-	//analog stick
-	int currentAnalogPos;
+    //analog stick
+    int currentAnalogPos;
 
 };
 

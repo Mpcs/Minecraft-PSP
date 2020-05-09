@@ -7,42 +7,42 @@
 #include <string>
 #include <string.h>
 
-namespace Aurora
-{
-	namespace Graphics
-	{
-		enum ImageLocation
-		{
-			Ram,
-			Vram
-		};
+namespace Aurora {
+    namespace Graphics {
+        enum ImageLocation {
+            Ram,
+            Vram
+        };
 
-		class Image
-		{
-		public:			
+        class Image {
+        public:
 
-			int _width;
-			int _height;
-			int _textureWidth;
-			int _textureHeight;
+            int _width;
+            int _height;
+            int _textureWidth;
+            int _textureHeight;
 
-			unsigned int _id;
-			unsigned int _id2;
-			unsigned char *_pixels;
+            unsigned int _id;
+            unsigned int _id2;
+            unsigned char *_pixels;
 
-			std::string _fileName;
+            std::string _fileName;
 
-			Image();
-			~Image();
+            Image();
 
-			bool loadImageFromFile(std::string fileName);
-			bool loadImageFromMemory(std::string newName,void *data,std::size_t size);
-			
-			unsigned int getColour(int x,int y);
-			void setColour(int x,int y, unsigned int color);
-			void getColour(int x,int y,unsigned char &r,unsigned char &g,unsigned char &b,unsigned char &a);
-		};
-	}
+            ~Image();
+
+            bool loadImageFromFile(std::string fileName);
+
+            bool loadImageFromMemory(std::string newName, void *data, std::size_t size);
+
+            unsigned int getColour(int x, int y);
+
+            void setColour(int x, int y, unsigned int color);
+
+            void getColour(int x, int y, unsigned char &r, unsigned char &g, unsigned char &b, unsigned char &a);
+        };
+    }
 }
 
 #endif

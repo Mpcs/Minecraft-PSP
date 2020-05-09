@@ -5,26 +5,28 @@
 #include <Aurora/Math/BoundingBox.h>
 #include <pspmath.h>
 
-namespace Aurora
-{
-	namespace Math
-	{
-		class BoundingSphere
-		{
-		public:
-			Vector3 center;
-			float radius;
+namespace Aurora {
+    namespace Math {
+        class BoundingSphere {
+        public:
+            Vector3 center;
+            float radius;
 
-			BoundingSphere();
-			BoundingSphere(const Vector3 &center_, float radius_);
-			~BoundingSphere();
+            BoundingSphere();
 
-			bool hasCollided(const BoundingSphere &other) const;
-			bool intersect(BoundingBox &box);
-			bool inside(BoundingBox &box,Vector3 &axis, float &distance);
-			bool PointCollided(Vector3 &point);
-		};
-	}
+            BoundingSphere(const Vector3 &center_, float radius_);
+
+            ~BoundingSphere();
+
+            bool hasCollided(const BoundingSphere &other) const;
+
+            bool intersect(BoundingBox &box);
+
+            bool inside(BoundingBox &box, Vector3 &axis, float &distance);
+
+            bool PointCollided(Vector3 &point);
+        };
+    }
 }
 
 #endif

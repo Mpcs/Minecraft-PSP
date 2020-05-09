@@ -9,7 +9,7 @@
 extern "C"
 {
 #endif
- 
+
 
 // Exit callback
 int exit_callback(int arg1, int arg2, void *common);

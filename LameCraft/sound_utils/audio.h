@@ -16,14 +16,14 @@ extern "C" {
 */
 
 /*
-	Ressources allouées à un son:
+	Ressources allouï¿½es ï¿½ un son:
 	Commun
 	s (OSL_SOUND)
 	
 	Fichier WAV
 		Commun
 			s->dataplus (WAV_SRC)
-		Streamé
+		Streamï¿½
 			s->dataplus (WAV_SRC)
 				fp (FILE)
 		Normal
@@ -32,56 +32,62 @@ extern "C" {
 	Fichier ADPCM
 		Commun
 			s->dataplus (OSL_ADGlobals)
-		Streamé
+		Streamï¿½
 			s->data (FILE)
 		Normal
 			s->data (malloc: s->size)
 */
 
 /** Structure of a sound in OSLib. You can make your own "drivers" for other sound types but I can't guarantee they will be forward compatible, so please release your source when creating one ;-) */
-typedef struct OSL_SOUND		{
-	char filename[64];					//!< Original file name, so that the file can be reopen after a resume from stand-by. Used only if the song is streamed.
-	void *data;							//!< User sound data (depends on the sound file format).
-	void *dataplus;						//!< Extended user sound data.
-	int baseoffset;						//!< Offset from the beginning of the file (without the header). Used to resume the sound after stand-by.
-	int format;							//!< -
-	int divider;						//!< -
-	int size;							//!< -
-	int mono;							//!< 0x10 for Mono, 0 for Stereo output
-	int isStreamed;						//!< Holds whether the sound is streamed or not.
-	u16 volumeLeft;						//!< Volume of the left channel (set volumeLeft == volumeRight for normal operation, another value creates a panning effect)
-	u16 volumeRight;					//!< Volume of the right channel
-	int suspendNumber;					//!< -
-	int (*endCallback)(struct OSL_SOUND*, int);			//!< Function called when the sound has finished to play
-	u8 userdata[32];					//!< Custom user data
-	int numSamples;						//!< Number of samples per read. Default is osl_audioDefaultNumSamples, that is, 512.
-	
-	void (*playSound)(struct OSL_SOUND*);		//!< Custom function called when the sound must be played
-	void (*stopSound)(struct OSL_SOUND*);		//!< Custom function called when the sound must be stopped (not paused, completely stopped)
-	int (*audioCallback)(unsigned int, void*, unsigned int);		//!< Custom function which must feed a buffer with a certain number of samples
-	VIRTUAL_FILE* (*standBySound)(struct OSL_SOUND*);				//!< Function called when the PSP enters in stand by mode
-	VIRTUAL_FILE** (*reactiveSound)(struct OSL_SOUND*, VIRTUAL_FILE*);		//!< Function called when the sound must be reactivated (after a stand by).
-	void (*deleteSound)(struct OSL_SOUND*);		//!< Custom function called to destroy the sound.
+typedef struct OSL_SOUND {
+    char filename[64];                    //!< Original file name, so that the file can be reopen after a resume from stand-by. Used only if the song is streamed.
+    void *data;                            //!< User sound data (depends on the sound file format).
+    void *dataplus;                        //!< Extended user sound data.
+    int baseoffset;                        //!< Offset from the beginning of the file (without the header). Used to resume the sound after stand-by.
+    int format;                            //!< -
+    int divider;                        //!< -
+    int size;                            //!< -
+    int mono;                            //!< 0x10 for Mono, 0 for Stereo output
+    int isStreamed;                        //!< Holds whether the sound is streamed or not.
+    u16 volumeLeft;                        //!< Volume of the left channel (set volumeLeft == volumeRight for normal operation, another value creates a panning effect)
+    u16 volumeRight;                    //!< Volume of the right channel
+    int suspendNumber;                    //!< -
+    int (*endCallback)(struct OSL_SOUND *, int);            //!< Function called when the sound has finished to play
+    u8 userdata[32];                    //!< Custom user data
+    int numSamples;                        //!< Number of samples per read. Default is osl_audioDefaultNumSamples, that is, 512.
+
+    void (*playSound)(struct OSL_SOUND *);        //!< Custom function called when the sound must be played
+    void (*stopSound)(
+            struct OSL_SOUND *);        //!< Custom function called when the sound must be stopped (not paused, completely stopped)
+    int (*audioCallback)(unsigned int, void *,
+                         unsigned int);        //!< Custom function which must feed a buffer with a certain number of samples
+    VIRTUAL_FILE *
+    (*standBySound)(struct OSL_SOUND *);                //!< Function called when the PSP enters in stand by mode
+    VIRTUAL_FILE **(*reactiveSound)(struct OSL_SOUND *,
+                                    VIRTUAL_FILE *);        //!< Function called when the sound must be reactivated (after a stand by).
+    void (*deleteSound)(struct OSL_SOUND *);        //!< Custom function called to destroy the sound.
 } OSL_SOUND;
 
 /** Currently playing channel status, system part. Don't access it */
 typedef struct {
-  int active;
-  int threadhandle;
-  int handle;
+    int active;
+    int threadhandle;
+    int handle;
+
 //  int volumeleft;
 //  int volumeright;
-  void (*callback)(unsigned int channel, void *buf, unsigned int reqn);
-  int inProgress;
+    void (*callback)(unsigned int channel, void *buf, unsigned int reqn);
+
+    int inProgress;
 } osl_audio_channelinfo;
 
 /** Currently playing channel, user part. Only sound drivers should play with this, the user will only work with OSL_SOUND. */
-typedef struct		{
-	void *data, *dataplus;
-	int format, divider, size, mono, isStreamed;
+typedef struct {
+    void *data, *dataplus;
+    int format, divider, size, mono, isStreamed;
 //	int volumeLeft, volumeRight;
-	int numSamples;
-	OSL_SOUND *sound;
+    int numSamples;
+    OSL_SOUND *sound;
 } OSL_AUDIO_VOICE;
 
 
@@ -92,7 +98,8 @@ typedef struct		{
 */
 
 /** Initializes the audio system. Don't forget to call this before trying to play any song. Maybe your application will not crash if you forget it, but weird things can happen randomly! */
-extern int  oslInitAudio();
+extern int oslInitAudio();
+
 /** Deinitializes the audio system. No sound will output anymore. Call this for clean-up (saves memory).
 
 However, before deinitializing audio, you should delete all sounds by yourself (oslDeleteSound). */
@@ -115,7 +122,7 @@ extern void oslInitAudioME(int formats);
 
 /** Sets the default number of samples per read. If you generate more samples at once, OSLib will need less calls, making it faster. But more data will be read at once, and the CPU will be blocked for
 a longer time, which may be too much and cause screen tearing. It's only an advanced command, let it to default (512) if you don't know exactly what you are doing. */
-#define oslAudioSetDefaultSampleNumber(num)			(osl_audioDefaultNumSamples = num)
+#define oslAudioSetDefaultSampleNumber(num)            (osl_audioDefaultNumSamples = num)
 
 //Don't access these
 extern int osl_audioDefaultNumSamples;
@@ -138,9 +145,11 @@ extern int osl_audioDefaultNumSamples;
 This remark applies for every format: the biggest the sample rate, the more CPU time it will need to be played back.
 */
 extern OSL_SOUND *oslLoadSoundFile(const char *filename, int stream);
+
 /** Loads a WAV sound file. See oslLoadSoundFile for more information. */
 extern OSL_SOUND *oslLoadSoundFileWAV(const char *filename, int stream);
-/** Loads a BGM sound file. See oslLoadSoundFile for more information. BGM is an audio format specific to OSLib. It stores "true" sound, taking less room than WAV, but is only mono. 
+
+/** Loads a BGM sound file. See oslLoadSoundFile for more information. BGM is an audio format specific to OSLib. It stores "true" sound, taking less room than WAV, but is only mono.
 
 You can find an encoder in the distribution.
 
@@ -164,6 +173,7 @@ OSL_SOUND *oslLoadSoundFileMOD(const char *filename, int stream);
 
 /** Loads an MP3 file. It is necessary to call #oslInitAudioME in kernel mode before, else your program will crash! */
 OSL_SOUND *oslLoadSoundFileMP3(const char *filename, int stream);
+
 /** Loads an AT3 file. It is necessary to call #oslInitAudioME in kernel mode before, else your program will crash! */
 OSL_SOUND *oslLoadSoundFileAT3(const char *filename, int stream);
 
@@ -233,8 +243,10 @@ oslPlaySound(jump, 2);
 oslPlaySound(stomp, 1);
 \endcode */
 extern void oslPlaySound(OSL_SOUND *s, int voice);
+
 /** Stops a sound currently playing. */
 extern void oslStopSound(OSL_SOUND *s);
+
 /** Pauses a sound.
 	\param s
 		Sound to pause or resume.
@@ -275,21 +287,29 @@ oslPlaySound(sound, 0);
 #define oslSetSoundEndCallback(s, fct)  (s->endCallback = (fct))
 
 /** Sets whether sound is looped or not. This is done by defining the same callback as in the example above. */
-#define oslSetSoundLoop(s,loop)			oslSetSoundEndCallback(s, (loop)?oslSoundLoopFunc:NULL)
+#define oslSetSoundLoop(s, loop)            oslSetSoundEndCallback(s, (loop)?oslSoundLoopFunc:NULL)
 
 
 //Do not use this.
-enum {OSL_FMT_NONE=0};
-enum {OSL_FMT_MASK=0xff};
+enum {
+    OSL_FMT_NONE = 0
+};
+enum {
+    OSL_FMT_MASK = 0xff
+};
 //enum {OSL_FMT_WAV=0x100, OSL_FMT_ADPCM};									//Fichier wav
-enum {OSL_FMT_MONO=0, OSL_FMT_STEREO=0x200, OSL_FMT_STREAM=0x400};
-enum {OSL_FMT_44K=0, OSL_FMT_22K=1, OSL_FMT_11K=2};
+enum {
+    OSL_FMT_MONO = 0, OSL_FMT_STEREO = 0x200, OSL_FMT_STREAM = 0x400
+};
+enum {
+    OSL_FMT_44K = 0, OSL_FMT_22K = 1, OSL_FMT_11K = 2
+};
 
-/** Formats de fichier à initialiser pour #oslInitAudioME. */
-enum oslInitAudioME_formats		{
-	OSL_FMT_AT3 = 1,				//!< Atrac3 and Atrac3+
-	OSL_FMT_MP3 = 2,				//!< Mpeg Audio-Layer 3
-	OSL_FMT_ALL = 3,				//!< All formats
+/** Formats de fichier ï¿½ initialiser pour #oslInitAudioME. */
+enum oslInitAudioME_formats {
+    OSL_FMT_AT3 = 1,                //!< Atrac3 and Atrac3+
+    OSL_FMT_MP3 = 2,                //!< Mpeg Audio-Layer 3
+    OSL_FMT_ALL = 3,                //!< All formats
 };
 
 
@@ -308,10 +328,14 @@ extern int oslGetSoundChannel(OSL_SOUND *s);
 
 //Internal
 extern int oslAudioCreateChannel(int i, int format, int numSamples, OSL_SOUND *s);
+
 extern int oslAudioRecreateChannel(int i, int format, int numSamples, OSL_SOUND *s);
+
 extern void oslAudioDeleteChannel(int i);
-extern int  oslAudioOutBlocking(unsigned int channel, unsigned int vol1, unsigned int vol2, void *buf);
-typedef int (* oslAudioThreadfunc_t)(int args, void *argp);
+
+extern int oslAudioOutBlocking(unsigned int channel, unsigned int vol1, unsigned int vol2, void *buf);
+
+typedef int (*oslAudioThreadfunc_t)(int args, void *argp);
 
 extern volatile int osl_audioActive[OSL_NUM_AUDIO_CHANNELS], osl_audioBusy[OSL_NUM_AUDIO_CHANNELS];
 extern int osl_suspendNumber;

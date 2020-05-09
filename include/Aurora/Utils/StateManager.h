@@ -3,41 +3,45 @@
 
 #include <vector>
 
-namespace Aurora
-{
-	namespace Utils
-	{
+namespace Aurora {
+    namespace Utils {
 
-		class CGameState;
+        class CGameState;
 
 
-		class StateManager
-		{
-		public:
+        class StateManager {
+        public:
 
-			void Init();
-			void Enter();
-			void CleanUp();
+            void Init();
 
-			void ChangeState(CGameState* state);
-			void PushState(CGameState* state);
-			void PopState();
+            void Enter();
 
-			void HandleEvents();
-			void Update();
-			void Draw();
+            void CleanUp();
 
-			bool Running() {return m_running;}
-			void Quit() {m_running = false;}
+            void ChangeState(CGameState *state);
 
-		private:
+            void PushState(CGameState *state);
 
-			std::vector<CGameState*> states;
-			bool m_running;
+            void PopState();
+
+            void HandleEvents();
+
+            void Update();
+
+            void Draw();
+
+            bool Running() { return m_running; }
+
+            void Quit() { m_running = false; }
+
+        private:
+
+            std::vector<CGameState *> states;
+            bool m_running;
 
 
-		};
-	}
+        };
+    }
 }
 
 #endif

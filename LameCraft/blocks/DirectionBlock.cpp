@@ -1,8 +1,7 @@
 #include "DirectionBlock.h"
 
 
-DirectionBlock::DirectionBlock(int x, int y, int z, char dir)
-{
+DirectionBlock::DirectionBlock(int x, int y, int z, char dir) {
     X = x;
     Z = z;
     Y = y;
@@ -10,8 +9,7 @@ DirectionBlock::DirectionBlock(int x, int y, int z, char dir)
     direction = dir;
 }
 
-DirectionBlock::~DirectionBlock()
-{
+DirectionBlock::~DirectionBlock() {
 
 }
 

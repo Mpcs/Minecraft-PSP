@@ -38,35 +38,32 @@ extern "C" {
 /**
  * File type enumerator
  */
-enum pgeFileTypes
-{
-	PGE_FILE_TYPE_MEM =	1,
-	PGE_FILE_TYPE_FILE,
-	PGE_FILE_TYPE_AFILE
+enum pgeFileTypes {
+    PGE_FILE_TYPE_MEM = 1,
+    PGE_FILE_TYPE_FILE,
+    PGE_FILE_TYPE_AFILE
 };
 
 /**
  * File seek type enumerator
  */
-enum pgeFileSeekTypes
-{
-	PGE_FILE_SET =	0,
-	PGE_FILE_CUR,
-	PGE_FILE_END
+enum pgeFileSeekTypes {
+    PGE_FILE_SET = 0,
+    PGE_FILE_CUR,
+    PGE_FILE_END
 };
 
 /**
  * File flags enumerator
  */
-enum pgeFileFlags
-{
-	PGE_FILE_RDONLY =	PSP_O_RDONLY,
-	PGE_FILE_WRONLY =	PSP_O_WRONLY,
-	PGE_FILE_RDWR =		PSP_O_RDWR,
-	PGE_FILE_APPEND =	PSP_O_APPEND,
-	PGE_FILE_CREATE =	PSP_O_CREAT,
-	PGE_FILE_TRUNC =	PSP_O_TRUNC,
-	PGE_FILE_ALL =		PGE_FILE_RDWR|PGE_FILE_APPEND|PGE_FILE_CREATE|PGE_FILE_TRUNC
+enum pgeFileFlags {
+    PGE_FILE_RDONLY = PSP_O_RDONLY,
+    PGE_FILE_WRONLY = PSP_O_WRONLY,
+    PGE_FILE_RDWR = PSP_O_RDWR,
+    PGE_FILE_APPEND = PSP_O_APPEND,
+    PGE_FILE_CREATE = PSP_O_CREAT,
+    PGE_FILE_TRUNC = PSP_O_TRUNC,
+    PGE_FILE_ALL = PGE_FILE_RDWR | PGE_FILE_APPEND | PGE_FILE_CREATE | PGE_FILE_TRUNC
 };
 
 /**
@@ -83,7 +80,7 @@ typedef struct pgeFileStruct pgeFile;
  *
  * @returns A pointer to a ::pgeFile struct or NULL on error.
  */
-pgeFile* pgeFileOpen(char* name, int flags);
+pgeFile *pgeFileOpen(char *name, int flags);
 
 /**
  * Open a file stream (async).
@@ -94,7 +91,7 @@ pgeFile* pgeFileOpen(char* name, int flags);
  *
  * @returns A pointer to a ::pgeFile struct or NULL on error.
  */
-pgeFile* pgeFileOpenAsync(char* name, int flags);
+pgeFile *pgeFileOpenAsync(char *name, int flags);
 
 /**
  * Open a memory stream.
@@ -105,7 +102,7 @@ pgeFile* pgeFileOpenAsync(char* name, int flags);
  *
  * @returns A pointer to a ::pgeFile struct or NULL on error.
  */
-pgeFile* pgeFileOpenMemory(char* data, int size);
+pgeFile *pgeFileOpenMemory(char *data, int size);
 
 /**
  * Close a stream.
@@ -114,7 +111,7 @@ pgeFile* pgeFileOpenMemory(char* data, int size);
  *
  * @returns < 0 on error.
  */
-int pgeFileClose(pgeFile* s);
+int pgeFileClose(pgeFile *s);
 
 /**
  * Read from a stream.
@@ -127,7 +124,7 @@ int pgeFileClose(pgeFile* s);
  *
  * @returns Number of bytes read, < 0 on error.
  */
-int pgeFileRead(pgeFile* s, void* buf, unsigned int size);
+int pgeFileRead(pgeFile *s, void *buf, unsigned int size);
 
 /**
  * Write to a stream.
@@ -140,7 +137,7 @@ int pgeFileRead(pgeFile* s, void* buf, unsigned int size);
  *
  * @returns Number of bytes written, < 0 on error.
  */
-int pgeFileWrite(pgeFile* s, void* buf, unsigned int size);
+int pgeFileWrite(pgeFile *s, void *buf, unsigned int size);
 
 /**
  * Seek within a stream.
@@ -153,7 +150,7 @@ int pgeFileWrite(pgeFile* s, void* buf, unsigned int size);
  *
  * @returns The position within the stream, < 0 on error.
  */
-int pgeFileSeek(pgeFile* s, int offs, unsigned int dir);
+int pgeFileSeek(pgeFile *s, int offs, unsigned int dir);
 
 /**
  * Get position within a stream.
@@ -162,7 +159,7 @@ int pgeFileSeek(pgeFile* s, int offs, unsigned int dir);
  *
  * @returns The position within the stream, < 0 on error.
  */
-int pgeFileTell(pgeFile* s);
+int pgeFileTell(pgeFile *s);
 
 /**
  * Seek to the start of a file.
@@ -171,7 +168,7 @@ int pgeFileTell(pgeFile* s);
  *
  * @returns The position within the file, < 0 on error.
  */
-int pgeFileRewind(pgeFile* s);
+int pgeFileRewind(pgeFile *s);
 
 /**
  * Get the size of a file.

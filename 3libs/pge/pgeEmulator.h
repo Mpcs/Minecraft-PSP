@@ -44,7 +44,7 @@ extern "C" {
 #define PSP_HEAP_SIZE_KB(size_kb)
 #endif
 
-void *	memalign(size_t align, size_t size);
+void *memalign(size_t align, size_t size);
 
 #ifdef __cplusplus
 }

@@ -26,139 +26,135 @@
 #ifndef NOISECOLOURVALUE_H
 #define NOISECOLOURVALUE_H
 
-namespace noisepp
-{
-namespace utils
-{
+namespace noisepp {
+    namespace utils {
 
 /// Class representing a colour value.
-class ColourValue
-{
-	public:
-		/// Constructor.
-		explicit ColourValue(float r=0.0f, float g=0.0f, float b=0.0f);
+        class ColourValue {
+        public:
+            /// Constructor.
+            explicit ColourValue(float r = 0.0f, float g = 0.0f, float b = 0.0f);
 
-		/// Writes the RGB value to a buffer.
-		void writeRGB (unsigned char *& buffer);
+            /// Writes the RGB value to a buffer.
+            void writeRGB(unsigned char *&buffer);
 
-		/// Red value.
-		float r;
-		/// Green value.
-		float g;
-		/// Blue value.
-		float b;
+            /// Red value.
+            float r;
+            /// Green value.
+            float g;
+            /// Blue value.
+            float b;
 
-		/// Converts an normalized floating point(range 0.0 to 1.0) colour value to an unsigned byte(range 0 to 255).
-		static unsigned char toUChar (float f);
+            /// Converts an normalized floating point(range 0.0 to 1.0) colour value to an unsigned byte(range 0 to 255).
+            static unsigned char toUChar(float f);
 
-		/// Adds two colour values together.
-		inline ColourValue operator+ (const ColourValue& c) const
-		{
-			ColourValue result;
-			result.r = r + c.r;
-			result.g = g + c.g;
-			result.b = b + c.b;
-			return result;
-		}
-		/// Substract operator.
-		inline ColourValue operator- (const ColourValue& c) const
-		{
-			ColourValue result;
-			result.r = r - c.r;
-			result.g = g - c.g;
-			result.b = b - c.b;
-			return result;
-		}
-		/// Mutliplication operator.
-		inline ColourValue operator* (const ColourValue& c) const
-		{
-			ColourValue result;
-			result.r = r * c.r;
-			result.g = g * c.g;
-			result.b = b * c.b;
-			return result;
-		}
-		/// Division operator.
-		inline ColourValue operator/ (const ColourValue& c) const
-		{
-			ColourValue result;
-			result.r = r / c.r;
-			result.g = g / c.g;
-			result.b = b / c.b;
-			return result;
-		}
-		/// Mutliplication operator.
-		inline ColourValue operator* (float f) const
-		{
-			ColourValue result;
-			result.r = r * f;
-			result.g = g * f;
-			result.b = b * f;
-			return result;
-		}
-		/// Division operator.
-		inline ColourValue operator/ (float f) const
-		{
-			ColourValue result;
-			result.r = r / f;
-			result.g = g / f;
-			result.b = b / f;
-			return result;
-		}
-		/// Addition operator.
-		inline ColourValue &operator += (const ColourValue& c)
-		{
-			r += c.r;
-			g += c.g;
-			b += c.b;
-			return *this;
-		}
-		/// Substract operator.
-		inline ColourValue &operator -= (const ColourValue& c)
-		{
-			r -= c.r;
-			g -= c.g;
-			b -= c.b;
-			return *this;
-		}
-		/// Multiplication operator.
-		inline ColourValue &operator *= (const ColourValue& c)
-		{
-			r *= c.r;
-			g *= c.g;
-			b *= c.b;
-			return *this;
-		}
-		/// Division operator.
-		inline ColourValue &operator /= (const ColourValue& c)
-		{
-			r /= c.r;
-			g /= c.g;
-			b /= c.b;
-			return *this;
-		}
-		/// Multiplication operator.
-		inline ColourValue &operator *= (float f)
-		{
-			r *= f;
-			g *= f;
-			b *= f;
-			return *this;
-		}
-		/// Division operator.
-		inline ColourValue &operator /= (float f)
-		{
-			r /= f;
-			g /= f;
-			b /= f;
-			return *this;
-		}
+            /// Adds two colour values together.
+            inline ColourValue operator+(const ColourValue &c) const {
+                ColourValue result;
+                result.r = r + c.r;
+                result.g = g + c.g;
+                result.b = b + c.b;
+                return result;
+            }
 
-	protected:
-	private:
-};
+            /// Substract operator.
+            inline ColourValue operator-(const ColourValue &c) const {
+                ColourValue result;
+                result.r = r - c.r;
+                result.g = g - c.g;
+                result.b = b - c.b;
+                return result;
+            }
 
-};
+            /// Mutliplication operator.
+            inline ColourValue operator*(const ColourValue &c) const {
+                ColourValue result;
+                result.r = r * c.r;
+                result.g = g * c.g;
+                result.b = b * c.b;
+                return result;
+            }
+
+            /// Division operator.
+            inline ColourValue operator/(const ColourValue &c) const {
+                ColourValue result;
+                result.r = r / c.r;
+                result.g = g / c.g;
+                result.b = b / c.b;
+                return result;
+            }
+
+            /// Mutliplication operator.
+            inline ColourValue operator*(float f) const {
+                ColourValue result;
+                result.r = r * f;
+                result.g = g * f;
+                result.b = b * f;
+                return result;
+            }
+
+            /// Division operator.
+            inline ColourValue operator/(float f) const {
+                ColourValue result;
+                result.r = r / f;
+                result.g = g / f;
+                result.b = b / f;
+                return result;
+            }
+
+            /// Addition operator.
+            inline ColourValue &operator+=(const ColourValue &c) {
+                r += c.r;
+                g += c.g;
+                b += c.b;
+                return *this;
+            }
+
+            /// Substract operator.
+            inline ColourValue &operator-=(const ColourValue &c) {
+                r -= c.r;
+                g -= c.g;
+                b -= c.b;
+                return *this;
+            }
+
+            /// Multiplication operator.
+            inline ColourValue &operator*=(const ColourValue &c) {
+                r *= c.r;
+                g *= c.g;
+                b *= c.b;
+                return *this;
+            }
+
+            /// Division operator.
+            inline ColourValue &operator/=(const ColourValue &c) {
+                r /= c.r;
+                g /= c.g;
+                b /= c.b;
+                return *this;
+            }
+
+            /// Multiplication operator.
+            inline ColourValue &operator*=(float f) {
+                r *= f;
+                g *= f;
+                b *= f;
+                return *this;
+            }
+
+            /// Division operator.
+            inline ColourValue &operator/=(float f) {
+                r /= f;
+                g /= f;
+                b /= f;
+                return *this;
+            }
+
+        protected:
+        private:
+        };
+
+    };
 };
 
 #endif // NOISECOLOURVALUE_H

@@ -36,32 +36,29 @@ extern "C" {
 /**
  * Directory entry type enumerator
  */
-enum pgeDirEntryTypes
-{
-	PGE_DIR_ENTRY_TYPE_FILE,
-	PGE_DIR_ENTRY_TYPE_DIR
+enum pgeDirEntryTypes {
+    PGE_DIR_ENTRY_TYPE_FILE,
+    PGE_DIR_ENTRY_TYPE_DIR
 };
 
 /**
  * A directory entry
  */
-typedef struct
-{
-	char name[256];
-	unsigned int size;
-	unsigned int type;
-	
+typedef struct {
+    char name[256];
+    unsigned int size;
+    unsigned int type;
+
 } pgeDirEntry;
 
 /**
  * A directory datatype
  */
-typedef struct
-{
-	int fd;
-	int count;
-	pgeDirEntry *entries;
-	
+typedef struct {
+    int fd;
+    int count;
+    pgeDirEntry *entries;
+
 } pgeDir;
 
 /**

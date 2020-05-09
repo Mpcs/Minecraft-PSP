@@ -6,12 +6,12 @@ extern "C" {
 #endif
 
 //Le format BGM
-typedef struct			{
-	char strVersion[11];				// "OSLBGM v01"
-	int format;							// Toujours 1
-	int sampleRate;						// Taux d'échantillonnage
-	unsigned char nbChannels;			// Mono ou stéréo
-	unsigned char reserved[32];			// Réservé
+typedef struct {
+    char strVersion[11];                // "OSLBGM v01"
+    int format;                            // Toujours 1
+    int sampleRate;                        // Taux d'ï¿½chantillonnage
+    unsigned char nbChannels;            // Mono ou stï¿½rï¿½o
+    unsigned char reserved[32];            // Rï¿½servï¿½
 } BGM_FORMAT_HEADER;
 
 #ifdef __cplusplus

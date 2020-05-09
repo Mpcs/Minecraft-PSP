@@ -3,14 +3,15 @@
 
 #include "blocks/BlockEntity.h"
 
-class JukeboxEntity : public BlockEntity
-{
+class JukeboxEntity : public BlockEntity {
 public:
-	JukeboxEntity(int create_x, int create_y, int create_z, int create_record);
-	virtual ~JukeboxEntity();
+    JukeboxEntity(int create_x, int create_y, int create_z, int create_record);
 
-	int GetRecord();
-	void SetRecord(int new_record);
+    virtual ~JukeboxEntity();
+
+    int GetRecord();
+
+    void SetRecord(int new_record);
 
 private:
     int record;

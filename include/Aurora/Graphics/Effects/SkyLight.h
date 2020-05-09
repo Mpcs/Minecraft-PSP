@@ -5,26 +5,25 @@
 #include <Aurora/Graphics/Vertex.h>
 #include <pspmath.h>
 
-namespace Aurora
-{
-	namespace Graphics
-	{
-		class SkyLight
-		{
-		public:
-			SkyLight();
-			~SkyLight();
+namespace Aurora {
+    namespace Graphics {
+        class SkyLight {
+        public:
+            SkyLight();
 
-			void UpdateLightSource(float sun_angle);
-			void Render();
+            ~SkyLight();
 
-		private:
+            void UpdateLightSource(float sun_angle);
 
-			TexturesPSPVertex *skyVertices;
+            void Render();
 
-			float sun_angle;
-		};
-	}
+        private:
+
+            TexturesPSPVertex *skyVertices;
+
+            float sun_angle;
+        };
+    }
 }
 
 #endif

@@ -1,19 +1,19 @@
 #ifndef CHEST_H
 #define CHEST_H
 
-class Chest
-{
+class Chest {
 public:
-	Chest(int x, int y, int z);
-	virtual ~Chest();
+    Chest(int x, int y, int z);
 
-	int chestSlotId[27];
-	int chestSlotAm[27];
-	bool chestSlotSt[27];
+    virtual ~Chest();
 
-	int chestAddress;
+    int chestSlotId[27];
+    int chestSlotAm[27];
+    bool chestSlotSt[27];
 
-	short id;
+    int chestAddress;
+
+    short id;
 };
 
 #endif

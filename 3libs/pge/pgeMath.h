@@ -37,10 +37,9 @@ extern "C" {
 /**
 * Another rect datatype
 */
-typedef struct
-{
-	float	x1, y1, x2, y2;
-	int clean;
+typedef struct {
+    float x1, y1, x2, y2;
+    int clean;
 } pgeRect2;
 
 /**

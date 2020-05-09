@@ -29,131 +29,133 @@
 #include "NoisePipeline.h"
 #include "NoiseModule.h"
 
-namespace noisepp
-{
-	class ScaleBiasElement1D : public PipelineElement1D
-	{
-		private:
-			ElementID mElement;
-			const PipelineElement1D *mElementPtr;
-			Real mScale, mBias;
+namespace noisepp {
+    class ScaleBiasElement1D : public PipelineElement1D {
+    private:
+        ElementID mElement;
+        const PipelineElement1D *mElementPtr;
+        Real mScale, mBias;
 
-		public:
-			ScaleBiasElement1D (const Pipeline1D *pipe, ElementID element, Real scale, Real bias) : mElement(element), mScale(scale), mBias(bias)
-			{
-				mElementPtr = pipe->getElement(mElement);
-			}
-			virtual Real getValue (Real x, Cache *cache) const
-			{
-				Real value;
-				value = getElementValue (mElementPtr, mElement, x, cache);
-				return value * mScale + mBias;
-			}
-	};
+    public:
+        ScaleBiasElement1D(const Pipeline1D *pipe, ElementID element, Real scale, Real bias) : mElement(element),
+                                                                                               mScale(scale),
+                                                                                               mBias(bias) {
+            mElementPtr = pipe->getElement(mElement);
+        }
 
-	class ScaleBiasElement2D : public PipelineElement2D
-	{
-		private:
-			ElementID mElement;
-			const PipelineElement2D *mElementPtr;
-			Real mScale, mBias;
+        virtual Real getValue(Real x, Cache *cache) const {
+            Real value;
+            value = getElementValue(mElementPtr, mElement, x, cache);
+            return value * mScale + mBias;
+        }
+    };
 
-		public:
-			ScaleBiasElement2D (const Pipeline2D *pipe, ElementID element, Real scale, Real bias) : mElement(element), mScale(scale), mBias(bias)
-			{
-				mElementPtr = pipe->getElement(mElement);
-			}
-			virtual Real getValue (Real x, Real y, Cache *cache) const
-			{
-				Real value;
-				value = getElementValue (mElementPtr, mElement, x, y, cache);
-				return value * mScale + mBias;
-			}
-	};
+    class ScaleBiasElement2D : public PipelineElement2D {
+    private:
+        ElementID mElement;
+        const PipelineElement2D *mElementPtr;
+        Real mScale, mBias;
 
-	class ScaleBiasElement3D : public PipelineElement3D
-	{
-		private:
-			ElementID mElement;
-			const PipelineElement3D *mElementPtr;
-			Real mScale, mBias;
+    public:
+        ScaleBiasElement2D(const Pipeline2D *pipe, ElementID element, Real scale, Real bias) : mElement(element),
+                                                                                               mScale(scale),
+                                                                                               mBias(bias) {
+            mElementPtr = pipe->getElement(mElement);
+        }
 
-		public:
-			ScaleBiasElement3D (const Pipeline3D *pipe, ElementID element, Real scale, Real bias) : mElement(element), mScale(scale), mBias(bias)
-			{
-				mElementPtr = pipe->getElement(mElement);
-			}
-			virtual Real getValue (Real x, Real y, Real z, Cache *cache) const
-			{
-				Real value;
-				value = getElementValue (mElementPtr, mElement, x, y, z, cache);
-				return value * mScale + mBias;
-			}
-	};
+        virtual Real getValue(Real x, Real y, Cache *cache) const {
+            Real value;
+            value = getElementValue(mElementPtr, mElement, x, y, cache);
+            return value * mScale + mBias;
+        }
+    };
 
-	/** Module for scaling with bias.
-		Transforms the output value of the source module by scaling with bias.
-	*/
-	class ScaleBiasModule : public Module
-	{
-		private:
-			Real mScale, mBias;
+    class ScaleBiasElement3D : public PipelineElement3D {
+    private:
+        ElementID mElement;
+        const PipelineElement3D *mElementPtr;
+        Real mScale, mBias;
 
-		public:
-			/// Constructor.
-			ScaleBiasModule() : Module(1), mScale(1.0), mBias(0.0)
-			{
-			}
-			/// Sets the scaling factor.
-			void setScale (Real v)
-			{
-				mScale = v;
-			}
-			/// Returns the scaling factor.
-			Real getScale () const
-			{
-				return mScale;
-			}
-			/// Sets the bias value.
-			void setBias (Real v)
-			{
-				mBias = v;
-			}
-			/// Returns the bias value.
-			Real getBias () const
-			{
-				return mBias;
-			}
-			/// @copydoc noisepp::Module::addToPipeline()
-			ElementID addToPipeline (Pipeline1D *pipe) const
-			{
-				//NoiseModuleCheckSourceModules;
-				ElementID first = getSourceModule(0)->addToPipeline(pipe);
-				return pipe->addElement (this, new ScaleBiasElement1D(pipe, first, mScale, mBias));
-			}
-			/// @copydoc noisepp::Module::addToPipeline()
-			ElementID addToPipeline (Pipeline2D *pipe) const
-			{
-				//NoiseModuleCheckSourceModules;
-				ElementID first = getSourceModule(0)->addToPipeline(pipe);
-				return pipe->addElement (this, new ScaleBiasElement2D(pipe, first, mScale, mBias));
-			}
-			/// @copydoc noisepp::Module::addToPipeline()
-			ElementID addToPipeline (Pipeline3D *pipe) const
-			{
-				//NoiseModuleCheckSourceModules;
-				ElementID first = getSourceModule(0)->addToPipeline(pipe);
-				return pipe->addElement (this, new ScaleBiasElement3D(pipe, first, mScale, mBias));
-			}
-			/// @copydoc noisepp::Module::getType()
-			ModuleTypeId getType() const { return MODULE_SCALEBIAS; }
+    public:
+        ScaleBiasElement3D(const Pipeline3D *pipe, ElementID element, Real scale, Real bias) : mElement(element),
+                                                                                               mScale(scale),
+                                                                                               mBias(bias) {
+            mElementPtr = pipe->getElement(mElement);
+        }
+
+        virtual Real getValue(Real x, Real y, Real z, Cache *cache) const {
+            Real value;
+            value = getElementValue(mElementPtr, mElement, x, y, z, cache);
+            return value * mScale + mBias;
+        }
+    };
+
+    /** Module for scaling with bias.
+        Transforms the output value of the source module by scaling with bias.
+    */
+    class ScaleBiasModule : public Module {
+    private:
+        Real mScale, mBias;
+
+    public:
+        /// Constructor.
+        ScaleBiasModule() : Module(1), mScale(1.0), mBias(0.0) {
+        }
+
+        /// Sets the scaling factor.
+        void setScale(Real v) {
+            mScale = v;
+        }
+
+        /// Returns the scaling factor.
+        Real getScale() const {
+            return mScale;
+        }
+
+        /// Sets the bias value.
+        void setBias(Real v) {
+            mBias = v;
+        }
+
+        /// Returns the bias value.
+        Real getBias() const {
+            return mBias;
+        }
+
+        /// @copydoc noisepp::Module::addToPipeline()
+        ElementID addToPipeline(Pipeline1D *pipe) const {
+            //NoiseModuleCheckSourceModules;
+            ElementID first = getSourceModule(0)->addToPipeline(pipe);
+            return pipe->addElement(this, new ScaleBiasElement1D(pipe, first, mScale, mBias));
+        }
+
+        /// @copydoc noisepp::Module::addToPipeline()
+        ElementID addToPipeline(Pipeline2D *pipe) const {
+            //NoiseModuleCheckSourceModules;
+            ElementID first = getSourceModule(0)->addToPipeline(pipe);
+            return pipe->addElement(this, new ScaleBiasElement2D(pipe, first, mScale, mBias));
+        }
+
+        /// @copydoc noisepp::Module::addToPipeline()
+        ElementID addToPipeline(Pipeline3D *pipe) const {
+            //NoiseModuleCheckSourceModules;
+            ElementID first = getSourceModule(0)->addToPipeline(pipe);
+            return pipe->addElement(this, new ScaleBiasElement3D(pipe, first, mScale, mBias));
+        }
+
+        /// @copydoc noisepp::Module::getType()
+        ModuleTypeId getType() const { return MODULE_SCALEBIAS; }
+
 #if NOISEPP_ENABLE_UTILS
-			/// @copydoc noisepp::Module::write()
-			virtual void write (utils::OutStream &stream) const;
-			/// @copydoc noisepp::Module::read()
-			virtual void read (utils::InStream &stream);
+
+        /// @copydoc noisepp::Module::write()
+        virtual void write(utils::OutStream &stream) const;
+
+        /// @copydoc noisepp::Module::read()
+        virtual void read(utils::InStream &stream);
+
 #endif
-	};
+    };
 };
 
 #endif

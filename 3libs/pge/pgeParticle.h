@@ -36,94 +36,92 @@ extern "C" {
 #include "pgeMath.h"
 #include "pgeGfx.h"
 
-#define MAX_PARTICLES	500
-#define MAX_PSYSTEMS	100
+#define MAX_PARTICLES    500
+#define MAX_PSYSTEMS    100
 
 /**
 * A particle datatype
 */
-typedef	struct
-{
-	ScePspFVector3 vecLocation;	/**< location vector */
-	ScePspFVector3 vecVelocity;	/**< velocity vector */
+typedef struct {
+    ScePspFVector3 vecLocation;    /**< location vector */
+    ScePspFVector3 vecVelocity;    /**< velocity vector */
 
-	float fGravity;							/**< gravity */
-	float fRadialAccel;					/**< radial acceleration */
-	float fTangentialAccel;			/**< tangential acceleration */
+    float fGravity;                            /**< gravity */
+    float fRadialAccel;                    /**< radial acceleration */
+    float fTangentialAccel;            /**< tangential acceleration */
 
-	float fSpin;								/**< spin */
-	float fSpinDelta;						/**< delta spin */
+    float fSpin;                                /**< spin */
+    float fSpinDelta;                        /**< delta spin */
 
-	float fSize;								/**< size */
-	float fSizeDelta;						/**< delta size */
+    float fSize;                                /**< size */
+    float fSizeDelta;                        /**< delta size */
 
-	unsigned int colColor;				/**< color */
-	unsigned int colColorDelta;	/**< delta color */
+    unsigned int colColor;                /**< color */
+    unsigned int colColorDelta;    /**< delta color */
 
-	float fAge;									/**< time the particle is alive */
-	float fTerminalAge;					/**< time at which the particle dies */
+    float fAge;                                    /**< time the particle is alive */
+    float fTerminalAge;                    /**< time at which the particle dies */
 } pgeParticle;
 
 /**
 * A particle system information datatype
 */
-typedef struct
-{
-	pgeRect			spriteRect;					/**<  ::pgeRect describing the region on the texture to be displayed */
-	pgeTexture	*spriteTexture;			/**<  texture for particles */
-	int					spriteBlendMode;		/**<  blend mode */
+typedef struct {
+    pgeRect spriteRect;                    /**<  ::pgeRect describing the region on the texture to be displayed */
+    pgeTexture *spriteTexture;            /**<  texture for particles */
+    int spriteBlendMode;        /**<  blend mode */
 
-	int			nEmission;							/**< particles per sec (0..MAX_PARTICLES,1) */
-	float		fLifetime;							/**< lifetime of the system float(0..100,0.1) */
+    int nEmission;                            /**< particles per sec (0..MAX_PARTICLES,1) */
+    float fLifetime;                            /**< lifetime of the system float(0..100,0.1) */
 
-	float		fParticleLifeMin;				/**< min. lifetime per particle (0..5,0.01) */
-	float		fParticleLifeMax;				/**< max. lifetime per particle (0..5,0.01) */
+    float fParticleLifeMin;                /**< min. lifetime per particle (0..5,0.01) */
+    float fParticleLifeMax;                /**< max. lifetime per particle (0..5,0.01) */
 
-	float		fDirection;							/**< part. movement direction (0..2*PI,0.1) */
-	float		fSpread;								/**< part. movement spread (0..2*PI,0.1) */
-	int			bRelative;							/**< part. relative movement (0..1,1) */
+    float fDirection;                            /**< part. movement direction (0..2*PI,0.1) */
+    float fSpread;                                /**< part. movement spread (0..2*PI,0.1) */
+    int bRelative;                            /**< part. relative movement (0..1,1) */
 
-	float		fSpeedMin;							/**< min. speed (-300..300,0.1) */
-	float		fSpeedMax;							/**< max. speed (-300..300,0.1) */
+    float fSpeedMin;                            /**< min. speed (-300..300,0.1) */
+    float fSpeedMax;                            /**< max. speed (-300..300,0.1) */
 
-	float		fGravityMin;						/**< min. gravity (-100..100,0.1) */
-	float		fGravityMax;						/**< max. gravity (-100..100,0.1) */
+    float fGravityMin;                        /**< min. gravity (-100..100,0.1) */
+    float fGravityMax;                        /**< max. gravity (-100..100,0.1) */
 
-	float		fRadialAccelMin;				/**< min. rad. accel (-5..5,0.01) */
-	float		fRadialAccelMax;				/**< max. rad. accel (-5..5,0.01) */
+    float fRadialAccelMin;                /**< min. rad. accel (-5..5,0.01) */
+    float fRadialAccelMax;                /**< max. rad. accel (-5..5,0.01) */
 
-	float		fTangentialAccelMin;		/**< min. tangential accel (-100..100,0.1) */
-	float		fTangentialAccelMax;		/**< max. tangential accel (-100..100,0.1) */
+    float fTangentialAccelMin;        /**< min. tangential accel (-100..100,0.1) */
+    float fTangentialAccelMax;        /**< max. tangential accel (-100..100,0.1) */
 
-	float		fSizeStart;							/**< part. size at the beginning (0.01..2,0.01) */
-	float		fSizeEnd;								/**< part. size at the end (0.01..2,0.01) */
-	float		fSizeVar;								/**< variance in part. size (0..1,0.01) */
+    float fSizeStart;                            /**< part. size at the beginning (0.01..2,0.01) */
+    float fSizeEnd;                                /**< part. size at the end (0.01..2,0.01) */
+    float fSizeVar;                                /**< variance in part. size (0..1,0.01) */
 
-	float		fSpinStart;							/**< part. spin at the beginning (-50,50,1) */
-	float		fSpinEnd;								/**< part. spin at the end (-50,50,1) */
-	float		fSpinVar;								/**< part. spin variance (0..1,0.01) */
+    float fSpinStart;                            /**< part. spin at the beginning (-50,50,1) */
+    float fSpinEnd;                                /**< part. spin at the end (-50,50,1) */
+    float fSpinVar;                                /**< part. spin variance (0..1,0.01) */
 
-	unsigned int	colColorStart;			/**< rgb color at the beginning 4xfloat(0..1,.01) */
-	unsigned int	colColorEnd;				/**< rgb color at the end 4xfloat(0..1,.01) */
-	float		fColorVar;							/**< variance float(0..1,0.01) */
-	float		fAlphaVar;							/**< variance float(0..1,0.01) */
+    unsigned int colColorStart;            /**< rgb color at the beginning 4xfloat(0..1,.01) */
+    unsigned int colColorEnd;                /**< rgb color at the end 4xfloat(0..1,.01) */
+    float fColorVar;                            /**< variance float(0..1,0.01) */
+    float fAlphaVar;                            /**< variance float(0..1,0.01) */
 } pgeParticleSystemInfo;
 
 /**
 * A particle system datatype
 */
 typedef struct {
-	pgeParticleSystemInfo info;								/**< particle system information */
-	float						age;											/**< time the system emits new particles */
-	float						emissionResidue;					/**< UNKNOWN */
-	ScePspFVector3	prevLocation;							/**< previous location of the system */
-	ScePspFVector3	location;									/**< location of the system */
-	float						fTx, fTy;									/**< translation coordinates */
-	int							numParticlesAlive;				/**< number of active particles */
-	pgeRect2				boundingBox;							/**< bounding box of the whole system */
-	int							bUpdateBoundingBox;				/**< update bounding box on runtime */
-	pgeParticle			particles[MAX_PARTICLES];	/**< array of ::pgeParticle */
-	float						timer;										/**< timer */
+    pgeParticleSystemInfo info;                                /**< particle system information */
+    float age;                                            /**< time the system emits new particles */
+    float emissionResidue;                    /**< UNKNOWN */
+    ScePspFVector3 prevLocation;                            /**< previous location of the system */
+    ScePspFVector3 location;                                    /**< location of the system */
+    float fTx, fTy;                                    /**< translation coordinates */
+    int numParticlesAlive;                /**< number of active particles */
+    pgeRect2 boundingBox;                            /**< bounding box of the whole system */
+    int bUpdateBoundingBox;                /**< update bounding box on runtime */
+    pgeParticle particles[MAX_PARTICLES];    /**< array of ::pgeParticle */
+    float timer;                                        /**< timer */
 } pgeParticleSystem;
 
 /**

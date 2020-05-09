@@ -1,28 +1,24 @@
 #ifndef AURORA_LOGGER_H
 #define AURORA_LOGGER_H
 
-namespace Aurora
-{
-	namespace Utils
-	{
+namespace Aurora {
+    namespace Utils {
 
-		class Logger
-		{
-		private:
+        class Logger {
+        private:
 
-			static Logger m_Logger;
+            static Logger m_Logger;
 
-		public:
+        public:
 
-			static Logger* Instance()
-			{
-				return &m_Logger;
-			}
+            static Logger *Instance() {
+                return &m_Logger;
+            }
 
-			void LogMessage(const char *message, ...);
+            void LogMessage(const char *message, ...);
 
-		};
-	}
+        };
+    }
 }
 
 #endif

@@ -1,32 +1,32 @@
 #ifndef FURNACE_H
 #define FURNACE_H
 
-class Furnace
-{
+class Furnace {
 public:
-	Furnace(int x, int y, int z);
+    Furnace(int x, int y, int z);
 
-	void SetSide(char side2);
-	char GetSide();
+    void SetSide(char side2);
 
-	virtual ~Furnace();
+    char GetSide();
 
-	int furnaceSlotId[3];
-	int furnaceSlotAm[3];
-	bool furnaceSlotSt[3];
+    virtual ~Furnace();
 
-	int smeltItemTemp;
+    int furnaceSlotId[3];
+    int furnaceSlotAm[3];
+    bool furnaceSlotSt[3];
 
-	float fuelTime;
-	float meltingTime;
-	bool working;
+    int smeltItemTemp;
 
-	int furnaceX;
-	int furnaceY;
-	int furnaceZ;
+    float fuelTime;
+    float meltingTime;
+    bool working;
 
-	short id;
-	char side;
+    int furnaceX;
+    int furnaceY;
+    int furnaceZ;
+
+    short id;
+    char side;
 };
 
 #endif

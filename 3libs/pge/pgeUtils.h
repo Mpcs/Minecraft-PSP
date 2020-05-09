@@ -33,26 +33,26 @@ extern "C" {
  *  @{
  */
 
-#define PGE_UTILS_NET_DIALOG_ADHOC_CONNECT		2
-#define PGE_UTILS_NET_DIALOG_ADHOC_CREATE		4
-#define PGE_UTILS_NET_DIALOG_ADHOC_JOIN			5
-#define PGE_UTILS_ADHOC_GAMESHARE_NAME			"GameShar"
+#define PGE_UTILS_NET_DIALOG_ADHOC_CONNECT        2
+#define PGE_UTILS_NET_DIALOG_ADHOC_CREATE        4
+#define PGE_UTILS_NET_DIALOG_ADHOC_JOIN            5
+#define PGE_UTILS_ADHOC_GAMESHARE_NAME            "GameShar"
 
-#define PGE_UTILS_MSG_DIALOG_NO_OPTIONS			0x00000000
-#define PGE_UTILS_MSG_DIALOG_YESNO_BUTTONS		0x00000010
-#define PGE_UTILS_MSG_DIALOG_DEFAULT_BUTTON_NO	0x00000100
+#define PGE_UTILS_MSG_DIALOG_NO_OPTIONS            0x00000000
+#define PGE_UTILS_MSG_DIALOG_YESNO_BUTTONS        0x00000010
+#define PGE_UTILS_MSG_DIALOG_DEFAULT_BUTTON_NO    0x00000100
 
-#define PGE_UTILS_MSG_DIALOG_RESULT_YES			1
-#define PGE_UTILS_MSG_DIALOG_RESULT_NO			2
-#define PGE_UTILS_MSG_DIALOG_RESULT_BACK		3
+#define PGE_UTILS_MSG_DIALOG_RESULT_YES            1
+#define PGE_UTILS_MSG_DIALOG_RESULT_NO            2
+#define PGE_UTILS_MSG_DIALOG_RESULT_BACK        3
 
-#define PGE_UTILS_SAVEDATA_TYPE_AUTOLOAD		0
-#define PGE_UTILS_SAVEDATA_TYPE_AUTOSAVE		1
-#define PGE_UTILS_SAVEDATA_TYPE_LISTLOAD		4
-#define PGE_UTILS_SAVEDATA_TYPE_LISTSAVE		5
-#define PGE_UTILS_SAVEDATA_TYPE_LISTDELETE		7
+#define PGE_UTILS_SAVEDATA_TYPE_AUTOLOAD        0
+#define PGE_UTILS_SAVEDATA_TYPE_AUTOSAVE        1
+#define PGE_UTILS_SAVEDATA_TYPE_LISTLOAD        4
+#define PGE_UTILS_SAVEDATA_TYPE_LISTSAVE        5
+#define PGE_UTILS_SAVEDATA_TYPE_LISTDELETE        7
 
-#define PGE_UTILS_DIALOG_RUNNING				-1
+#define PGE_UTILS_DIALOG_RUNNING                -1
 
 /**
  * Save or load savedata dialog
@@ -75,7 +75,8 @@ extern "C" {
  *
  * @returns 1 on success, 0 on error.
  */
-int pgeUtilsSavedataInit(int type, void *data, unsigned int datasize, const char *gamename, const char *key, const char *title, const char *subtitle, const char *detail);
+int pgeUtilsSavedataInit(int type, void *data, unsigned int datasize, const char *gamename, const char *key,
+                         const char *title, const char *subtitle, const char *detail);
 
 /**
  * Update savedata dialog

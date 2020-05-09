@@ -12,13 +12,13 @@
 #include "SoundManager.h"
 
 
-class LameMob
-{
+class LameMob {
 public:
-	LameMob(float x, float y , float z);
-	 ~LameMob();
+    LameMob(float x, float y, float z);
 
-	void Go(int block, float x, float y , float z);
+    ~LameMob();
+
+    void Go(int block, float x, float y, float z);
 
     Vector3 pos;
     Vector3 angle;

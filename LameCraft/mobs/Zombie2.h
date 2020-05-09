@@ -13,17 +13,21 @@
 
 class CraftWorld;
 
-class Zombie : public LameMob
-{
+class Zombie : public LameMob {
 public:
 
     Zombie(Vector3 position1, int number1);
+
     ~Zombie();
 
     void BoxCollision();
+
     void Update(CraftWorld *myWorld, Vector3 playerPos, float dt);
+
     void Render(Frustum &camFrustum, float dt);
+
     void TakeDamage(float damage, float power, float dt);
+
     void TakeDamageFromPointExplosion(float damage, float power, float dt, Vector3 point);
 
     int helmetId, chestplateId, leggingsId, bootsId;

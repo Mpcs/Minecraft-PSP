@@ -38,14 +38,21 @@
 #include <ostream>
 
 class Cow;
+
 class Zombie;
+
 class Creeper;
+
 class Sheep;
+
 class LameMob;
 
 class Drop;
+
 class TNT;
+
 class ItemFrameEntity;
+
 class WeatherSystem;
 
 using namespace std;
@@ -53,27 +60,25 @@ using namespace Aurora::Utils;
 using namespace Aurora::System;
 using namespace Aurora;
 
-class CraftWorld
-{
+class CraftWorld {
 public:
 
-	double TestWriteChunk(float dt);
+    double TestWriteChunk(float dt);
 
-	int WORLD_HEIGHT;
+    int WORLD_HEIGHT;
 
-	enum BlockSettings
-	{
-		 OpFirstShadowBit = 16,
-		 OpSecondShadowBit = 32,
-		 OpThirdShadowBit = 64,
-		 OpFourthShadowBit = 128
-	};
+    enum BlockSettings {
+        OpFirstShadowBit = 16,
+        OpSecondShadowBit = 32,
+        OpThirdShadowBit = 64,
+        OpFourthShadowBit = 128
+    };
 
-	CraftWorld();
-	~CraftWorld();
+    CraftWorld();
 
-    typedef struct Statistics
-    {
+    ~CraftWorld();
+
+    typedef struct Statistics {
         unsigned short blockPlaced;
         unsigned short blockDestroyed;
         unsigned short daysInGame;
@@ -93,8 +98,7 @@ public:
         unsigned short damageRecieved;
     } st;
 
-    typedef struct Options
-    {
+    typedef struct Options {
         bool useMipsTexturing;
         bool detailedSky;
         bool fastRendering;
@@ -115,8 +119,7 @@ public:
         int difficult;
     } opt;
 
-    typedef struct WorldVariables
-    {
+    typedef struct WorldVariables {
         int worldDiamondOre;
         int worldIronOre;
         int worldCoalOre;
@@ -128,7 +131,7 @@ public:
         int worldClay;
     } wvars;
 
-    WeatherSystem* worldWeather;
+    WeatherSystem *worldWeather;
 
     float updateChunkTimer;
     float updateTransparentChunkTimer2;
@@ -148,261 +151,410 @@ public:
     bool gameLocked;
 
     void UpdateBlocksAndItemsName();
+
     void InitBlockVector();
+
     void InitItemVector();
 
     block_t _GetBlock(const int x, const int y, const int z);
+
     block_t _GetBlockNoCheck(const int x, const int y, const int z);
 
-	block_t& GetBlock (const int x, const int y, const int z) ;
-	block_t& GetBlockNoCheck (const int x, const int y, const int z) ;
-	block_t& GetBlockSettings (const int x, const int y, const int z);
-	block_t& GetBlockSettingsNoCheck (const int x, const int y, const int z);
+    block_t &GetBlock(const int x, const int y, const int z);
 
-	int GetShadowLevel (const int x, const int y, const int z);
-	int GetShadowLevelNoCheck (const int x, const int y, const int z);
-	void SetShadowLevel (const int x, const int y, const int z, int level);
-	void SetShadowLevelNoCheck (const int x, const int y, const int z, int level);
+    block_t &GetBlockNoCheck(const int x, const int y, const int z);
 
-	int GetLightLevel(const int x, const int y, const int z);
-	int GetLightLevelNoCheck(const int x, const int y, const int z);
-	void SetLightLevel(const int x, const int y, const int z, unsigned int level);
-	void SetLightLevelNoCheck(const int x, const int y, const int z, unsigned int level);
+    block_t &GetBlockSettings(const int x, const int y, const int z);
 
-	block_t BlockAtPoint(Vector3 pos);
+    block_t &GetBlockSettingsNoCheck(const int x, const int y, const int z);
 
-    void BuildWorldBlockPlane(BaseBlock *blockType, int x,int y, int z, int &iVertex, SimpleMeshChunk* MeshChunk, block_t Block, bool transparent, char side, Vector3 point1, Vector3 point2, Vector3 point3, Vector3 point4);
-    void BuildWorldBlockPlane(BaseBlock *blockType, int x,int y, int z, int &iVertex, SimpleMeshChunk* MeshChunk, block_t Block, bool transparent, char side, Vector3 point1, Vector3 point2, Vector3 point3, Vector3 point4, bool alwaysBuild, bool constantColor);
-    void BuildWorldBlockPlane(BaseBlock *blockType, int x,int y, int z, int &iVertex, SimpleMeshChunk* MeshChunk, block_t Block, bool transparent, char side, Vector3 point1, Vector3 point2, Vector3 point3, Vector3 point4, bool alwaysBuild, bool constantColor, int texturePlane);
-    void BuildWorldBlockPlane(BaseBlock *blockType, int x,int y, int z, int &iVertex, SimpleMeshChunk* MeshChunk, block_t Block, bool transparent, char side, Vector3 point1, Vector3 point2, Vector3 point3, Vector3 point4, bool alwaysBuild, bool constantColor, int texturePlane, int textureRotation);
-    void BuildWorldBlockPlaneNoCheck(BaseBlock *blockType, int x,int y, int z, int &iVertex, SimpleMeshChunk* MeshChunk, block_t Block, bool transparent, char side, Vector3 point1, Vector3 point2, Vector3 point3, Vector3 point4);
-    void BuildGUIBlockPlane(BaseBlock* blockType, char side, Vector3 point1, Vector3 point2, Vector3 point3, Vector3 point4);
+    int GetShadowLevel(const int x, const int y, const int z);
+
+    int GetShadowLevelNoCheck(const int x, const int y, const int z);
+
+    void SetShadowLevel(const int x, const int y, const int z, int level);
+
+    void SetShadowLevelNoCheck(const int x, const int y, const int z, int level);
+
+    int GetLightLevel(const int x, const int y, const int z);
+
+    int GetLightLevelNoCheck(const int x, const int y, const int z);
+
+    void SetLightLevel(const int x, const int y, const int z, unsigned int level);
+
+    void SetLightLevelNoCheck(const int x, const int y, const int z, unsigned int level);
+
+    block_t BlockAtPoint(Vector3 pos);
+
+    void BuildWorldBlockPlane(BaseBlock *blockType, int x, int y, int z, int &iVertex, SimpleMeshChunk *MeshChunk,
+                              block_t Block, bool transparent, char side, Vector3 point1, Vector3 point2,
+                              Vector3 point3, Vector3 point4);
+
+    void BuildWorldBlockPlane(BaseBlock *blockType, int x, int y, int z, int &iVertex, SimpleMeshChunk *MeshChunk,
+                              block_t Block, bool transparent, char side, Vector3 point1, Vector3 point2,
+                              Vector3 point3, Vector3 point4, bool alwaysBuild, bool constantColor);
+
+    void BuildWorldBlockPlane(BaseBlock *blockType, int x, int y, int z, int &iVertex, SimpleMeshChunk *MeshChunk,
+                              block_t Block, bool transparent, char side, Vector3 point1, Vector3 point2,
+                              Vector3 point3, Vector3 point4, bool alwaysBuild, bool constantColor, int texturePlane);
+
+    void BuildWorldBlockPlane(BaseBlock *blockType, int x, int y, int z, int &iVertex, SimpleMeshChunk *MeshChunk,
+                              block_t Block, bool transparent, char side, Vector3 point1, Vector3 point2,
+                              Vector3 point3, Vector3 point4, bool alwaysBuild, bool constantColor, int texturePlane,
+                              int textureRotation);
+
+    void
+    BuildWorldBlockPlaneNoCheck(BaseBlock *blockType, int x, int y, int z, int &iVertex, SimpleMeshChunk *MeshChunk,
+                                block_t Block, bool transparent, char side, Vector3 point1, Vector3 point2,
+                                Vector3 point3, Vector3 point4);
+
+    void
+    BuildGUIBlockPlane(BaseBlock *blockType, char side, Vector3 point1, Vector3 point2, Vector3 point3, Vector3 point4);
 
     float LengthDirX(float horAngle, float verAngle);
+
     float LengthDirY(float horAngle, float verAngle);
+
     float LengthDirZ(float horAngle, float verAngle);
 
     float TaxicabDistance2d(float x1, float y1, float x2, float y2);
+
     unsigned int FastDistance2d(unsigned int dx, unsigned int dy);
+
     float Distance2d(float x1, float y1, float x2, float y2);
+
     float Distance3d(float x1, float y1, float z1, float x2, float y2, float z2);
-	//inline void BuildWorldBlockPlane(BaseBlock *blockType, int x,int y, int z, int &iVertex, SimpleMeshChunk* MeshChunk, block_t Block, bool transparent, std::string side, Vector3 point1, Vector3 point2, Vector3 point3, Vector3 point4);
+    //inline void BuildWorldBlockPlane(BaseBlock *blockType, int x,int y, int z, int &iVertex, SimpleMeshChunk* MeshChunk, block_t Block, bool transparent, std::string side, Vector3 point1, Vector3 point2, Vector3 point3, Vector3 point4);
 
-	//map creation
-	void initWorld(int worldSize, int worldHeight, int chunkSize);
-	void initWorldBlocksLight();
+    //map creation
+    void initWorld(int worldSize, int worldHeight, int chunkSize);
 
-	void UpdateBlocksLightNearby(const int xx, const int yy, const int zz);
+    void initWorldBlocksLight();
+
+    void UpdateBlocksLightNearby(const int xx, const int yy, const int zz);
+
     void CalculateBlocksLightAtPos(const int xx, const int yy, const int zz, int iteration);
 
-	void initPutBlocksLight(const int xx, const int zz);
-	void initPutBlocksLight(const int xx, const int yy, const int zz);
+    void initPutBlocksLight(const int xx, const int zz);
 
-	void GetSpecialBlockVerts(int i,BaseBlock *blockType);
-	void GetNormalBlockVerts(int i,BaseBlock *blockType);
-	void GetItemVerts(int i,BaseItem *itemType);
-	void GetCloudsVerts(BaseBlock *blockType);
+    void initPutBlocksLight(const int xx, const int yy, const int zz);
 
-	void buildblocksVerts();
-	void buildcloudsVerts();
-	void buildskyVerts();
-	void buildmobVerts();
-	void buildCowVerts();
-	void buildZombieVerts();
-	void buildArmorVerts();
+    void GetSpecialBlockVerts(int i, BaseBlock *blockType);
 
-    void setTextureSize(int texture,int chunk,int animTexture, int animChunk, int itemTexture, int itemChunk);
+    void GetNormalBlockVerts(int i, BaseBlock *blockType);
+
+    void GetItemVerts(int i, BaseItem *itemType);
+
+    void GetCloudsVerts(BaseBlock *blockType);
+
+    void buildblocksVerts();
+
+    void buildcloudsVerts();
+
+    void buildskyVerts();
+
+    void buildmobVerts();
+
+    void buildCowVerts();
+
+    void buildZombieVerts();
+
+    void buildArmorVerts();
+
+    void setTextureSize(int texture, int chunk, int animTexture, int animChunk, int itemTexture, int itemChunk);
 
     void PutInInventory(int id, int num, bool st);
+
     void PutInInventory(int id, int num, bool st, int &slot);
+
     bool InventoryIsFull(int id, int num, bool st);
 
-	//
-	void CreateFullMeshChunk(const int StartX, const int StartY, const int StartZ);
+    //
+    void CreateFullMeshChunk(const int StartX, const int StartY, const int StartZ);
 
-	void RebuildFullMeshChunk(int id);
-	void RebuildOpaqueMeshChunk(int id);
-	void RebuildTransparentMeshChunk(int id);
+    void RebuildFullMeshChunk(int id);
 
-	void rebuildNearestChunks(int id,Vector3 pos);
-	void rebuildNearestTransparentChunks(int id, Vector3 pos);
+    void RebuildOpaqueMeshChunk(int id);
 
-	void rebuildNearestChunksForLight(int id,Vector3 pos);
-	void createWorldChunkss();
-	void SetAllChunksToUpdate();
+    void RebuildTransparentMeshChunk(int id);
+
+    void rebuildNearestChunks(int id, Vector3 pos);
+
+    void rebuildNearestTransparentChunks(int id, Vector3 pos);
+
+    void rebuildNearestChunksForLight(int id, Vector3 pos);
+
+    void createWorldChunkss();
+
+    void SetAllChunksToUpdate();
+
     int getChunkId(Vector3 pos);
+
     bool ChunksEqual(Vector3 pos1, Vector3 pos2);
 
-	void RebuildVisibleChunks();
+    void RebuildVisibleChunks();
 
-	void GetSpecialBlock(int x,int y, int z,int &iVertex,SimpleMeshChunk* MeshChunk,block_t Block,bool transparent);
-	void GetNormalBlock(int x,int y, int z,int &iVertex,SimpleMeshChunk* MeshChunk,block_t Block,bool transparent);
+    void
+    GetSpecialBlock(int x, int y, int z, int &iVertex, SimpleMeshChunk *MeshChunk, block_t Block, bool transparent);
 
-	//load/save options
-	void SaveCompressedWorld(std::string filename);
-	void LoadWorld(const char *filename);
-	void LoadCompressedWorld(std::string filename);
+    void GetNormalBlock(int x, int y, int z, int &iVertex, SimpleMeshChunk *MeshChunk, block_t Block, bool transparent);
 
-	//lightening
-	void InitLightValues();
-	void SetWolrdTime(float time);
-	void LightTravel(int x,int y,int z,int steps,int lightLevel);
+    //load/save options
+    void SaveCompressedWorld(std::string filename);
 
-	void buildMap();
-	void destroyMap();
+    void LoadWorld(const char *filename);
 
-	//rendering
-	void FetchNearestChunks();
-	void drawWorld(Frustum &camFrustum,bool camUpdate);
-	void drawCubes(int i, float light);
-	void drawHudCubes(int i);
-	void drawWhiteCube(int i, float light);
-	void drawHand();
-	void drawClouds();
-	void drawDropItems(int i);
-	void drawItems(int i);
-	void drawHudItems(int i);
-	void drawFull3DItem(int i,float light);
-	void drawHandItems(int i, float light);
-	void drawArmor(int i, float light);
-	void drawShoulder(int chestplateId, float light);
-	void drawBelly(int leggingsId, float light);
+    void LoadCompressedWorld(std::string filename);
 
-	//pickin,collision etc
-	int groundHeightFromBottom (const int x, const int y, const int z);
-	int groundHeight (const int x, const int z);
-	int groundHeight (const int x, const int y, const int z);
-	int groundHeightWater (const int x, const int z);
-	int groundHeightExcept (const int x, const int z, int bl);
-	int BlockSoundAtPos(Vector3 pos);
+    //lightening
+    void InitLightValues();
+
+    void SetWolrdTime(float time);
+
+    void LightTravel(int x, int y, int z, int steps, int lightLevel);
+
+    void buildMap();
+
+    void destroyMap();
+
+    //rendering
+    void FetchNearestChunks();
+
+    void drawWorld(Frustum &camFrustum, bool camUpdate);
+
+    void drawCubes(int i, float light);
+
+    void drawHudCubes(int i);
+
+    void drawWhiteCube(int i, float light);
+
+    void drawHand();
+
+    void drawClouds();
+
+    void drawDropItems(int i);
+
+    void drawItems(int i);
+
+    void drawHudItems(int i);
+
+    void drawFull3DItem(int i, float light);
+
+    void drawHandItems(int i, float light);
+
+    void drawArmor(int i, float light);
+
+    void drawShoulder(int chestplateId, float light);
+
+    void drawBelly(int leggingsId, float light);
+
+    //pickin,collision etc
+    int groundHeightFromBottom(const int x, const int y, const int z);
+
+    int groundHeight(const int x, const int z);
+
+    int groundHeight(const int x, const int y, const int z);
+
+    int groundHeightWater(const int x, const int z);
+
+    int groundHeightExcept(const int x, const int z, int bl);
+
+    int BlockSoundAtPos(Vector3 pos);
 
     bool SolidAtPointForPlayerHead(Vector3 pos);
-	bool SolidAtPointForPlayer(Vector3 pos);
-	bool SolidAtPointForMovingPlayer(Vector3 pos);
-	bool SolidAtPointForPlayerOnGround(Vector3 pos);
-	bool SolidAtPointForEntity(Vector3 pos, Vector3 collider1);
-	bool SolidAtPoint(Vector3 pos);
-	bool HighStairAtPoint(Vector3 pos);
 
-	bool PlayerOnHalfBlock(Vector3 pos);
-	bool PlayerOnStairsBlock(Vector3 pos);
-	bool PlayerOnHighStair(Vector3 pos);
+    bool SolidAtPointForPlayer(Vector3 pos);
 
-	bool PlayerInWater(Vector3 pos);
-	bool PlayerInLava(Vector3 pos);
-	bool PlayerInBlock(Vector3 pos);
-	bool PlayerCollisionWithLadder(Vector3 pos);
-	bool PlayerCollisionWithCactus(Vector3 pos);
+    bool SolidAtPointForMovingPlayer(Vector3 pos);
 
-	bool BlockTransparentOrSpecial(const int x, const int y, const int z);
-	bool BlockTransparentOrLightSource(const int x, const int y, const int z);
-	bool BlockTransparentOrLightSourceNoCheck(const int x, const int y, const int z);
-	bool BlockTransparent(const int x, const int y, const int z);
-	bool BlockTransparentNoCheck(const int x, const int y, const int z);
-	bool BlockAnimated(const int x, const int y, const int z);
-	char BlockSpecial(const int x, const int y, const int z);
-	char BlockSpecialNoCheck(const int x, const int y, const int z);
-	bool BlockEditable(const int x, const int y, const int z);
-	bool BlockAllowLight(const int x, const int y, const int z);
-	float BlockFinalLight(int x, int y, int z);
-	float BlockFinalLightNoCheck(int x, int y, int z);
-	char BlockRefraction(const int x, const int y, const int z);
-	short BlockLoot(const int x, const int y, const int z);
-	short BlockMaterial(const int x, const int y, const int z);
-	bool BlockUpdate2(const int x, const int y, const int z);
-	bool BlockSolid(const int x, const int y, const int z);
+    bool SolidAtPointForPlayerOnGround(Vector3 pos);
+
+    bool SolidAtPointForEntity(Vector3 pos, Vector3 collider1);
+
+    bool SolidAtPoint(Vector3 pos);
+
+    bool HighStairAtPoint(Vector3 pos);
+
+    bool PlayerOnHalfBlock(Vector3 pos);
+
+    bool PlayerOnStairsBlock(Vector3 pos);
+
+    bool PlayerOnHighStair(Vector3 pos);
+
+    bool PlayerInWater(Vector3 pos);
+
+    bool PlayerInLava(Vector3 pos);
+
+    bool PlayerInBlock(Vector3 pos);
+
+    bool PlayerCollisionWithLadder(Vector3 pos);
+
+    bool PlayerCollisionWithCactus(Vector3 pos);
+
+    bool BlockTransparentOrSpecial(const int x, const int y, const int z);
+
+    bool BlockTransparentOrLightSource(const int x, const int y, const int z);
+
+    bool BlockTransparentOrLightSourceNoCheck(const int x, const int y, const int z);
+
+    bool BlockTransparent(const int x, const int y, const int z);
+
+    bool BlockTransparentNoCheck(const int x, const int y, const int z);
+
+    bool BlockAnimated(const int x, const int y, const int z);
+
+    char BlockSpecial(const int x, const int y, const int z);
+
+    char BlockSpecialNoCheck(const int x, const int y, const int z);
+
+    bool BlockEditable(const int x, const int y, const int z);
+
+    bool BlockAllowLight(const int x, const int y, const int z);
+
+    float BlockFinalLight(int x, int y, int z);
+
+    float BlockFinalLightNoCheck(int x, int y, int z);
+
+    char BlockRefraction(const int x, const int y, const int z);
+
+    short BlockLoot(const int x, const int y, const int z);
+
+    short BlockMaterial(const int x, const int y, const int z);
+
+    bool BlockUpdate2(const int x, const int y, const int z);
+
+    bool BlockSolid(const int x, const int y, const int z);
 
     int LootBlock(int id);
-	bool LightSourceBlock(int id);
-	int DurabilityPointsItem(int id);
-	bool StackableItem(int id);
-	string NameBlock(int id);
 
-	bool ItemHaveTerrainTexture(int id);
-	char ItemType(int id);
+    bool LightSourceBlock(int id);
 
-    bool CheckForTorchSupport(const int x, const int y, const int z,int blockID);
-	bool CheckForLadderSupport(const int x, const int y, const int z);
+    int DurabilityPointsItem(int id);
 
-	bool DestroyAroundTrapdoors(const int x, const int y, const int z);
-	bool DestroyAroundItemFrames(const int x, const int y, const int z);
+    bool StackableItem(int id);
 
-	bool CanPutBlockHere(const int x, const int y, const int z,int blockID);
-	void SetLigtSourcePosition(const int x, const int y, const int z,int blockID);
-	void RemoveLigtSourceAtPosition(const int x, const int y, const int z,int blockID);
-	void AddChunkToUpdate(const int x, const int y, const int z);
+    string NameBlock(int id);
+
+    bool ItemHaveTerrainTexture(int id);
+
+    char ItemType(int id);
+
+    bool CheckForTorchSupport(const int x, const int y, const int z, int blockID);
+
+    bool CheckForLadderSupport(const int x, const int y, const int z);
+
+    bool DestroyAroundTrapdoors(const int x, const int y, const int z);
+
+    bool DestroyAroundItemFrames(const int x, const int y, const int z);
+
+    bool CanPutBlockHere(const int x, const int y, const int z, int blockID);
+
+    void SetLigtSourcePosition(const int x, const int y, const int z, int blockID);
+
+    void RemoveLigtSourceAtPosition(const int x, const int y, const int z, int blockID);
+
+    void AddChunkToUpdate(const int x, const int y, const int z);
+
     void AddChunkToUpdate(int id);
+
     void AddChunkToFastUpdate(int id);
+
     void AddNearestChunk(int id);
-	void UpdateLightAreaIn(Vector3 pos);
 
-	void UpdateFlood(Vector3 pos);
-	void AddChunkToFloodUpdate(int id);
-	void AddToFloodPos(Vector3 pos);
+    void UpdateLightAreaIn(Vector3 pos);
 
-	void SpawnZombie(float xx, float yy, float zz);
-	void DestroyZombie(int id);
-	void DestroyAllZombies();
+    void UpdateFlood(Vector3 pos);
 
-	void SpawnCreeper(float xx, float yy, float zz);
-	void SpawnCreeper(float xx, float yy, float zz, float freezedTimerMax);
-	void DestroyCreeper(int id);
-	void DestroyAllCreepers();
+    void AddChunkToFloodUpdate(int id);
 
-	void DestroyItemFrameEntity(Vector3 position);
+    void AddToFloodPos(Vector3 pos);
+
+    void SpawnZombie(float xx, float yy, float zz);
+
+    void DestroyZombie(int id);
+
+    void DestroyAllZombies();
+
+    void SpawnCreeper(float xx, float yy, float zz);
+
+    void SpawnCreeper(float xx, float yy, float zz, float freezedTimerMax);
+
+    void DestroyCreeper(int id);
+
+    void DestroyAllCreepers();
+
+    void DestroyItemFrameEntity(Vector3 position);
 
     void SpawnCow(float xx, float yy, float zz);
-	void DestroyCow(int id);
 
-	void SpawnSheep(float xx, float yy, float zz);
-	void DestroySheep(int id);
+    void DestroyCow(int id);
+
+    void SpawnSheep(float xx, float yy, float zz);
+
+    void DestroySheep(int id);
 
     void CollisionWithOtherZombies(Zombie *Zombie1);
 
     void SpawnTNTentity(float xx, float yy, float zz);
+
     void SpawnTNTentity(float xx, float yy, float zz, float time);
+
     void DestroyTNTentity(int id);
 
     void DropThis(int id, Vector3 position);
+
     void DropThis(int id, int am, Vector3 position);
+
     void DropThis(int id, int am, bool st, Vector3 position);
 
     void DropThisNoAlign(int id, int am, bool st, Vector3 position, Vector3 velocity);
+
     void DestroyDrop(int id);
 
     int FetchArmorPoints(int bootsId, int leggingsId, int chestId, int helmetId);
+
     float FetchDamagePoints(int weaponId, bool &weapon);
+
     bool HaveItemInBarSlots(int id);
 
-	int GetDrawntTrianglesCount() { return drawnTriangles; }
+    int GetDrawntTrianglesCount() { return drawnTriangles; }
 
-	Vector3 GetPlayerPos();
+    Vector3 GetPlayerPos();
 
-	void UpdatePlayerZoneBB(Vector3 playerPosition);
-	void UpdateWorldTime(float dt);
-	void UpdateWorldProcesses(float dt);
-	void UpdateWorldAnimation(float dt);
-	void UpdateClockTexture();
-	void UpdateCompassTexture(float cameraAngle);
-	void SpawnMobs(float dt);
+    void UpdatePlayerZoneBB(Vector3 playerPosition);
 
-	int clockFrame;
-	int lastClockFrame;
+    void UpdateWorldTime(float dt);
 
-	int compassFrame;
-	int lastCompassFrame;
-	bool haveCompass;
+    void UpdateWorldProcesses(float dt);
 
-	int GetBlockTypesCount();
-	int GetItemTypesCount();
+    void UpdateWorldAnimation(float dt);
 
-	void UpdateChunkBlocks(int id);
-	void UpdateChunkGrowingBlocks(int id, int vectorId);
+    void UpdateClockTexture();
 
-	int FindDirId(int x, int y, int z);
+    void UpdateCompassTexture(float cameraAngle);
 
-	void GetTexturesIds();
-	void GetSkyColor();
+    void SpawnMobs(float dt);
+
+    int clockFrame;
+    int lastClockFrame;
+
+    int compassFrame;
+    int lastCompassFrame;
+    bool haveCompass;
+
+    int GetBlockTypesCount();
+
+    int GetItemTypesCount();
+
+    void UpdateChunkBlocks(int id);
+
+    void UpdateChunkGrowingBlocks(int id, int vectorId);
+
+    int FindDirId(int x, int y, int z);
+
+    void GetTexturesIds();
+
+    void GetSkyColor();
 
     short armorId[4];
     short armorAm[4];
@@ -417,28 +569,28 @@ public:
     float playerCollisionSize;
 
     std::vector<BaseBlock> blockTypes;
-	std::vector<BaseItem> itemTypes;
+    std::vector<BaseItem> itemTypes;
 
     float brightFactor;         // ��������� ����
     float starsFactor;         // ��������� ����
     float dawnSunsetFactor;     // ����� � �������
-    Vector3	fogColor;           // ���� ������
-	Vector3 startSkyColor;      // ��������� ���� ���� (��������)
-	Vector3 endSkyColor;        // �������� ���� ���� (��������)
-	Vector3 dawnSunsetSkyColor; // ���� ������ � ��������
+    Vector3 fogColor;           // ���� ������
+    Vector3 startSkyColor;      // ��������� ���� ���� (��������)
+    Vector3 endSkyColor;        // �������� ���� ���� (��������)
+    Vector3 dawnSunsetSkyColor; // ���� ������ � ��������
 
-	Vector3 startClearSkyColor;      // ��������� ���� ������ ���� (��������)
-	Vector3 endClearSkyColor;        // �������� ���� ������ ���� (��������)
-	Vector3 dawnSunsetClearSkyColor; // ���� ������ � �������� ������ ����
+    Vector3 startClearSkyColor;      // ��������� ���� ������ ���� (��������)
+    Vector3 endClearSkyColor;        // �������� ���� ������ ���� (��������)
+    Vector3 dawnSunsetClearSkyColor; // ���� ������ � �������� ������ ����
 
-	Vector3 startRainySkyColor;      // ��������� ���� ������ ���� (��������)
-	Vector3 endRainySkyColor;        // �������� ���� ������ ���� (��������)
-	Vector3 dawnSunsetRainySkyColor; // ���� ������ � �������� ������ ����
+    Vector3 startRainySkyColor;      // ��������� ���� ������ ���� (��������)
+    Vector3 endRainySkyColor;        // �������� ���� ������ ���� (��������)
+    Vector3 dawnSunsetRainySkyColor; // ���� ������ � �������� ������ ����
 
-	float rainyColorAlpha;
+    float rainyColorAlpha;
 
-	float blockZConstLight;
-	float blockXConstLight;
+    float blockZConstLight;
+    float blockXConstLight;
 
     unsigned int worldSeed;  // ��� ����
     float HP;       // ��������
@@ -483,50 +635,50 @@ public:
     int textureCompassId;
     int textureSkyColorId;
 
-	char worldName[50];
-	int createdChunksCount;
+    char worldName[50];
+    int createdChunksCount;
 
-	float worldDayTime;
-	float worldTime;
+    float worldDayTime;
+    float worldTime;
 
-	float sunTime;
-	int worldVersion;
-	float lightAngle;
+    float sunTime;
+    int worldVersion;
+    float lightAngle;
 
-	Vector3 playerZoneSize;
-	Vector3 playerSpawnPointPosition;
+    Vector3 playerZoneSize;
+    Vector3 playerSpawnPointPosition;
 
-	Vector3 snowBiomePosition;
-	Vector3 desertBiomePosition;
-	float snowBiomeRadius;
-	float desertBiomeRadius;
+    Vector3 snowBiomePosition;
+    Vector3 desertBiomePosition;
+    float snowBiomeRadius;
+    float desertBiomeRadius;
 
-    std::vector<Chest*> mChests;
-    std::vector<Furnace*> mFurnaces;
-    std::vector<DirectionBlock*> mDirects;
-    std::vector<Zombie*> mZombies;
-    std::vector<Cow*> mCows;
-    std::vector<Creeper*> mCreepers;
-    std::vector<Sheep*> mSheeps;
-    std::vector<Drop*> mDrops;
-    std::vector<TNT*> mTNTs;
-    std::vector<NoteBlockEntity*> mNoteBlocks;
-    std::vector<JukeboxEntity*> mJukeboxes;
-    std::vector<MonsterSpawnerEntity*> mMonsterSpawners;
-    std::vector<ItemFrameEntity*> mItemFrames;
+    std::vector<Chest *> mChests;
+    std::vector<Furnace *> mFurnaces;
+    std::vector<DirectionBlock *> mDirects;
+    std::vector<Zombie *> mZombies;
+    std::vector<Cow *> mCows;
+    std::vector<Creeper *> mCreepers;
+    std::vector<Sheep *> mSheeps;
+    std::vector<Drop *> mDrops;
+    std::vector<TNT *> mTNTs;
+    std::vector<NoteBlockEntity *> mNoteBlocks;
+    std::vector<JukeboxEntity *> mJukeboxes;
+    std::vector<MonsterSpawnerEntity *> mMonsterSpawners;
+    std::vector<ItemFrameEntity *> mItemFrames;
 
     /// Gui block properties
-    std::vector<Vector3*> mPositionLeftRight;
-    std::vector<Vector2*> mtexturesLeftRight;
-    std::vector<Vector3*> mTriangleLeftRight;
+    std::vector<Vector3 *> mPositionLeftRight;
+    std::vector<Vector2 *> mtexturesLeftRight;
+    std::vector<Vector3 *> mTriangleLeftRight;
 
-    std::vector<Vector3*> mPositionBackFront;
-    std::vector<Vector2*> mtexturesBackFront;
-    std::vector<Vector3*> mTriangleBackFront;
+    std::vector<Vector3 *> mPositionBackFront;
+    std::vector<Vector2 *> mtexturesBackFront;
+    std::vector<Vector3 *> mTriangleBackFront;
 
-    std::vector<Vector3*> mPositionBottomTop;
-    std::vector<Vector2*> mtexturesBottomTop;
-    std::vector<Vector3*> mTriangleBottomTop;
+    std::vector<Vector3 *> mPositionBottomTop;
+    std::vector<Vector2 *> mtexturesBottomTop;
+    std::vector<Vector3 *> mTriangleBottomTop;
 
     int iVertexLeftRight;
     int pointsLeftRight;
@@ -558,29 +710,35 @@ public:
     int TNTnum;
 
     Vector3 lightColor;
-    Vector3	ambientColor;
+    Vector3 ambientColor;
     float westLight;
     float eastLight;
 
     float skyTime;
 
     int FindFurnaceID(Vector3 pos);
+
     int FindChestID(Vector3 pos);
+
     int FindNoteBlockID(Vector3 pos);
+
     int FindJukeboxID(Vector3 pos);
+
     int FindMonsterSpawnerID(Vector3 pos);
+
     int FindItemFrameID(Vector3 pos);
 
     void SetPlayerSpawnPosition(Vector3 newPosition);
 
     void BuildExplodeSphere(float radius, int X, int Y, int Z);
+
     void BuildBlockSphere(float radius, block_t block, int X, int Y, int Z);
 
     void BuildBlockSphere(float radius, block_t block, int X, int Y, int Z, block_t blockToChange);
 
     void BuildBlockEllipsoid(float w_radius, float h_radius, block_t block, int X, int Y, int Z);
 
-    std::vector<SimpleMeshChunk*> mChunks;
+    std::vector<SimpleMeshChunk *> mChunks;
     std::vector<int> toUpdate;
     std::vector<int> toFastUpdate;
 
@@ -629,44 +787,44 @@ public:
     bool playerContactLadder;
 
     //player zone aabb
-	BoundingBox playerZoneBB;
+    BoundingBox playerZoneBB;
 
-	int WORLD_SIZE;
-	int CHUNK_SIZE;
+    int WORLD_SIZE;
+    int CHUNK_SIZE;
 
-	std::vector<int> mNearestChunksIds;
+    std::vector<int> mNearestChunksIds;
 
 private:
 
-	int texutreSize;
-	int textureChunk;
-	float percent;
-	float percent2;
-	float percent3;
+    int texutreSize;
+    int textureChunk;
+    float percent;
+    float percent2;
+    float percent3;
 
-	std::vector<SimpleMeshChunk*> mTransparentChunks;
+    std::vector<SimpleMeshChunk *> mTransparentChunks;
 
-	block_t* m_BlockSettings;
-    block_t* m_Blocks;
-
-
-	int chunksCreatedInFrameCount;
-	int transparentchunksCreatedInFrameCount;
-	int chunksCreatedInFrameCount2;
-	int transparentchunksCreatedInFrameCount2;
+    block_t *m_BlockSettings;
+    block_t *m_Blocks;
 
 
-	float minuteTimer;
-	float allChunksUpdateTimer;
-	bool updateChunksSwitch;
+    int chunksCreatedInFrameCount;
+    int transparentchunksCreatedInFrameCount;
+    int chunksCreatedInFrameCount2;
+    int transparentchunksCreatedInFrameCount2;
 
-	//world time
-	float worldHour;//1 game hour = 50 real seconds; 24 game hours = 20 real minutes
 
-	//information
-	int drawnTriangles;
-	float lightShadowFactor;
-	Vector3 lightFactor;
+    float minuteTimer;
+    float allChunksUpdateTimer;
+    bool updateChunksSwitch;
+
+    //world time
+    float worldHour;//1 game hour = 50 real seconds; 24 game hours = 20 real minutes
+
+    //information
+    int drawnTriangles;
+    float lightShadowFactor;
+    Vector3 lightFactor;
 
 };
 

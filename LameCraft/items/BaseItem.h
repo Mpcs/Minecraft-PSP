@@ -10,34 +10,35 @@ using namespace Aurora::Graphics;
 
 typedef const unsigned short item_id;
 
-class BaseItem
-{
+class BaseItem {
 public:
-	char textureRow;
-	char plane;
+    char textureRow;
+    char plane;
 
-	short furnItem;
+    short furnItem;
     short durabilityPoints;
 
-	short points;
-	short addPoints;
-	short add2Points;
+    short points;
+    short addPoints;
+    short add2Points;
 
-	bool terrainTexture;
+    bool terrainTexture;
     bool stackable;
 
-	item_t itemType; // "D" - default, "T" - tool, "F" - food, "H" - helmet, "C" - chestplate, "L" - leggings, "B" - boots "Y" - dye
+    item_t itemType; // "D" - default, "T" - tool, "F" - food, "H" - helmet, "C" - chestplate, "L" - leggings, "B" - boots "Y" - dye
 
-	TexturesPSPVertex *vertices;
-	TexturesPSPVertex *addVertices;
-	TexturesPSPVertex *add2Vertices;
+    TexturesPSPVertex *vertices;
+    TexturesPSPVertex *addVertices;
+    TexturesPSPVertex *add2Vertices;
 
-	TexturesPSPVertex *dropVertices;
+    TexturesPSPVertex *dropVertices;
 
-	BaseItem();
-	virtual ~BaseItem();
+    BaseItem();
 
-	static item_id getBaseID();
+    virtual ~BaseItem();
+
+    static item_id getBaseID();
+
     std::string name;
 };
 

@@ -2,6 +2,7 @@
 #define common_vram_h
 
 #include <stddef.h>
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -12,9 +13,10 @@ extern "C" {
 */
 
 /* make a static allocation of vram memory and return pointer relative to vram start */
-void* getStaticVramBuffer(unsigned int width, unsigned int height, unsigned int psm);
+void *getStaticVramBuffer(unsigned int width, unsigned int height, unsigned int psm);
+
 /* make a static allocation of vram memory and return absolute pointer */
-void* getStaticVramTexture(unsigned int width, unsigned int height, unsigned int psm);
+void *getStaticVramTexture(unsigned int width, unsigned int height, unsigned int psm);
 
 // the following is not yet implemented
 /*

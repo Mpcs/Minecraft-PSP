@@ -1,10 +1,8 @@
 #include "Furnace2.h"
 
 
-Furnace::Furnace(int x, int y, int z)
-{
-    for(int i = 0; i <= 2; i++)
-    {
+Furnace::Furnace(int x, int y, int z) {
+    for (int i = 0; i <= 2; i++) {
         furnaceSlotId[i] = -1;
         furnaceSlotAm[i] = -1;
         furnaceSlotSt[i] = 0;
@@ -22,18 +20,15 @@ Furnace::Furnace(int x, int y, int z)
     working = false;
 }
 
-void Furnace::SetSide(char side2)
-{
+void Furnace::SetSide(char side2) {
     side = side2;
 }
 
-char Furnace::GetSide()
-{
+char Furnace::GetSide() {
     return side;
 }
 
-Furnace::~Furnace()
-{
+Furnace::~Furnace() {
 
 }
 
