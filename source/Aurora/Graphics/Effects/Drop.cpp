@@ -191,7 +191,7 @@ void Drop::Render(Frustum &camFrustum, Vector3 playerPos, float camAngle) {
     if (toDestroy == false && getMe == false && active == true) {
         if (abs(position.x - playerPos.x) < 0.8f && abs(position.y - playerPos.y) < 1.8f &&
             abs(position.z - playerPos.z) < 0.8f && existingTime >= 0.5f &&
-            myCrft->InventoryIsFull(id, amount, stackable) == false && myCrft->HP > 0.0f) {
+            myCrft->InventoryIsFull(id, amount, stackable) == false && myCrft->health > 0.0f) {
             getMe = true;
             return;
         }
