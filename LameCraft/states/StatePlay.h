@@ -131,8 +131,6 @@ private:
 
 private:
 
-    double time12;
-
     RenderManager *mRender;
     SystemManager *mSystemMgr;
     SoundManager *mSoundMgr;
@@ -153,8 +151,6 @@ private:
     Destroyer *destroyer;
     StarsBox *starsBox;
     InventoryPlayer *invPlayer;
-
-    double temp_total_time_ms;
 
     bool cycle;
     bool loadReady;
@@ -196,7 +192,6 @@ private:
     short craftItemAm3;
     bool craftItemSt3;
 
-    float musicTimeGo;
     float musicTime;
 
     char chestId;
@@ -247,7 +242,6 @@ private:
     float tickCactusDamage;
     float tickOS;
     float tickShowSlotName;
-    short chunks; // 0 - 7;
 
     float tutorialTimer;
 
@@ -261,7 +255,6 @@ private:
     Timer mTimer;
     float dt;
 
-    //int texture[16];
     int barItems;
     int texture;
     int texture_mips;

@@ -100,7 +100,6 @@ namespace Aurora {
 
             void DrawCube(float x, float y, float z);
 
-
             void StartFrame(float a, float b, float c);
 
             void EndFrame();

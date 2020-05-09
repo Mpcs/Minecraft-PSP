@@ -20,14 +20,11 @@
 #define RUSSIAN 2
 
 StatePlay::StatePlay() {
-    time12 = 0.0f;
     mRender = NULL;
     mSystemMgr = NULL;
     fppCam = NULL;
     UseChest = NULL;
     UseFurnace = NULL;
-
-    temp_total_time_ms = 0;
 
     statisticsPage = 0;
 
@@ -67,10 +64,7 @@ StatePlay::StatePlay() {
     shift_x = 0.0f;
     shift_y = 0.0f;
 
-    musicTimeGo = 0;
-
     chunkId = 0;
-    chunks = 0;
 
     angleFactor = 0.0f;
 
