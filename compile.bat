@@ -1,3 +1,3 @@
-PATH=d:\programy\pspsdk\bin;%cd%;
+PATH=c:\pspsdk\bin;%cd%;
 make clean
 make
