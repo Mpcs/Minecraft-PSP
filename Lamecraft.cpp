@@ -8,7 +8,7 @@
 #include <Aurora/Graphics/Camera.h>
 #include <Aurora/Utils/StateManager.h>
 
-#include "states/StateMenu.h"
+#include "states/StateLanguageSelect.h"
 #include "screens/SplashScreen.h"
 #include "LameCraft/SoundManager.h"
 #include "LameCraft/TextureHelper.h"
@@ -57,9 +57,9 @@ int main() {
     RenderManager::InstancePtr()->SetClearColour(0xFFFFFFFF);
 
     //new active state
-    StateMenu *statePlay = new StateMenu();
-    statePlay->Init();
-    stateManager.ChangeState(statePlay);
+    StateLanguageSelect *state = new StateLanguageSelect();
+    state->Init();
+    stateManager.ChangeState(state);
 
     //trun
     while (stateManager.Running()) {

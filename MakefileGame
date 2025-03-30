@@ -52,6 +52,7 @@ LameCraft/States/StateMenu.o \
 LameCraft/States/StateOptions.o \
 LameCraft/States/StatePlayCreative.o \
 LameCraft/States/StatePlay.o \
+LameCraft/States/StateLanguageSelect.o \
 LameCraft/Screens/LoadingScreen.o \
 LameCraft/Screens/SplashScreen.o \
 LameCraft/InputHelper.o \
@@ -81,7 +82,7 @@ Lamecraft.o
 
 INCDIR = $(PSPPATH)/include
 INCDIR += ./include ./source ./libs ./LameCraft
-CFLAGS = -O3 -G0 -Wall -mpreferred-stack-boundary=4 #-enable-newlib-hw-fp -ffast-math
+CFLAGS = -w -O3 -G0 -mpreferred-stack-boundary=4 #-enable-newlib-hw-fp -ffast-math
 CXXFLAGS = $(CFLAGS) -fno-exceptions -fno-rtti
 ASFLAGS = $(CFLAGS)
 

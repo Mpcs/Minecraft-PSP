@@ -75,6 +75,8 @@ void StateMenu::Init() {
 
     lol = "";
 
+    SplashNumber = rand() % 6;
+
 
     mainStatistics.blockPlaced = 0;
     mainStatistics.blockDestroyed = 0;
@@ -200,7 +202,7 @@ void StateMenu::Init() {
     ScanSaveFiles("Save/");
     ScanTexturePacks("Assets/Textures/");
 
-    menuState = -1;
+    menuState = 0;
     loadSelectPos = 0;
     loadSavePos = 0;
     aboutPos = 0;
@@ -291,35 +293,6 @@ void StateMenu::HandleEvents(StateManager *sManager) {
     mSystemMgr->InputUpdate();
 
     switch (menuState) {
-        case -1:// language menu
-        {
-            //up, down
-            if (mSystemMgr->KeyPressed(PSP_CTRL_UP)) {
-                selectPos--;
-                if (selectPos < 0)
-                    selectPos = 1;
-
-                mSoundMgr->PlayMenuSound();
-            }
-
-            if (mSystemMgr->KeyPressed(PSP_CTRL_DOWN)) {
-                selectPos++;
-                if (selectPos > 1)
-                    selectPos = 0;
-
-                mSoundMgr->PlayMenuSound();
-            }
-
-            if (mSystemMgr->KeyPressed(PSP_CTRL_CROSS)) {
-                RenderManager::InstancePtr()->defaultFontType = selectPos + 1;
-                RenderManager::InstancePtr()->SetDefaultFont();
-                selectPos = 0;
-                menuState = 0;
-
-                SplashNumber = rand() % 6;
-            }
-        }
-            break;
         case 0://main menu
         {
             //if triangle button pressed the exit
@@ -1797,52 +1770,6 @@ void StateMenu::Draw(StateManager *sManager) {
     mRender->StartFrame(1, 1, 1);
 
     switch (menuState) {
-        case -1://language menu
-        {
-            sceGuDisable(GU_DEPTH_TEST);
-            sceGuEnable(GU_BLEND);
-            sceGuColor(GU_COLOR(1, 1, 1, 1.0f));
-
-            for (int x = 0; x < 8; x++) {
-                for (int y = 0; y < 5; y++) {
-                    backSprite->SetPosition(x * 64, y * 64);
-                    backSprite->Draw();
-                }
-            }
-
-            // english
-            buttonSprite->SetPosition(240, 120);
-            buttonSprite->Draw();
-
-            // russian
-            buttonSprite->SetPosition(240, 160);
-            buttonSprite->Draw();
-
-            //selected button
-            sbuttonSprite->SetPosition(240, (selectPos * 40) + 120);
-            sbuttonSprite->Draw();
-
-            sceGuDisable(GU_BLEND);
-            sceGuEnable(GU_DEPTH_TEST);
-
-            selectPos == 0 ? DrawText(240, 129, GU_COLOR(1, 1, 0.25, 1), default_size, "English") : DrawText(240, 129,
-                                                                                                             GU_COLOR(1,
-                                                                                                                      1,
-                                                                                                                      1,
-                                                                                                                      1),
-                                                                                                             default_size,
-                                                                                                             "English");
-            selectPos == 1 ? DrawText(240, 169, GU_COLOR(1, 1, 0.25, 1), default_size, "Russian") : DrawText(240, 169,
-                                                                                                             GU_COLOR(1,
-                                                                                                                      1,
-                                                                                                                      1,
-                                                                                                                      1),
-                                                                                                             default_size,
-                                                                                                             "Russian");
-
-            DrawText(240, 24, GU_COLOR(1, 1, 1, 1), default_size, "Choose your language");
-        }
-            break;
         case 0://main menu
         {
             sceGuDisable(GU_DEPTH_TEST);
@@ -1918,97 +1845,52 @@ void StateMenu::Draw(StateManager *sManager) {
                 splashSize = 0.0f;
             }
 
+            char* menuOptionNames [4] = {
+                    "Singleplayer", "Options", "About & Converter", "Texture Packs"
+                };
+            char* menuOptionNamesRussian[4] = {"Odinoyna^ igra", "Nastro~ki", "Ob igre i Konverter", "Tekstur@"};
+
+            char* splashTexts[6] = {
+                "Uses C++!",
+                "Fan fiction!",
+                "Made on Lamecraft op-30!",
+                "More polygons!",
+                "there is no grass",
+                "Not approved by Mojang"
+            };
+
+            char* splashTextsRussian[6] = {
+                "Na S++!",
+                "Fanatska^ rabota!",
+                "Uje 3 goda s vami!",
+                "Bol$we poligonov!",
+                "zdes$ net trav@",
+                "Ne odobreno Mojang"
+            };
+
             if (RenderManager::InstancePtr()->GetFontLanguage() == ENGLISH) {
-                selectPos == 0 ? DrawText(240, 129, GU_COLOR(1, 1, 0.25, 1), default_size, "Singleplayer") : DrawText(
-                        240, 129, GU_COLOR(1, 1, 1, 1), default_size, "Singleplayer");
-                selectPos == 1 ? DrawText(240, 169, GU_COLOR(1, 1, 0.25, 1), default_size, "Options") : DrawText(240,
-                                                                                                                 169,
-                                                                                                                 GU_COLOR(
-                                                                                                                         1,
-                                                                                                                         1,
-                                                                                                                         1,
-                                                                                                                         1),
-                                                                                                                 default_size,
-                                                                                                                 "Options");
-                selectPos == 2 ? DrawText(240, 209, GU_COLOR(1, 1, 0.25, 1), default_size, "About & Converter")
-                               : DrawText(240, 209, GU_COLOR(1, 1, 1, 1), default_size, "About & Converter");
-                selectPos == 3 ? DrawText(240, 249, GU_COLOR(1, 1, 0.25, 1), default_size, "Texture Packs") : DrawText(
-                        240, 249, GU_COLOR(1, 1, 1, 1), default_size, "Texture Packs");
 
-
-                switch (SplashNumber) {
-                    case 0:
-                        DrawText(328, 86, GU_COLOR(1, 1, 0, 1), 0.6 + sinf(splashSize) * 0.04f, "Uses C++!");
-                        break;
-                    case 1:
-                        DrawText(328, 86, GU_COLOR(1, 1, 0, 1), 0.6 + sinf(splashSize) * 0.04f, "Fan fiction!");
-                        break;
-                    case 2:
-                        DrawText(328, 86, GU_COLOR(1, 1, 0, 1), 0.6 + sinf(splashSize) * 0.04f,
-                                 "Made on Lamecraft op-30!");
-                        break;
-                    case 3:
-                        DrawText(328, 86, GU_COLOR(1, 1, 0, 1), 0.6 + sinf(splashSize) * 0.04f, "More polygons!");
-                        break;
-                    case 4:
-                        DrawText(328, 86, GU_COLOR(1, 1, 0, 1), 0.6 + sinf(splashSize) * 0.04f, "there is no grass");
-                        break;
-                    case 5:
-                        DrawText(328, 86, GU_COLOR(1, 1, 0, 1), 0.6 + sinf(splashSize) * 0.04f,
-                                 "Not approved by Mojang");
-                        break;
-                }
             }
+
+
             if (RenderManager::InstancePtr()->GetFontLanguage() == RUSSIAN) {
-                selectPos == 0 ? DrawText(240, 129, GU_COLOR(1, 1, 0.25, 1), default_size, "Odinoyna^ igra") : DrawText(
-                        240, 129, GU_COLOR(1, 1, 1, 1), default_size, "Odinoyna^ igra");
-                selectPos == 1 ? DrawText(240, 169, GU_COLOR(1, 1, 0.25, 1), default_size, "Nastro~ki") : DrawText(240,
-                                                                                                                   169,
-                                                                                                                   GU_COLOR(
-                                                                                                                           1,
-                                                                                                                           1,
-                                                                                                                           1,
-                                                                                                                           1),
-                                                                                                                   default_size,
-                                                                                                                   "Nastro~ki");
-                selectPos == 2 ? DrawText(240, 209, GU_COLOR(1, 1, 0.25, 1), default_size, "Ob igre i Konverter")
-                               : DrawText(240, 209, GU_COLOR(1, 1, 1, 1), default_size, "Ob igre i Konverter");
-                selectPos == 3 ? DrawText(240, 249, GU_COLOR(1, 1, 0.25, 1), default_size, "Tekstur@") : DrawText(240,
-                                                                                                                  249,
-                                                                                                                  GU_COLOR(
-                                                                                                                          1,
-                                                                                                                          1,
-                                                                                                                          1,
-                                                                                                                          1),
-                                                                                                                  default_size,
-                                                                                                                  "Tekstur@");
-
-                switch (SplashNumber) {
-                    case 0:
-                        DrawText(328, 86, GU_COLOR(1, 1, 0, 1), 0.6 + sinf(splashSize) * 0.04f, "Na S++!");
-                        break;
-                    case 1:
-                        DrawText(328, 86, GU_COLOR(1, 1, 0, 1), 0.6 + sinf(splashSize) * 0.04f, "Fanatska^ rabota!");
-                        break;
-                    case 2:
-                        DrawText(328, 86, GU_COLOR(1, 1, 0, 1), 0.6 + sinf(splashSize) * 0.04f, "Uje 3 goda s vami!");
-                        break;
-                    case 3:
-                        DrawText(328, 86, GU_COLOR(1, 1, 0, 1), 0.6 + sinf(splashSize) * 0.04f, "Bol$we poligonov!");
-                        break;
-                    case 4:
-                        DrawText(328, 86, GU_COLOR(1, 1, 0, 1), 0.6 + sinf(splashSize) * 0.04f, "zdes$ net trav@");
-                        break;
-                    case 5: {
-                        DrawText(328, 86, GU_COLOR(1, 1, 0, 1), 0.6 + sinf(splashSize) * 0.04f, "Ne odobreno ");
-                        RenderManager::InstancePtr()->SetFont(ENGLISH);
-                        DrawText(328, 84, GU_COLOR(1, 1, 0, 1), 0.6 + sinf(splashSize) * 0.04f,
-                                 "                Mojang");
-                        RenderManager::InstancePtr()->SetDefaultFont();
-                    }
-                        break;
-                }
+                std::copy(menuOptionNames, menuOptionNames+4, menuOptionNamesRussian);
+                std::copy(splashTexts, splashTexts+6, splashTextsRussian);
             }
+
+            int optionVerticalPosition = 129;
+            for (int i = 0; i < 4; i++) {
+                float lightness = 0.25;
+                if (selectPos == i) {
+                    lightness = 1;
+                }
+
+                DrawText(240, optionVerticalPosition, GU_COLOR(1, 1, lightness, 1), default_size, menuOptionNames[i]);
+
+                optionVerticalPosition += 40;
+            }
+
+            DrawText(328, 86, GU_COLOR(1, 1, 0, 1), 0.6 + sinf(splashSize) * 0.04f, splashTexts[SplashNumber]);
         }
             break;
         case 1://select world
