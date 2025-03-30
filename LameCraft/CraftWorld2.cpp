@@ -7,8 +7,6 @@
 #include <string.h>
 #include <zlib.h>
 
-#define PI 3.14159f
-
 #define ENGLISH 1
 #define RUSSIAN 2
 
@@ -107,7 +105,7 @@ CraftWorld::CraftWorld() {
 
     health = 20;
     hunger = 20;
-    OS = 10;
+    oxygenPoints = 10;
     AP = 0;
 
     playerGrowth = 1.65f;
@@ -1147,7 +1145,7 @@ void CraftWorld::initWorldBlocksLight() // Тень под блоками
                             GetBlock(x, y, z) = GrassBlock::getID();
                         }
                     }
-                    if (GetBlock(x, y, z) != 0 && BlockRefraction(x, y, z) != 0 && BlockRefraction(x, y, z) != 2 ||
+                    if ((GetBlock(x, y, z) != 0 && BlockRefraction(x, y, z) != 0 && BlockRefraction(x, y, z) != 2) ||
                         GetBlock(x, y, z) == WaterBlock::getID()) {
                         level += 1;
                     }
@@ -1467,7 +1465,7 @@ void CraftWorld::initPutBlocksLight(const int xx, const int zz) // Тень по
         SetShadowLevel(x, y, z, level);
         if (level < 15) {
             int block = GetBlockNoCheck(x, y, z);
-            if (block != 0 && BlockRefraction(x, y, z) != 0 && BlockRefraction(x, y, z) != 2 ||
+            if ((block != 0 && BlockRefraction(x, y, z) != 0 && BlockRefraction(x, y, z) != 2) ||
                 block == WaterBlock::getID()) {
                 level += 1;
             }
@@ -1623,7 +1621,7 @@ void CraftWorld::SaveCompressedWorld(std::string filename) // Сохранени
 
     gzwrite(saveFile, &hunger, sizeof(unsigned int));
 
-    gzwrite(saveFile, &OS, sizeof(unsigned int));
+    gzwrite(saveFile, &oxygenPoints, sizeof(unsigned int));
 
     gzwrite(saveFile, &brightFactor, sizeof(float));
 
@@ -2261,7 +2259,7 @@ void CraftWorld::LoadCompressedWorld(std::string filename) // Загрузка �
 
         gzread(saveFile, &hunger, sizeof(unsigned int));
 
-        gzread(saveFile, &OS, sizeof(unsigned int));
+        gzread(saveFile, &oxygenPoints, sizeof(unsigned int));
 
         gzread(saveFile, &brightFactor, sizeof(float));
 
@@ -4801,7 +4799,6 @@ void CraftWorld::GetItemVerts(int i, BaseItem *itemType) {
 
     iVertex = 0;
     //light
-    float BlockLight = 1.0f;  //For the two x faces
 
     mPosition.push_back(new Vector3(x, y, z + 1));
     mtextures.push_back(new Vector2(left, down));

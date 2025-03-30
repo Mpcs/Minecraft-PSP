@@ -596,7 +596,7 @@ public:
     float health;       // ��������
     float hunger;       // �������
     float AP;       // �����
-    char OS;        // ���������� ���������
+    char oxygenPoints;        // ���������� ���������
 
     bool kickedStart;
     int kickedBy;

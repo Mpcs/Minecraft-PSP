@@ -8628,7 +8628,7 @@ void StatePlay::HandleEvents(StateManager *sManager) {
                 fppCam->horAngle = 270;
                 mWorld->health = 20;
                 mWorld->hunger = 20;
-                mWorld->OS = 10;
+                mWorld->oxygenPoints = 10;
 
                 invEn = false;
                 craft3xEn = false;
@@ -9065,8 +9065,8 @@ void StatePlay::Update(StateManager *sManager) {
                 }
 
                 if (headInWater == 0) {
-                    if (mWorld->OS != 10) {
-                        mWorld->OS = 10;
+                    if (mWorld->oxygenPoints != 10) {
+                        mWorld->oxygenPoints = 10;
                     }
                     tickOS = 0;
                 } else {
@@ -10733,7 +10733,7 @@ void StatePlay::Draw(StateManager *sManager) {
 
                 if (headInWater) {
                     bubbleSprite->SetPosition(486 - i * 16, 32);
-                    if (i <= mWorld->OS) {
+                    if (i <= mWorld->oxygenPoints) {
                         bubbleSprite->Draw();
                     }
                 }
@@ -12849,11 +12849,11 @@ void StatePlay::HealthTime() {
 
 void StatePlay::OxygenTime() {
     if (mWorld->health > 0) {
-        if (mWorld->OS <= 0) {
+        if (mWorld->oxygenPoints <= 0) {
             HurtPlayer(2);
         }
-        if (mWorld->OS > 0) {
-            mWorld->OS -= 1;
+        if (mWorld->oxygenPoints > 0) {
+            mWorld->oxygenPoints -= 1;
         }
     }
 }

@@ -2,7 +2,6 @@
 #include "CraftWorld2.h"
 
 #define PIXEL 1.0f / 16.0f
-#define PI 3.14159f
 
 ItemFrameEntity::ItemFrameEntity(int create_x, int create_y, int create_z, unsigned int create_facing) : BlockEntity(
         create_x, create_y, create_z) {
@@ -54,7 +53,7 @@ void ItemFrameEntity::Render(CraftWorld *mWorld, Frustum &camFrustum, float dt) 
 
         float x_offset = 0.0f;
         float z_offset = 0.0f;
-        float rotate_y_offset;
+        float rotate_y_offset = 0.0f;
 
         updateLightTimer += dt;
         if (updateLightTimer > 0.4f) {
