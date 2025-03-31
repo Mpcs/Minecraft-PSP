@@ -1,6 +1,7 @@
 #include "StateLanguageSelect.h"
 #include "InputHelper.h"
 #include "TextureHelper.h"
+#include "lang/Translation.h"
 #include "states/StateMenu.h"
 #include <vector>
 #include <string>
@@ -8,9 +9,6 @@
 // font vars
 #define default_size 0.5
 #define default_big_size 0.687
-
-#define ENGLISH 1
-#define RUSSIAN 2
 
 using std::string;
 
@@ -52,13 +50,10 @@ void StateLanguageSelect::Init() {
         string linestr(line);
         int pos = linestr.find(":");
         string languageName = linestr.substr(0, pos);
-        string languageFileName = linestr.substr(pos+1, linestr.length()-1);
-        
+        string languageFileName = linestr.substr(pos+1, linestr.length()-pos-2 ); // -2 because we skip the last char - newline
+        printf(languageFileName.c_str());
         languageNames.push_back(languageName);
         languageFileNames.push_back(languageFileName);
-
-        // Print each line to the standard output.
-        printf("%s", line);
     }
     
     fclose(file);
@@ -103,9 +98,15 @@ void StateLanguageSelect::HandleEvents(StateManager *sManager) {
     }
 
     if (mSystemMgr->KeyPressed(PSP_CTRL_CROSS)) {
-        RenderManager::InstancePtr()->defaultFontType = selectPos + 1;
+        int fakeLangPos = selectPos; // Will be removed when translations work fully
+        if(selectPos > 1) {
+            fakeLangPos = 0;
+        }
+        RenderManager::InstancePtr()->defaultFontType = fakeLangPos + 1;
         RenderManager::InstancePtr()->SetDefaultFont();
-        selectPos = 0;
+
+        Translation* translation = Translation::GetInstance();
+        translation->loadLanguage(languageNames[selectPos], languageFileNames[selectPos]); 
         
         StateMenu *stateMenu = new StateMenu();
         stateMenu->Init();

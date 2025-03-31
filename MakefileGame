@@ -55,6 +55,7 @@ LameCraft/States/StatePlay.o \
 LameCraft/States/StateLanguageSelect.o \
 LameCraft/Screens/LoadingScreen.o \
 LameCraft/Screens/SplashScreen.o \
+LameCraft/Lang/Translation.o \
 LameCraft/InputHelper.o \
 LameCraft/TextureHelper.o \
 LameCraft/sound_utils/pgeWav.o \

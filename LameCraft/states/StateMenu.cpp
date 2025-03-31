@@ -3,6 +3,7 @@
 #include "states/StatePlay.h"
 #include "StatePlayCreative.h"
 #include "screens/LoadingScreen.h"
+#include "lang/Translation.h"
 #include "InputHelper.h"
 #include "TextureHelper.h"
 #include <Aurora/System/NetworkManager.h>
@@ -1845,38 +1846,9 @@ void StateMenu::Draw(StateManager *sManager) {
                 splashSize = 0.0f;
             }
 
-            char* menuOptionNames [4] = {
-                    "Singleplayer", "Options", "About & Converter", "Texture Packs"
-                };
-            char* menuOptionNamesRussian[4] = {"Odinoyna^ igra", "Nastro~ki", "Ob igre i Konverter", "Tekstur@"};
-
-            char* splashTexts[6] = {
-                "Uses C++!",
-                "Fan fiction!",
-                "Made on Lamecraft op-30!",
-                "More polygons!",
-                "there is no grass",
-                "Not approved by Mojang"
-            };
-
-            char* splashTextsRussian[6] = {
-                "Na S++!",
-                "Fanatska^ rabota!",
-                "Uje 3 goda s vami!",
-                "Bol$we poligonov!",
-                "zdes$ net trav@",
-                "Ne odobreno Mojang"
-            };
-
-            if (RenderManager::InstancePtr()->GetFontLanguage() == ENGLISH) {
-
-            }
-
-
-            if (RenderManager::InstancePtr()->GetFontLanguage() == RUSSIAN) {
-                std::copy(menuOptionNames, menuOptionNames+4, menuOptionNamesRussian);
-                std::copy(splashTexts, splashTexts+6, splashTextsRussian);
-            }
+            Translation* translation = Translation::GetInstance();
+            vector<string> splashTexts = translation->getValuesOfType("SPLASH");
+            vector<string> menuOptionNames = translation->getValuesOfType("MAIN_MENU");
 
             int optionVerticalPosition = 129;
             for (int i = 0; i < 4; i++) {
@@ -1885,12 +1857,12 @@ void StateMenu::Draw(StateManager *sManager) {
                     lightness = 1;
                 }
 
-                DrawText(240, optionVerticalPosition, GU_COLOR(1, 1, lightness, 1), default_size, menuOptionNames[i]);
+                DrawText(240, optionVerticalPosition, GU_COLOR(1, 1, lightness, 1), default_size, menuOptionNames[i].c_str());
 
                 optionVerticalPosition += 40;
             }
 
-            DrawText(328, 86, GU_COLOR(1, 1, 0, 1), 0.6 + sinf(splashSize) * 0.04f, splashTexts[SplashNumber]);
+            DrawText(328, 86, GU_COLOR(1, 1, 0, 1), 0.6 + sinf(splashSize) * 0.04f, splashTexts[SplashNumber].c_str());
         }
             break;
         case 1://select world
