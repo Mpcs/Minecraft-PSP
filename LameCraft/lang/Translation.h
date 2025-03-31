@@ -11,6 +11,9 @@ using std::vector;
 using std::map;
 
 class Translation {
+private:
+    string replaceNewlines(string input);
+
 public:
     Translation();
 

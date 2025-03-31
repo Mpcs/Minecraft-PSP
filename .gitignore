@@ -57,3 +57,5 @@ Temporary Items
 .gitignore
 compile.bat
 .vscode/settings.json
+_Game/EBOOT.PBP
+_Game/Log.txt

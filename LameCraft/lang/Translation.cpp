@@ -39,6 +39,7 @@ void Translation::loadLanguage(string languageName, string languageFileName) {
         int pos = linestr.find("=");
         string translationKey = linestr.substr(0, pos);
         string value = linestr.substr(pos+1, linestr.length()-1);
+        value = replaceNewlines(value);
 
         pos = translationKey.find(".");
         string type = translationKey.substr(0, pos);
@@ -48,6 +49,14 @@ void Translation::loadLanguage(string languageName, string languageFileName) {
     }
 
     fclose(file);
+}
+
+string Translation::replaceNewlines(string input) {
+    string queryString = "\\n";
+    int index = input.find(queryString);
+    if(index > -1 && index < (input.size() - 1))
+        input.replace(index, queryString.size(), "\n");
+    return input;
 }
 
 map<string, string> Translation::getTranslationsOfType(string translationType) {

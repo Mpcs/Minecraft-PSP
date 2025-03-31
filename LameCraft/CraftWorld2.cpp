@@ -2,13 +2,12 @@
 #include <Aurora/Graphics/RenderManager.h>
 #include <Aurora/Utils/Logger.h>
 #include "TextureHelper.h"
-
+#include "lang/Translation.h"
 
 #include <string.h>
 #include <zlib.h>
-
-#define ENGLISH 1
-#define RUSSIAN 2
+#include <map>
+#include <vector>
 
 CraftWorld::CraftWorld() {
     WORLD_SIZE = 0;
@@ -737,254 +736,22 @@ void CraftWorld::InitItemVector() {
 }
 
 void CraftWorld::UpdateBlocksAndItemsName() {
-    if (RenderManager::InstancePtr()->GetFontLanguage() == RUSSIAN) {
-        blockTypes[1].name = "Dern";
-        blockTypes[2].name = "Zeml^";
-        blockTypes[3].name = "Kamen$";
-        blockTypes[4].name = "Voda";
-        blockTypes[5].name = "Zolota^ ruda";
-        blockTypes[7].name = "Pesok";
-        blockTypes[8].name = "Dub";
-        blockTypes[9].name = "Dubov@e list$^";
-        blockTypes[10].name = "Yerna^ werst$";
-        blockTypes[11].name = "Sera^ werst$";
-        blockTypes[12].name = "Krasna^ werst$";
-        blockTypes[13].name = "Rozova^ werst$";
-        blockTypes[14].name = "Zelena^ werst$";
-        blockTypes[15].name = "La~mova^ werst$";
-        blockTypes[16].name = "Koriyneva^ werst$";
-        blockTypes[17].name = "Jelta^ werst$";
-        blockTypes[18].name = "Sin^^ werst$";
-        blockTypes[19].name = "Goluba^ werst$";
-        blockTypes[20].name = "Fioletova^ werst$";
-        blockTypes[21].name = "Purpurna^ werst$";
-        blockTypes[22].name = "Orangeva^ werst$";
-        blockTypes[23].name = "Svetlo-sera^ werst$";
-        blockTypes[24].name = "Werst$";
-        blockTypes[25].name = "Kaktus";
-        blockTypes[26].name = "Pesyanik";
-        blockTypes[27].name = "Kirpiyi";
-        blockTypes[28].name = "Spauner";
-        blockTypes[29].name = "Sneg";
-        blockTypes[30].name = "El$";
-        blockTypes[31].name = "Bereza";
-        blockTypes[32].name = "Led";
-        blockTypes[33].name = "Trostnik";
-        blockTypes[34].name = "Dubov@e doski";
-        blockTypes[35].name = "Knijna^ polka";
-        blockTypes[36].name = "Bul@jnik";
-        blockTypes[37].name = "Hvo^";
-        blockTypes[38].name = "Berezov@e list$^";
-        blockTypes[39].name = "Gubka";
-        blockTypes[40].name = "Steklo";
-        blockTypes[41].name = "Jelezna^ ruda";
-        blockTypes[42].name = "Ugol$na^ ruda";
-        blockTypes[43].name = "Almazna^ ruda";
-        blockTypes[44].name = "Krasna^ ruda";
-        blockTypes[45].name = "Lazuritova^ ruda";
-        blockTypes[46].name = "Obsidian";
-        blockTypes[47].name = "Snejn@~ blok";
-        blockTypes[49].name = "Dverno~ blok";
-        blockTypes[59].name = "Dubov@~ zabor";
-        blockTypes[60].name = "Bul@jnikova^ stupen$ka";
-        blockTypes[61].name = "Bul@jnikova^ stupen$ka";
-        blockTypes[62].name = "Bul@jnikova^ stupen$ka";
-        blockTypes[63].name = "Bul@jnikova^ stupen$ka";
-        blockTypes[64].name = "Almazn@~ blok";
-        blockTypes[65].name = "Zoloto~ blok";
-        blockTypes[66].name = "Jelezn@~ blok";
-        blockTypes[67].name = "Kirpiyna^ stupen$ka";
-        blockTypes[68].name = "Kirpiyna^ stupen$ka";
-        blockTypes[69].name = "Kirpiyna^ stupen$ka";
-        blockTypes[70].name = "Kirpiyna^ stupen$ka";
-        blockTypes[71].name = "Notn@~ blok";
-        blockTypes[72].name = "Muz@kal$n@~ proigr@vatel$";
-        blockTypes[73].name = "T@kva";
-        blockTypes[74].name = "T@kva";
-        blockTypes[75].name = "T@kva";
-        blockTypes[76].name = "T@kva";
-        blockTypes[81].name = "Arbuz";
-        blockTypes[82].name = "Polublok iz dubov@h dosok";
-        blockTypes[83].name = "Bul@jnikova^ plita";
-        blockTypes[84].name = "Kirpiyna^ plita";
-        blockTypes[85].name = "Kamenna^ plita";
-        blockTypes[86].name = "Pesyanikova^ plita";
-        blockTypes[91].name = "Tort";
-        blockTypes[92].name = "Zamwel@~ bul@jnik";
-        blockTypes[93].name = "Sneg";
-        blockTypes[94].name = "Sunduk";
-        blockTypes[95].name = "Sunduk";
-        blockTypes[96].name = "Sunduk";
-        blockTypes[97].name = "Sunduk";
-        blockTypes[99].name = "Glin^n@~ blok";
-        blockTypes[101].name = "Lazuritov@~ blok";
-        blockTypes[102].name = "Kamenn@~ kirpiy";
-        blockTypes[103].name = "Kamenn@~ kirpiy";
-        blockTypes[104].name = "Rezno~ kamenn@~ kirpiy";
-        blockTypes[105].name = "Verstak";
-        blockTypes[106].name = "Pey$";
-        blockTypes[107].name = "Pey$";
-        blockTypes[108].name = "Plita iz kamennogo kirpiya";
-        blockTypes[109].name = "Spauner mobov";
-        blockTypes[110].name = "TNT";
-        blockTypes[112].name = "Lava";
-        blockTypes[113].name = "Gravi~";
-        blockTypes[125].name = "Dubova^ stupen@ka";
-        blockTypes[126].name = "Dubova^ stupen@ka";
-        blockTypes[127].name = "Dubova^ stupen@ka";
-        blockTypes[142].name = "Korenna^ poroda";
-        blockTypes[143].name = "Svetil$nik Djeka";
-        blockTypes[144].name = "Svetil$nik Djeka";
-        blockTypes[145].name = "Svetil$nik Djeka";
-        blockTypes[146].name = "Svetil$nik Djeka";
-        blockTypes[151].name = "L#k";
-        blockTypes[155].name = "Berezov@e doski";
-        blockTypes[156].name = "Elov@e doski";
-        blockTypes[157].name = "Polublok iz berezov@h dosok";
-        blockTypes[158].name = "Polublok iz elov@h dosok";
-        blockTypes[159].name = "Berezov@~ zabor";
-        blockTypes[160].name = "Elov@~ zabor";
-        blockTypes[161].name = "Berezova^ stupen$ka";
-        blockTypes[165].name = "Elova^ stupen$ka";
-
-        for (int i = 197; i <= 212; i++) {
-            blockTypes[i].name = "Kover";
-        }
-        blockTypes[213].name = "Blok Sena";
-        blockTypes[214].name = "Ugol$n@~ blok";
-        blockTypes[215].name = "Blok Redstouna";
-
-        itemTypes[0].name = "Derev^nna^ kirka";
-        itemTypes[1].name = "Kamenna^ kirka";
-        itemTypes[2].name = "Jelezna^ kirka";
-        itemTypes[3].name = "Almazna^ kirka";
-        itemTypes[4].name = "Zolota^ kirka";
-        itemTypes[5].name = "Derev^nn@~ mey";
-        itemTypes[6].name = "Kamenn@~ mey";
-        itemTypes[7].name = "Jelezn@~ mey";
-        itemTypes[8].name = "Almazn@~ mey";
-        itemTypes[9].name = "Zoloto~ mey";
-        itemTypes[10].name = "Derev^nna^ lopata";
-        itemTypes[11].name = "Kamenna^ lopata";
-        itemTypes[12].name = "Jelezna^ lopata";
-        itemTypes[13].name = "Almazna^ lopata";
-        itemTypes[14].name = "Zolota^ lopata";
-        itemTypes[15].name = "Derev^nn@~ topor";
-        itemTypes[16].name = "Kamenn@~ topor";
-        itemTypes[17].name = "Jelezn@~ topor";
-        itemTypes[18].name = "Almazn@~ topor";
-        itemTypes[19].name = "Zoloto~ topor";
-        itemTypes[20].name = "Derev^nna^ mot@ga";
-        itemTypes[21].name = "Kamenna^ mot@ga";
-        itemTypes[22].name = "Jelezna^ mot@ga";
-        itemTypes[23].name = "Almazna^ mot@ga";
-        itemTypes[24].name = "Zolota^ mot@ga";
-        itemTypes[25].name = "Nojnic@";
-        itemTypes[26].name = "Palka";
-        itemTypes[27].name = "Ugol$";
-        itemTypes[28].name = "Jelezn@~ slitok";
-        itemTypes[29].name = "Almaz";
-        itemTypes[30].name = "Zoloto~ slitok";
-        itemTypes[33].name = "Glina";
-        itemTypes[34].name = "]bloko";
-        itemTypes[35].name = "Zolotoe ^bloko";
-        itemTypes[36].name = "Semena pwenic@";
-        itemTypes[37].name = "Pwenica";
-        itemTypes[38].name = "Hleb";
-        itemTypes[39].name = "Kirpiy";
-        itemTypes[40].name = "Vedro";
-        itemTypes[41].name = "Vedro vod@";
-        itemTypes[42].name = "Vedro lav@";
-        itemTypes[43].name = "Trostnik";
-        itemTypes[44].name = "Roza";
-        itemTypes[45].name = "Oduvanyik";
-        itemTypes[46].name = "Sajenec duba";
-        itemTypes[47].name = "Bumaga";
-        itemTypes[48].name = "Kniga";
-        itemTypes[49].name = "Snejok";
-        itemTypes[50].name = "Grib";
-        itemTypes[51].name = "Grib";
-        itemTypes[52].name = "Miska";
-        itemTypes[53].name = "Gribna^ pohlebka";
-        itemTypes[56].name = "Dver$";
-        itemTypes[57].name = "Lestnica";
-        itemTypes[58].name = "Fakel";
-        itemTypes[59].name = "Sajenec eli";
-        itemTypes[60].name = "Sajenec berez@";
-        itemTypes[61].name = "Lomtik arbuza";
-        itemTypes[62].name = "Semeba arbuza";
-        itemTypes[63].name = "Sahar";
-        itemTypes[64].name = "Kako-bob@";
-        itemTypes[65].name = "Peyen$e";
-        itemTypes[66].name = "S@ra^ gov^dina";
-        itemTypes[67].name = "Ste~k";
-        itemTypes[68].name = "Lazurit";
-        itemTypes[69].name = "Vedro moloka";
-        itemTypes[70].name = "Tort";
-        itemTypes[71].name = "Kost$";
-        itemTypes[72].name = "Kostna^ muka";
-        itemTypes[73].name = "Koja";
-        itemTypes[78].name = "Kojana^ wapka";
-        itemTypes[79].name = "Kojana^ kurtka";
-        itemTypes[80].name = "Kojan@e wtan@";
-        itemTypes[81].name = "Kojan@e sapogi";
-        itemTypes[82].name = "Kolyujn@~ wlem";
-        itemTypes[83].name = "Kolyujn@~ nagrudnik";
-        itemTypes[84].name = "Kolyujn@e ponoji";
-        itemTypes[85].name = "Kolyujn@e botinki";
-        itemTypes[86].name = "Jelezn@~ wlem";
-        itemTypes[87].name = "Jelezna^ kirasa";
-        itemTypes[88].name = "Jelezn@e ponoji";
-        itemTypes[89].name = "Jelezn@e botinki";
-        itemTypes[90].name = "Almazn@~ wlem";
-        itemTypes[91].name = "Almazna^ kirasa";
-        itemTypes[92].name = "Almazn@e ponoji";
-        itemTypes[93].name = "Almazn@e botinki";
-        itemTypes[94].name = "Zoloto~ wlem";
-        itemTypes[95].name = "Zolota^ kirasa";
-        itemTypes[96].name = "Zolot@e ponoji";
-        itemTypes[97].name = "Zolot@e botinki";
-        itemTypes[98].name = "Gnila^ plot$";
-        itemTypes[99].name = "Stekl^nna^ panel$";
-        itemTypes[100].name = "Jelezna^ rewetka";
-
-        itemTypes[101].name = "Kremen$";
-        itemTypes[102].name = "Poroh";
-        itemTypes[103].name = "Redstoun";
-        itemTypes[104].name = "Yas@";
-        itemTypes[105].name = "Kompas";
-        itemTypes[106].name = "Sedlo";
-        itemTypes[107].name = "Tabliyka";
-        itemTypes[108].name = "Ramka";
-        itemTypes[109].name = "Cvetoyn@~ gorwok";
-        itemTypes[110].name = "Kartina";
-        itemTypes[111].name = "Krovat$";
-        itemTypes[112].name = "Muz@kal$na^ plastinka";
-        itemTypes[113].name = "Muz@kal$na^ plastinka";
-        itemTypes[114].name = "Muz@kal$na^ plastinka";
-        itemTypes[115].name = "Svetlo-ser@~ krasitel$";
-        itemTypes[116].name = "Ser@~ krasitel$";
-        itemTypes[117].name = "Yernil$n@~ mewok";
-        itemTypes[118].name = "Rozov@~ krasitel$";
-        itemTypes[119].name = "Krasn@~ krasitel$";
-        itemTypes[120].name = "Oranjev@~ krasitel$";
-        itemTypes[121].name = "Jelt@~ krasitel$";
-        itemTypes[122].name = "La~mov@~ krasitel$";
-        itemTypes[123].name = "Zelen@~ krasitel$";
-        itemTypes[124].name = "Svetlo-sini~ krasitel$";
-        itemTypes[125].name = "Fioletov@~ krasitel$";
-        itemTypes[126].name = "Sirenev@~ krasitel$";
-        itemTypes[127].name = "Semena t@kv@";
-        itemTypes[128].name = "Ognivo";
-        itemTypes[129].name = "Kartofel$";
-        itemTypes[130].name = "Peyenn@~ kartofel$";
-        itemTypes[131].name = "]dovit@~ kartofel$";
-        itemTypes[132].name = "Morkov$";
-
-        for (int i = 133; i <= 141; i++) {
-            itemTypes[i].name = "Muz@kal$na^ plastinka";
-        }
-    }
+    //Translation* translation = Translation::GetInstance();
+    //map<string, string> blockNames = translation->getTranslationsOfType("BLOCK");
+    //for (int i = 0; i < blockTypes.size(); i++) {
+    //    int id = blockTypes[i].getBaseID();
+    //    char stringid[3];
+    //    sprintf(stringid, "%d", id);
+    //    blockTypes[i].name = blockNames[stringid];
+    //}
+//
+    //map<string, string> itemNames = translation->getTranslationsOfType("ITEM");
+    //for (int i = 0; i < itemTypes.size(); i++) {
+    //    int id = itemTypes[i].getBaseID();
+    //    char stringid[3];
+    //    sprintf(stringid, "%d", id);
+    //    itemTypes[i].name = itemNames[stringid];
+    //}
 }
 
 CraftWorld::~CraftWorld() {
