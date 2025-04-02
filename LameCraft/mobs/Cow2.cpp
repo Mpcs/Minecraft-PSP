@@ -1,6 +1,8 @@
 #include "Cow2.h"
 #include <Aurora/Graphics/TextureManager.h>
 
+#include "mobs/models/CowModel.h"
+
 #define PI 3.14159f
 #define DEG_TO_RAD (PI / 180.0f)
 #define PIXEL 1.0f / 16.0f
@@ -527,7 +529,7 @@ void Cow::Render(Frustum &camFrustum, float dt) {
             sceGumRotateZ(0.0f);
 
             sceGumDrawArray(GU_TRIANGLES, GU_TEXTURE_32BITF | GU_VERTEX_32BITF | GU_TRANSFORM_3D, 36, 0,
-                            world->cowBodyVertices);
+                            CowModel::bodyVertices);
             sceGumPopMatrix();
 
 
@@ -540,7 +542,7 @@ void Cow::Render(Frustum &camFrustum, float dt) {
             sceGumRotateZ(0.0f);
 
             sceGumDrawArray(GU_TRIANGLES, GU_TEXTURE_32BITF | GU_VERTEX_32BITF | GU_TRANSFORM_3D, 36, 0,
-                            world->cowHeadVertices);
+                            CowModel::headVertices);
 
             // horns drawing
             /*if(DistanceToPlayer() < 15.0f)
@@ -578,7 +580,7 @@ void Cow::Render(Frustum &camFrustum, float dt) {
             sceGumRotateZ(rLegAngle - animLegAngle);
 
             sceGumDrawArray(GU_TRIANGLES, GU_TEXTURE_32BITF | GU_VERTEX_32BITF | GU_TRANSFORM_3D, 36, 0,
-                            world->cowLegVertices);
+                            CowModel::legVertices);
             sceGumPopMatrix();
 
 
@@ -591,7 +593,7 @@ void Cow::Render(Frustum &camFrustum, float dt) {
             sceGumRotateZ(lLegAngle + animLegAngle);
 
             sceGumDrawArray(GU_TRIANGLES, GU_TEXTURE_32BITF | GU_VERTEX_32BITF | GU_TRANSFORM_3D, 36, 0,
-                            world->cowLegVertices);
+                            CowModel::legVertices);
             sceGumPopMatrix();
 
 
@@ -604,7 +606,7 @@ void Cow::Render(Frustum &camFrustum, float dt) {
             sceGumRotateZ(rLegAngle + animLegAngle);
 
             sceGumDrawArray(GU_TRIANGLES, GU_TEXTURE_32BITF | GU_VERTEX_32BITF | GU_TRANSFORM_3D, 36, 0,
-                            world->cowLegVertices);
+                            CowModel::legVertices);
             sceGumPopMatrix();
 
 
@@ -617,7 +619,7 @@ void Cow::Render(Frustum &camFrustum, float dt) {
             sceGumRotateZ(lLegAngle - animLegAngle);
 
             sceGumDrawArray(GU_TRIANGLES, GU_TEXTURE_32BITF | GU_VERTEX_32BITF | GU_TRANSFORM_3D, 36, 0,
-                            world->cowLegVertices);
+                            CowModel::legVertices);
             sceGumPopMatrix();
 
 

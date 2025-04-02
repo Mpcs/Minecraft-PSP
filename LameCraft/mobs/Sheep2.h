@@ -66,6 +66,12 @@ private:
     bool senselessJumps;
     float senselessJumpsTimer;
     float senselessJumpsTimerMax;
+
+    static TexturesPSPVertex sheepBodyVertices[36];
+    static TexturesPSPVertex sheepHeadVertices[36];
+    static TexturesPSPVertex sheepHeadFurVertices[36];
+    static TexturesPSPVertex sheepLegFurVertices[30];
+
 };
 
 #endif

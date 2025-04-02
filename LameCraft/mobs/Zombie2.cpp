@@ -8,6 +8,7 @@
 #define JUMPVELOCITY 4.6f
 
 #include "CraftWorld2.h"
+#include "mobs/models/HumanoidModel.h"
 
 /// SIMPLE TRIGONOMETRY
 
@@ -679,7 +680,7 @@ void Zombie::Render(Frustum &camFrustum, float dt) {
             sceGumRotateZ(0.0f);
 
             sceGumDrawArray(GU_TRIANGLES, GU_TEXTURE_32BITF | GU_VERTEX_32BITF | GU_TRANSFORM_3D, 36, 0,
-                            world->bodyVertices);
+                            HumanoidModel::bodyVertices);
             sceGumPopMatrix();
 
 
@@ -692,7 +693,7 @@ void Zombie::Render(Frustum &camFrustum, float dt) {
             sceGumRotateZ(headAngleZ);
 
             sceGumDrawArray(GU_TRIANGLES, GU_TEXTURE_32BITF | GU_VERTEX_32BITF | GU_TRANSFORM_3D, 36, 0,
-                            world->headVertices);
+                            HumanoidModel::headVertices);
             sceGumPopMatrix();
 
 
@@ -705,7 +706,7 @@ void Zombie::Render(Frustum &camFrustum, float dt) {
             sceGumRotateZ(rHandAngle - animHandAngle);
 
             sceGumDrawArray(GU_TRIANGLES, GU_TEXTURE_32BITF | GU_VERTEX_32BITF | GU_TRANSFORM_3D, 36, 0,
-                            world->handVertices);
+                            HumanoidModel::armVertices);
             sceGumPopMatrix();
 
 
@@ -718,7 +719,7 @@ void Zombie::Render(Frustum &camFrustum, float dt) {
             sceGumRotateZ(lHandAngle + animHandAngle);
 
             sceGumDrawArray(GU_TRIANGLES, GU_TEXTURE_32BITF | GU_VERTEX_32BITF | GU_TRANSFORM_3D, 36, 0,
-                            world->handVertices);
+                            HumanoidModel::armVertices);
             sceGumPopMatrix();
 
 
@@ -731,7 +732,7 @@ void Zombie::Render(Frustum &camFrustum, float dt) {
             sceGumRotateZ(rLegAngle + animLegAngle);
 
             sceGumDrawArray(GU_TRIANGLES, GU_TEXTURE_32BITF | GU_VERTEX_32BITF | GU_TRANSFORM_3D, 36, 0,
-                            world->legVertices);
+                            HumanoidModel::legVertices);
             sceGumPopMatrix();
 
 
@@ -744,7 +745,7 @@ void Zombie::Render(Frustum &camFrustum, float dt) {
             sceGumRotateZ(lLegAngle - animLegAngle);
 
             sceGumDrawArray(GU_TRIANGLES, GU_TEXTURE_32BITF | GU_VERTEX_32BITF | GU_TRANSFORM_3D, 36, 0,
-                            world->legVertices);
+                            HumanoidModel::legVertices);
             sceGumPopMatrix();
 
 

@@ -7,6 +7,8 @@
 #define GRAVITY -6.8f
 #define JUMPVELOCITY 4.6f
 
+#include "mobs/models/HumanoidModel.h"
+
 namespace Aurora {
     namespace Graphics {
         InventoryPlayer::InventoryPlayer() {
@@ -60,7 +62,7 @@ namespace Aurora {
             sceGumRotateZ(rHandAngle);
 
             sceGumDrawArray(GU_TRIANGLES, GU_TEXTURE_32BITF | GU_VERTEX_32BITF | GU_TRANSFORM_3D, 36, 0,
-                            world->handVertices);
+                            HumanoidModel::armVertices);
             sceGumPopMatrix();
 
 
@@ -79,7 +81,7 @@ namespace Aurora {
             }
 
             sceGumDrawArray(GU_TRIANGLES, GU_TEXTURE_32BITF | GU_VERTEX_32BITF | GU_TRANSFORM_3D, 36, 0,
-                            world->handVertices);
+                            HumanoidModel::armVertices);
 
             // ITEM IN OUR HAND
             sceGumPushMatrix();
@@ -139,7 +141,7 @@ namespace Aurora {
             sceGumRotateZ(rLegAngle);
 
             sceGumDrawArray(GU_TRIANGLES, GU_TEXTURE_32BITF | GU_VERTEX_32BITF | GU_TRANSFORM_3D, 36, 0,
-                            world->legVertices);
+                            HumanoidModel::legVertices);
             sceGumPopMatrix();
 
 
@@ -154,7 +156,7 @@ namespace Aurora {
             sceGumRotateZ(lLegAngle);
 
             sceGumDrawArray(GU_TRIANGLES, GU_TEXTURE_32BITF | GU_VERTEX_32BITF | GU_TRANSFORM_3D, 36, 0,
-                            world->legVertices);
+                            HumanoidModel::legVertices);
             sceGumPopMatrix();
 
 
@@ -169,7 +171,7 @@ namespace Aurora {
             sceGumRotateZ(0.0f);
 
             sceGumDrawArray(GU_TRIANGLES, GU_TEXTURE_32BITF | GU_VERTEX_32BITF | GU_TRANSFORM_3D, 36, 0,
-                            world->bodyVertices);
+                            HumanoidModel::bodyVertices);
             sceGumPopMatrix();
 
 
@@ -185,7 +187,7 @@ namespace Aurora {
             sceGumRotateZ(0.0f);
 
             sceGumDrawArray(GU_TRIANGLES, GU_TEXTURE_32BITF | GU_VERTEX_32BITF | GU_TRANSFORM_3D, 36, 0,
-                            world->headVertices);
+                            HumanoidModel::headVertices);
             sceGumPopMatrix();
 
 

@@ -8,6 +8,7 @@
 #define JUMPVELOCITY 4.6f
 
 #include "CraftWorld2.h"
+#include "mobs/models/CreeperModel.h"
 
 /// SIMPLE TRIGONOMETRY
 
@@ -651,7 +652,7 @@ void Creeper::Render(Frustum &camFrustum, float dt) {
             sceGumRotateZ(0.0f);
 
             sceGumDrawArray(GU_TRIANGLES, GU_TEXTURE_32BITF | GU_VERTEX_32BITF | GU_TRANSFORM_3D, 36, 0,
-                            world->bodyVertices);
+                            CreeperModel::bodyVertices);
             sceGumPopMatrix();
 
 
@@ -664,7 +665,7 @@ void Creeper::Render(Frustum &camFrustum, float dt) {
             sceGumRotateZ(headAngleZ);
 
             sceGumDrawArray(GU_TRIANGLES, GU_TEXTURE_32BITF | GU_VERTEX_32BITF | GU_TRANSFORM_3D, 36, 0,
-                            world->headVertices);
+                            CreeperModel::headVertices);
             sceGumPopMatrix();
 
 
@@ -677,7 +678,7 @@ void Creeper::Render(Frustum &camFrustum, float dt) {
             sceGumRotateZ(rLegAngle + animLegAngle);
 
             sceGumDrawArray(GU_TRIANGLES, GU_TEXTURE_32BITF | GU_VERTEX_32BITF | GU_TRANSFORM_3D, 36, 0,
-                            world->creeperLegVertices);
+                            CreeperModel::legVertices);
             sceGumPopMatrix();
 
 
@@ -690,7 +691,7 @@ void Creeper::Render(Frustum &camFrustum, float dt) {
             sceGumRotateZ(rLegAngle + animLegAngle);
 
             sceGumDrawArray(GU_TRIANGLES, GU_TEXTURE_32BITF | GU_VERTEX_32BITF | GU_TRANSFORM_3D, 36, 0,
-                            world->creeperLegVertices);
+                            CreeperModel::legVertices);
             sceGumPopMatrix();
 
 
@@ -703,7 +704,7 @@ void Creeper::Render(Frustum &camFrustum, float dt) {
             sceGumRotateZ(lLegAngle - animLegAngle);
 
             sceGumDrawArray(GU_TRIANGLES, GU_TEXTURE_32BITF | GU_VERTEX_32BITF | GU_TRANSFORM_3D, 36, 0,
-                            world->creeperLegVertices);
+                            CreeperModel::legVertices);
             sceGumPopMatrix();
 
 
@@ -716,7 +717,7 @@ void Creeper::Render(Frustum &camFrustum, float dt) {
             sceGumRotateZ(lLegAngle - animLegAngle);
 
             sceGumDrawArray(GU_TRIANGLES, GU_TEXTURE_32BITF | GU_VERTEX_32BITF | GU_TRANSFORM_3D, 36, 0,
-                            world->creeperLegVertices);
+                            CreeperModel::legVertices);
             sceGumPopMatrix();
 
 

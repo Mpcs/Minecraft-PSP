@@ -1,5 +1,6 @@
 #include "Sheep2.h"
 #include <Aurora/Graphics/TextureManager.h>
+#include "mobs/models/SheepModel.h"
 
 #define PI 3.14159f
 #define DEG_TO_RAD (PI / 180.0f)
@@ -642,7 +643,7 @@ void Sheep::Render(Frustum &camFrustum, float dt) {
                 sceGumRotateZ(0.0f);
 
                 sceGumDrawArray(GU_TRIANGLES, GU_TEXTURE_32BITF | GU_VERTEX_32BITF | GU_TRANSFORM_3D, 36, 0,
-                                world->sheepBodyVertices);
+                                SheepModel::bodyVertices);
 
                 sceGumPopMatrix();
             } else {
@@ -668,7 +669,7 @@ void Sheep::Render(Frustum &camFrustum, float dt) {
                 sceGumRotateZ(0.0f);
 
                 sceGumDrawArray(GU_TRIANGLES, GU_TEXTURE_32BITF | GU_VERTEX_32BITF | GU_TRANSFORM_3D, 36, 0,
-                                world->sheepBodyVertices);
+                    SheepModel::bodyVertices);
 
                 sceGumPopMatrix();
 
@@ -685,7 +686,7 @@ void Sheep::Render(Frustum &camFrustum, float dt) {
                 sceGumRotateZ(0.0f);
 
                 sceGumDrawArray(GU_TRIANGLES, GU_TEXTURE_32BITF | GU_VERTEX_32BITF | GU_TRANSFORM_3D, 36, 0,
-                                world->sheepHeadFurVertices);
+                    SheepModel::headFurVertices);
 
                 sceGumPopMatrix();
             }
@@ -708,7 +709,7 @@ void Sheep::Render(Frustum &camFrustum, float dt) {
             sceGumRotateZ(0.0f);
 
             sceGumDrawArray(GU_TRIANGLES, GU_TEXTURE_32BITF | GU_VERTEX_32BITF | GU_TRANSFORM_3D, 30 + sheared * 6, 0,
-                            world->sheepHeadVertices);
+                SheepModel::headVertices);
 
             sceGumPopMatrix();
 
@@ -734,7 +735,7 @@ void Sheep::Render(Frustum &camFrustum, float dt) {
                 sceGumRotateZ(rLegAngle - animLegAngle);
 
                 sceGumDrawArray(GU_TRIANGLES, GU_TEXTURE_32BITF | GU_VERTEX_32BITF | GU_TRANSFORM_3D, 30, 0,
-                                world->sheepLegFurVertices);
+                    SheepModel::legFurVertices);
                 sceGumPopMatrix();
 
 
@@ -749,7 +750,7 @@ void Sheep::Render(Frustum &camFrustum, float dt) {
                 sceGumRotateZ(lLegAngle + animLegAngle);
 
                 sceGumDrawArray(GU_TRIANGLES, GU_TEXTURE_32BITF | GU_VERTEX_32BITF | GU_TRANSFORM_3D, 30, 0,
-                                world->sheepLegFurVertices);
+                    SheepModel::legFurVertices);
                 sceGumPopMatrix();
 
 
@@ -764,7 +765,7 @@ void Sheep::Render(Frustum &camFrustum, float dt) {
                 sceGumRotateZ(rLegAngle + animLegAngle);
 
                 sceGumDrawArray(GU_TRIANGLES, GU_TEXTURE_32BITF | GU_VERTEX_32BITF | GU_TRANSFORM_3D, 30, 0,
-                                world->sheepLegFurVertices);
+                    SheepModel::legFurVertices);
                 sceGumPopMatrix();
 
 
@@ -779,7 +780,7 @@ void Sheep::Render(Frustum &camFrustum, float dt) {
                 sceGumRotateZ(lLegAngle - animLegAngle);
 
                 sceGumDrawArray(GU_TRIANGLES, GU_TEXTURE_32BITF | GU_VERTEX_32BITF | GU_TRANSFORM_3D, 30, 0,
-                                world->sheepLegFurVertices);
+                    SheepModel::legFurVertices);
                 sceGumPopMatrix();
             }
 
@@ -799,7 +800,7 @@ void Sheep::Render(Frustum &camFrustum, float dt) {
             sceGumRotateZ(rLegAngle - animLegAngle);
 
             sceGumDrawArray(GU_TRIANGLES, GU_TEXTURE_32BITF | GU_VERTEX_32BITF | GU_TRANSFORM_3D, 30 + sheared * 6, 0,
-                            world->cowLegVertices);
+                            SheepModel::legVertices);
             sceGumPopMatrix();
 
 
@@ -812,7 +813,7 @@ void Sheep::Render(Frustum &camFrustum, float dt) {
             sceGumRotateZ(lLegAngle + animLegAngle);
 
             sceGumDrawArray(GU_TRIANGLES, GU_TEXTURE_32BITF | GU_VERTEX_32BITF | GU_TRANSFORM_3D, 30 + sheared * 6, 0,
-                            world->cowLegVertices);
+                            SheepModel::legVertices);
             sceGumPopMatrix();
 
 
@@ -825,7 +826,7 @@ void Sheep::Render(Frustum &camFrustum, float dt) {
             sceGumRotateZ(rLegAngle + animLegAngle);
 
             sceGumDrawArray(GU_TRIANGLES, GU_TEXTURE_32BITF | GU_VERTEX_32BITF | GU_TRANSFORM_3D, 30 + sheared * 6, 0,
-                            world->cowLegVertices);
+                            SheepModel::legVertices);
             sceGumPopMatrix();
 
 
@@ -838,7 +839,7 @@ void Sheep::Render(Frustum &camFrustum, float dt) {
             sceGumRotateZ(lLegAngle - animLegAngle);
 
             sceGumDrawArray(GU_TRIANGLES, GU_TEXTURE_32BITF | GU_VERTEX_32BITF | GU_TRANSFORM_3D, 30 + sheared * 6, 0,
-                            world->cowLegVertices);
+                            SheepModel::legVertices);
             sceGumPopMatrix();
 
 
@@ -853,3 +854,4 @@ void Sheep::Render(Frustum &camFrustum, float dt) {
     }
 }
 
+//TODO: Free Verts!!

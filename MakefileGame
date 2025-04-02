@@ -48,6 +48,11 @@ LameCraft/Mobs/Zombie2.o \
 LameCraft/Mobs/Cow2.o \
 LameCraft/Mobs/Creeper2.o \
 LameCraft/Mobs/Sheep2.o \
+Lamecraft/Mobs/Models/ArmorModel.o \
+Lamecraft/Mobs/Models/CowModel.o \
+Lamecraft/Mobs/Models/CreeperModel.o \
+Lamecraft/Mobs/Models/HumanoidModel.o \
+Lamecraft/Mobs/Models/SheepModel.o \
 LameCraft/States/StateMenu.o \
 LameCraft/States/StateOptions.o \
 LameCraft/States/StatePlayCreative.o \

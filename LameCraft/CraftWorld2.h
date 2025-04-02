@@ -751,38 +751,6 @@ public:
 
     std::vector<int> updatingChunks;
 
-    // for humanoids
-    TexturesPSPVertex *bodyVertices;
-    TexturesPSPVertex *headVertices;
-    TexturesPSPVertex *hatVertices;
-    TexturesPSPVertex *legVertices;
-    TexturesPSPVertex *handVertices;
-
-    // for creeper
-    TexturesPSPVertex *creeperLegVertices;
-
-    // for cows
-    TexturesPSPVertex *cowBodyVertices;
-    TexturesPSPVertex *cowHeadVertices;
-    TexturesPSPVertex *cowLegVertices;
-    TexturesPSPVertex *cowHornsVertices;
-
-    // for sheep
-    TexturesPSPVertex *sheepBodyVertices;
-    TexturesPSPVertex *sheepHeadVertices;
-    TexturesPSPVertex *sheepHeadOPTVertices;
-    TexturesPSPVertex *sheepHeadFurVertices;
-    TexturesPSPVertex *sheepLegOPTVertices;
-    TexturesPSPVertex *sheepLegFurVertices;
-
-    // for armor
-    TexturesPSPVertex *helmetVertices;
-    TexturesPSPVertex *shoulderVertices;
-    TexturesPSPVertex *chestplateVertices;
-    TexturesPSPVertex *bellyVertices;
-    TexturesPSPVertex *leggingVertices;
-    TexturesPSPVertex *bootVertices;
-
     Vector3 playerPos;
     bool playerContactLadder;
 
