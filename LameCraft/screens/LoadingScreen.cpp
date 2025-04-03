@@ -117,8 +117,8 @@ int LoadingScreen::RunLoadingScreen(SceSize args, void *argp) {
 
         if (stateName == 1) {
             RenderManager::InstancePtr()->DebugPrint(240, 136, loadingStepsTexts[0].c_str(), readiness);
-        } else if (stateName > 1) {
-            RenderManager::InstancePtr()->DebugPrint(240, 136, loadingStepsTexts[stateName+1].c_str());
+        } else if (stateName > 1 && stateName < 7) {
+            RenderManager::InstancePtr()->DebugPrint(240, 136, loadingStepsTexts[stateName].c_str());
         }
 
         RenderManager::InstancePtr()->SetFontStyle(default_size, GU_COLOR(0.45f, 0.45f, 0.45f, 1.0f), 0,
