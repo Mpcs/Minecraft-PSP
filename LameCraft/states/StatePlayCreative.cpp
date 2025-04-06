@@ -800,7 +800,7 @@ void StatePlayCreative::CheckForFurnFuel(Furnace *Fur) {
     }
 
     if (Fur->furnaceSlotId[0] >= 250) {
-        furnItem = mWorld->itemTypes[Fur->furnaceSlotId[0] - 250].furnItem;
+        //furnItem = mWorld->itemTypes[Fur->furnaceSlotId[0] - 250].furnItem;
     }
 
     if (Fur->fuelTime <= 0 && furnItem != -1) {
@@ -923,7 +923,7 @@ void StatePlayCreative::CheckForFurnWorking(Furnace *Fur) {
     }
 
     if (Fur->furnaceSlotId[0] >= 250) {
-        furnItem = mWorld->itemTypes[Fur->furnaceSlotId[0] - 250].furnItem;
+        //furnItem = mWorld->itemTypes[Fur->furnaceSlotId[0] - 250].furnItem;
     }
 
     if (furnItem != -1) {
@@ -959,7 +959,7 @@ void StatePlayCreative::ReadyFurnSmelting(Furnace *Fur) {
     }
 
     if (Fur->furnaceSlotId[0] >= 250) {
-        furnItem = mWorld->itemTypes[Fur->furnaceSlotId[0] - 250].furnItem;
+        //furnItem = mWorld->itemTypes[Fur->furnaceSlotId[0] - 250].furnItem;
     }
 
     if (furnItem != -1) {

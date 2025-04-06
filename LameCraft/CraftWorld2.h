@@ -36,6 +36,9 @@
 
 #include <fstream>
 #include <ostream>
+#include "items/Item.h"
+#include "items/Features.h"
+#include <map>
 
 class Cow;
 
@@ -153,6 +156,7 @@ public:
     void UpdateBlocksAndItemsName();
 
     void InitBlockVector();
+    void insertItem(Item& item);
 
     void InitItemVector();
 
@@ -243,7 +247,7 @@ public:
 
     void GetNormalBlockVerts(int i, BaseBlock *blockType);
 
-    void GetItemVerts(int i, BaseItem *itemType);
+    void GetItemVerts(int i, Item *itemType);
 
     void GetCloudsVerts(BaseBlock *blockType);
 
@@ -569,7 +573,9 @@ public:
     float playerCollisionSize;
 
     std::vector<BaseBlock> blockTypes;
-    std::vector<BaseItem> itemTypes;
+    //std::vector<BaseItem> itemTypes;
+    std::map<std::string, int> stringIdMap;
+    std::map<item_id, Item*> itemTypes;
 
     float brightFactor;         // ��������� ����
     float starsFactor;         // ��������� ����

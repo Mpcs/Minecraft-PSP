@@ -121,7 +121,7 @@ GoldenSword::GoldenSword() : BaseItem() {
 }
 
 item_id GoldenSword::getID() { return 259; }
-
+////////
 WoodenShovel::WoodenShovel() : BaseItem() {
     textureRow = 10;
 
@@ -241,7 +241,7 @@ GoldenAxe::GoldenAxe() : BaseItem() {
 }
 
 item_id GoldenAxe::getID() { return 269; }
-
+///////
 WoodenHoe::WoodenHoe() : BaseItem() {
     textureRow = 7;
 
@@ -301,7 +301,7 @@ GoldenHoe::GoldenHoe() : BaseItem() {
 }
 
 item_id GoldenHoe::getID() { return 274; }
-
+///////
 Scissors::Scissors() : BaseItem() {
     textureRow = 10;
 
@@ -540,7 +540,7 @@ Paper::Paper() : BaseItem() {
 }
 
 item_id Paper::getID() { return 297; }
-
+///////
 Book::Book() : BaseItem() {
     textureRow = 12;
 
@@ -604,22 +604,6 @@ MooshroomBowl::MooshroomBowl() : BaseItem() {
 
 item_id MooshroomBowl::getID() { return 303; }
 
-IronWateringCan::IronWateringCan() : BaseItem() {
-    textureRow = 1;
-
-    plane = 3;
-}
-
-item_id IronWateringCan::getID() { return 304; }
-
-DiamondWateringCan::DiamondWateringCan() : BaseItem() {
-    textureRow = 1;
-
-    plane = 4;
-}
-
-item_id DiamondWateringCan::getID() { return 305; }
-
 DoorItem::DoorItem() : BaseItem() {
     textureRow = 13;
 
@@ -652,7 +636,7 @@ TorchItem::TorchItem() : BaseItem() {
 }
 
 item_id TorchItem::getID() { return 308; }
-
+/// @brief ////
 SpruceSaplingItem::SpruceSaplingItem() : BaseItem() {
     textureRow = 15;
 
@@ -947,7 +931,7 @@ ChainmailBoots::ChainmailBoots() : BaseItem() {
 }
 
 item_id ChainmailBoots::getID() { return 335; }
-
+///////
 IronHelmet::IronHelmet() : BaseItem() {
     textureRow = 15;
 
@@ -1182,7 +1166,7 @@ Compass::Compass() : BaseItem() {
 }
 
 item_id Compass::getID() { return 355; }
-
+/// @brief /
 Saddle::Saddle() : BaseItem() {
     textureRow = 9;
     plane = 8;

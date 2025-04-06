@@ -3,6 +3,7 @@
 
 #include "WorldGenerator.h"
 #include "screens/LoadingScreen.h"
+#include <Aurora/Utils/Logger.h>
 
 #define PI 3.14159265f
 #define DEG_TO_RAD (PI / 180.0f)
@@ -188,6 +189,7 @@ void StatePlay::InitCamera() {
 }
 
 void StatePlay::Init() {
+    Utils::Logger::Instance()->LogMessage("State Play Init\n");
     //set render manager instance
     mRender = RenderManager::InstancePtr();
     mSystemMgr = SystemManager::Instance();
@@ -197,6 +199,7 @@ void StatePlay::Init() {
     WorldGenerator *mGen = new WorldGenerator();
 
     //then create our perfect world
+    
     mWorld = new CraftWorld();
     mWorld->initWorld(WORLD_SIZE, WORLD_HEIGHT, CHUNK_SIZE);
     delete mGen;
@@ -228,43 +231,55 @@ void StatePlay::Init() {
     walkSoundAccu = 0.0f;
     isWalking = false;
     loadReady = false;
+    Utils::Logger::Instance()->LogMessage("StatePlay init end\n");
 }
 
 void StatePlay::InitParametric(bool makeTrees, bool makeWater, bool makeCaves, unsigned int seed_1, int worldType,
                                char gameMode) {
+                                Utils::Logger::Instance()->LogMessage("StatePlay init parametric\n");
     //set render manager instance
     mRender = RenderManager::InstancePtr();
     mSystemMgr = SystemManager::Instance();
     mSoundMgr = SoundManager::Instance();
     mIhelper = InputHelper::Instance();
 
+    Utils::Logger::Instance()->LogMessage("Helpers end\n");
+
     //then create our perfect world
     mWorld = new CraftWorld();
     mWorld->initWorld(WORLD_SIZE, WORLD_HEIGHT, CHUNK_SIZE);
     mWorld->gameModeWorld = gameMode;
 
+    Utils::Logger::Instance()->LogMessage("mworld init end\n");
+
     WorldGenerator *mGen = new WorldGenerator();
     mGen->initRandompMap(WORLD_SIZE, WORLD_HEIGHT, CHUNK_SIZE, mWorld, makeTrees, makeWater, makeCaves, seed_1,
                          worldType);
+
+                         Utils::Logger::Instance()->LogMessage("initrandomMap end\n");
     delete mGen;
     //mWorld->initRandompMap(128,16,terrainType,makeFlat,makeTrees,makeWater,makeCaves);
     mWorld->setTextureSize(256, 16, 64, 16, 256, 16);
     mWorld->SetWolrdTime(10);
     mWorld->UpdatePlayerZoneBB(playerPosition);
     mWorld->buildMap();
+    Utils::Logger::Instance()->LogMessage("mworldBuildMapEnd\n");
 
     playerPosition = newPlayerPos = oldPlayerPos = mWorld->playerSpawnPointPosition;
 
     int curchunkTarget = mWorld->getChunkId(playerPosition);
 
     dt = mTimer.GetDeltaTime();
+    Utils::Logger::Instance()->LogMessage("mtimer end\n");
 
     LoadTextures();
+    Utils::Logger::Instance()->LogMessage("loadtextures end\n");
 
     mWorld->GetTexturesIds();
     mWorld->buildblocksVerts();
     mWorld->buildcloudsVerts();
     mWorld->buildmobVerts();
+    Utils::Logger::Instance()->LogMessage("buildVerts end\n");
 
     menuOptions = false;
     optionsMenuPos = 0;
@@ -278,8 +293,10 @@ void StatePlay::InitParametric(bool makeTrees, bool makeWater, bool makeCaves, u
     bobCycle = PI / 2.0f;
     loadReady = true;
 
-    mWorld->haveCompass = mWorld->HaveItemInBarSlots(Compass::getID());
+    Utils::Logger::Instance()->LogMessage("LoadEnd\n");
 
+    mWorld->haveCompass = mWorld->HaveItemInBarSlots(Compass::getID());
+    Utils::Logger::Instance()->LogMessage("StatePlay parametric init end\n");
 
 }
 
@@ -291,6 +308,7 @@ void StatePlay::SetWorldAndSaveName(std::string worldName, std::string fileName)
 }
 
 void StatePlay::LoadMap(std::string fileName, bool compressed) {
+    Utils::Logger::Instance()->LogMessage("loadMap\n");
     //enter loading screen
     LoadingScreen *loading = new LoadingScreen();
 
@@ -363,6 +381,7 @@ void StatePlay::LoadMap(std::string fileName, bool compressed) {
     // cancel loading screen
     loading->KillLoadingScreen();
     delete loading;
+    Utils::Logger::Instance()->LogMessage("Load Map End\n");
 }
 
 void StatePlay::LoadTextures() {
@@ -713,7 +732,7 @@ void StatePlay::CheckForFurnFuel(Furnace *Fur) {
     }
 
     if (Fur->furnaceSlotId[0] >= 250) {
-        furnItem = mWorld->itemTypes[Fur->furnaceSlotId[0] - 250].furnItem;
+        //furnItem = mWorld->itemTypes[Fur->furnaceSlotId[0]].furnItem;
     }
 
     if (Fur->fuelTime <= 0 && furnItem != -1) {
@@ -721,97 +740,107 @@ void StatePlay::CheckForFurnFuel(Furnace *Fur) {
             return;
 
         bool used = false;
-
-        switch (Fur->furnaceSlotId[1]) {
-            case 8:
-                Fur->fuelTime = 15;
+        Item* fuelItem = mWorld->itemTypes[Fur->furnaceSlotId[1]];
+        if (fuelItem != NULL) {
+            if (fuelItem->hasFeature(FeatureType::fuel)) {
+                FuelFeature* fuelFeature = static_cast<FuelFeature*>(fuelItem->getFeature(FeatureType::fuel));
+                Fur->fuelTime = fuelFeature->getBurnTime();
                 used = true;
-                break;
-            case 31:
-                Fur->fuelTime = 15;
-                used = true;
-                break;
-            case 34:
-                Fur->fuelTime = 15;
-                used = true;
-                break;
-            case 296:
-                Fur->fuelTime = 5;
-                used = true;
-                break;
-            case 276:
-                Fur->fuelTime = 5;
-                used = true;
-                break;
-            case 277:
-                Fur->fuelTime = 80;
-                used = true;
-                break;
-            case 292:
-                Fur->fuelTime = 1000;
-                used = true;
-                break;
-            case 306:
-                Fur->fuelTime = 30;
-                used = true;
-                break;
-            case 59:
-                Fur->fuelTime = 15;
-                used = true;
-                break;
-            case 71:
-                Fur->fuelTime = 15;
-                used = true;
-                break;
-            case 72:
-                Fur->fuelTime = 15;
-                used = true;
-                break;
-            case 100:
-                Fur->fuelTime = 15;
-                used = true;
-                break;
-            case 105:
-                Fur->fuelTime = 15;
-                used = true;
-                break;
-            case 125:
-                Fur->fuelTime = 15;
-                used = true;
-                break;
-            case 155:
-                Fur->fuelTime = 15;
-                used = true;
-                break;
-            case 156:
-                Fur->fuelTime = 15;
-                used = true;
-                break;
-            case 214:
-                Fur->fuelTime = 800;
-                used = true;
-                break;
-            case 250:
-                Fur->fuelTime = 10;
-                used = true;
-                break;
-            case 255:
-                Fur->fuelTime = 10;
-                used = true;
-                break;
-            case 260:
-                Fur->fuelTime = 10;
-                used = true;
-                break;
-            case 265:
-                Fur->fuelTime = 10;
-                used = true;
-                break;
-            case 270:
-                Fur->fuelTime = 10;
-                used = true;
-                break;
+            }
         }
+        
+        //TODO: Add feature to all the items
+        //switch (Fur->furnaceSlotId[1]) {
+        //    case 8:
+        //        Fur->fuelTime = 15;
+        //        used = true;
+        //        break;
+        //}
+        //    case 31:
+        //        Fur->fuelTime = 15;
+        //        used = true;
+        //        break;
+        //    case 34:
+        //        Fur->fuelTime = 15;
+        //        used = true;
+        //        break;
+        //    case 296:
+        //        Fur->fuelTime = 5;
+        //        used = true;
+        //        break;
+        //    case 276:
+        //        Fur->fuelTime = 5;
+        //        used = true;
+        //        break;
+        //    case 277:
+        //        Fur->fuelTime = 80;
+        //        used = true;
+        //        break;
+        //    case 292:
+        //        Fur->fuelTime = 1000;
+        //        used = true;
+        //        break;
+        //    case 306:
+        //        Fur->fuelTime = 30;
+        //        used = true;
+        //        break;
+        //    case 59:
+        //        Fur->fuelTime = 15;
+        //        used = true;
+        //        break;
+        //    case 71:
+        //        Fur->fuelTime = 15;
+        //        used = true;
+        //        break;
+        //    case 72:
+        //        Fur->fuelTime = 15;
+        //        used = true;
+        //        break;
+        //    case 100:
+        //        Fur->fuelTime = 15;
+        //        used = true;
+        //        break;
+        //    case 105:
+        //        Fur->fuelTime = 15;
+        //        used = true;
+        //        break;
+        //    case 125:
+        //        Fur->fuelTime = 15;
+        //        used = true;
+        //        break;
+        //    case 155:
+        //        Fur->fuelTime = 15;
+        //        used = true;
+        //        break;
+        //    case 156:
+        //        Fur->fuelTime = 15;
+        //        used = true;
+        //        break;
+        //    case 214:
+        //        Fur->fuelTime = 800;
+        //        used = true;
+        //        break;
+        //    case 250:
+        //        Fur->fuelTime = 10;
+        //        used = true;
+        //        break;
+        //    case 255:
+        //        Fur->fuelTime = 10;
+        //        used = true;
+        //        break;
+        //    case 260:
+        //        Fur->fuelTime = 10;
+        //        used = true;
+        //        break;
+        //    case 265:
+        //        Fur->fuelTime = 10;
+        //        used = true;
+        //        break;
+        //    case 270:
+        //        Fur->fuelTime = 10;
+        //        used = true;
+        //        break;
+        //}
 
         if (used == true) {
             Fur->furnaceSlotAm[1] -= 1;
@@ -836,7 +865,7 @@ void StatePlay::CheckForFurnWorking(Furnace *Fur) {
     }
 
     if (Fur->furnaceSlotId[0] >= 250) {
-        furnItem = mWorld->itemTypes[Fur->furnaceSlotId[0] - 250].furnItem;
+        //furnItem = mWorld->itemTypes[Fur->furnaceSlotId[0] - 250].furnItem;
     }
 
     if (furnItem != -1) {
@@ -872,7 +901,7 @@ void StatePlay::ReadyFurnSmelting(Furnace *Fur) {
     }
 
     if (Fur->furnaceSlotId[0] >= 250) {
-        furnItem = mWorld->itemTypes[Fur->furnaceSlotId[0] - 250].furnItem;
+        //furnItem = mWorld->itemTypes[Fur->furnaceSlotId[0] - 250].furnItem;
     }
 
     if (furnItem != -1) {
@@ -5146,7 +5175,7 @@ void StatePlay::HandleEvents(StateManager *sManager) {
                                                                               Vector3(particlePos.x,
                                                                                       particlePos.y - 0.18f,
                                                                                       particlePos.z));
-                                            FoodPart->var1 = mWorld->invId[27 + barPosition] - 250;
+                                            FoodPart->var1 = mWorld->invId[27 + barPosition];
                                             mParticles.push_back(FoodPart);
                                         }
                                     }
@@ -6328,7 +6357,7 @@ void StatePlay::HandleEvents(StateManager *sManager) {
                                     Particle *FoodPart = new Particle(mWorld, "item crack",
                                                                       Vector3(particlePos.x, particlePos.y - 0.18f,
                                                                               particlePos.z));
-                                    FoodPart->var1 = mWorld->invId[27 + barPosition] - 250;
+                                    FoodPart->var1 = mWorld->invId[27 + barPosition];
                                     mParticles.push_back(FoodPart);
                                 }
                             }
@@ -6992,7 +7021,7 @@ void StatePlay::HandleEvents(StateManager *sManager) {
                                                                               Vector3(particlePos.x,
                                                                                       particlePos.y - 0.18f,
                                                                                       particlePos.z));
-                                            ToolPart->var1 = mWorld->invId[27 + barPosition] - 250;
+                                            ToolPart->var1 = mWorld->invId[27 + barPosition];
                                             mParticles.push_back(ToolPart);
                                         }
                                     }
@@ -10239,7 +10268,7 @@ void StatePlay::Draw(StateManager *sManager) {
                                                                                                 UseSnowBall->position.y +
                                                                                                 0.1f,
                                                                                                 UseSnowBall->position.z));
-                            SnowballPart->var1 = SnowBallItem::getID() - 250;
+                            SnowballPart->var1 = SnowBallItem::getID();
                             SnowballPart->SetScale(0.06f, 0.12f);
                             mParticles.push_back(SnowballPart);
                         }
@@ -10833,7 +10862,7 @@ void StatePlay::Draw(StateManager *sManager) {
                     DrawSetDepthMask(false);
                     sceGuEnable(GU_DEPTH_TEST);
                 }
-
+                //COMEBACKHERE
                 if (mWorld->invId[27 + k] >= 250) {
                     MatrixTranslation(Vector3(80 + k * 40, 250, 0));
                     mWorld->ItemHaveTerrainTexture(mWorld->invId[27 + k])
@@ -10864,6 +10893,7 @@ void StatePlay::Draw(StateManager *sManager) {
 
     /// INVENTORY CRAFT MENU
     if (invEn == true) {
+        Utils::Logger::Instance()->LogMessage("Inventory Craft Menu\n");
         for (int i = 0; i <= 1; i++) {
             for (int j = 0; j <= 1; j++) {
                 if (craftSlotId[i * 2 + j] != -1) {
@@ -10888,12 +10918,12 @@ void StatePlay::Draw(StateManager *sManager) {
                 }
             }
         }
-
+        Utils::Logger::Instance()->LogMessage("Inventory Craft Menu 2\n");
         for (int i = 0; i <= 1; i++) {
             for (int j = 0; j <= 1; j++) {
                 if (mWorld->armorId[i * 2 + j] != -1) {
                     MatrixPush();
-
+                    Utils::Logger::Instance()->LogMessage("if armor\n");
                     MatrixTranslation(Vector3(96 + j * 108, 26 + i * 72, 0.0f));
 
                     if (mWorld->armorId[i * 2 + j] < 250) {
@@ -10902,17 +10932,22 @@ void StatePlay::Draw(StateManager *sManager) {
                         mWorld->drawHudCubes(mWorld->armorId[i * 2 + j]);
                     }
 
+                    Utils::Logger::Instance()->LogMessage("post blocks\n");
+
                     if (mWorld->armorId[i * 2 + j] >= 250) {
+                        Utils::Logger::Instance()->LogMessage("post blocks if\n");
                         mWorld->ItemHaveTerrainTexture(mWorld->armorId[i * 2 + j])
                         ? TextureManager::Instance()->SetTextureModeulate(texture)
                         : TextureManager::Instance()->SetTextureModeulate(barItems);
-
+                        Utils::Logger::Instance()->LogMessage("post blocks draw hud\n");
                         mWorld->drawHudItems(mWorld->armorId[i * 2 + j]);
                     }
                     MatrixPop();
+                    Utils::Logger::Instance()->LogMessage("Post Items\n");
                 }
             }
         }
+        Utils::Logger::Instance()->LogMessage("Inventory Craft Menu3\n");
 
         //End
 
@@ -10936,6 +10971,7 @@ void StatePlay::Draw(StateManager *sManager) {
             }
             MatrixPop();
         }
+        Utils::Logger::Instance()->LogMessage("Inventory Craft Menu4\n");
 
         if (upEn == false) {
             if (invSteveAngle < invXPosition / 8.0f * 48) {
@@ -10963,6 +10999,7 @@ void StatePlay::Draw(StateManager *sManager) {
         DrawSetDepthMask(true);
 
         MatrixPop();
+        Utils::Logger::Instance()->LogMessage("Inventory Craft Menu5\n");
     }
 
 

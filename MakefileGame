@@ -32,6 +32,8 @@ LameCraft/Blocks/BaseBlock.o \
 LameCraft/Blocks/Blocks.o \
 LameCraft/Items/BaseItem.o \
 LameCraft/Items/Items.o \
+LameCraft/Items/Item.o \
+LameCraft/Items/Features.o \
 LameCraft/SimpleMeshChunk2.o \
 LameCraft/ChunkDataProvider.o \
 LameCraft/Blocks/BlockEntity.o \
