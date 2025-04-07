@@ -279,11 +279,6 @@ void ItemTypes::initialize() {
     );
 
     insertItem(
-        Item("gold_ingot", 279)
-        .setTexture(13, 7)
-    );
-
-    insertItem(
         Item("gold_ingot", 280)
         .setTexture(13, 7)
     );
@@ -364,7 +359,7 @@ void ItemTypes::initialize() {
     );
 
     insertItem(
-        Item("flower_2_item", 294)
+        Item("flower_2_item", 295)
         .setTerrainTexture(15, 13)
     );
 
