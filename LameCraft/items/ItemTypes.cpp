@@ -447,11 +447,6 @@ void ItemTypes::initialize() {
     );
 
     insertItem(
-        Item("sugar", 313)
-        .setTexture(15, 3)
-    );
-
-    insertItem(
         Item("cocoa_beans", 314)
         .setTexture(8, 14)
     );

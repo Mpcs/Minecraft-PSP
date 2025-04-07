@@ -550,7 +550,7 @@ void CraftWorld::InitBlockVector() {
 }
 
 void CraftWorld::UpdateBlocksAndItemsName() {
-    //Translation* translation = Translation::GetInstance();
+    Translation* translation = Translation::GetInstance();
     //map<string, string> blockNames = translation->getTranslationsOfType("BLOCK");
     //for (int i = 0; i < blockTypes.size(); i++) {
     //    int id = blockTypes[i].getBaseID();
@@ -559,13 +559,11 @@ void CraftWorld::UpdateBlocksAndItemsName() {
     //    blockTypes[i].name = blockNames[stringid];
     //}
 //
-    //map<string, string> itemNames = translation->getTranslationsOfType("ITEM");
-    //for (int i = 0; i < itemTypes.size(); i++) {
-    //    int id = itemTypes[i].getBaseID();
-    //    char stringid[3];
-    //    sprintf(stringid, "%d", id);
-    //    itemTypes[i].name = itemNames[stringid];
-    //}
+    map<string, string> itemNames = translation->getTranslationsOfType("ITEM");
+    vector<Item*> items = ItemTypes::getAllItems();
+    for (int i = 0; i < items.size(); i++) {
+        items[i]->displayName = itemNames[items[i]->internalName];
+    }
 }
 
 CraftWorld::~CraftWorld() {
@@ -3674,7 +3672,7 @@ string CraftWorld::NameBlock(int id) {
             return blockTypes[id].name;
         }
     } else {
-        return ItemTypes::getItem(id)->internalName;
+        return ItemTypes::getItem(id)->displayName;
     }
     return "null";
 }
