@@ -732,7 +732,12 @@ void StatePlay::CheckForFurnFuel(Furnace *Fur) {
     }
 
     if (Fur->furnaceSlotId[0] >= 250) {
-        //furnItem = mWorld->itemTypes[Fur->furnaceSlotId[0]].furnItem;
+        Item* smeltingItem = mWorld->itemTypes[Fur->furnaceSlotId[0]];
+        if (smeltingItem->hasFeature(FeatureType::smeltable)) {
+
+            SmeltableFeature* smeltableFeature = static_cast<SmeltableFeature*>(smeltingItem->getFeature(FeatureType::smeltable));
+            furnItem = mWorld->stringIdMap[smeltableFeature->getResultItemName()];
+        }
     }
 
     if (Fur->fuelTime <= 0 && furnItem != -1) {
@@ -749,98 +754,57 @@ void StatePlay::CheckForFurnFuel(Furnace *Fur) {
             }
         }
         
-        //TODO: Add feature to all the items
-        //switch (Fur->furnaceSlotId[1]) {
-        //    case 8:
-        //        Fur->fuelTime = 15;
-        //        used = true;
-        //        break;
-        //}
-        //    case 31:
-        //        Fur->fuelTime = 15;
-        //        used = true;
-        //        break;
-        //    case 34:
-        //        Fur->fuelTime = 15;
-        //        used = true;
-        //        break;
-        //    case 296:
-        //        Fur->fuelTime = 5;
-        //        used = true;
-        //        break;
-        //    case 276:
-        //        Fur->fuelTime = 5;
-        //        used = true;
-        //        break;
-        //    case 277:
-        //        Fur->fuelTime = 80;
-        //        used = true;
-        //        break;
-        //    case 292:
-        //        Fur->fuelTime = 1000;
-        //        used = true;
-        //        break;
-        //    case 306:
-        //        Fur->fuelTime = 30;
-        //        used = true;
-        //        break;
-        //    case 59:
-        //        Fur->fuelTime = 15;
-        //        used = true;
-        //        break;
-        //    case 71:
-        //        Fur->fuelTime = 15;
-        //        used = true;
-        //        break;
-        //    case 72:
-        //        Fur->fuelTime = 15;
-        //        used = true;
-        //        break;
-        //    case 100:
-        //        Fur->fuelTime = 15;
-        //        used = true;
-        //        break;
-        //    case 105:
-        //        Fur->fuelTime = 15;
-        //        used = true;
-        //        break;
-        //    case 125:
-        //        Fur->fuelTime = 15;
-        //        used = true;
-        //        break;
-        //    case 155:
-        //        Fur->fuelTime = 15;
-        //        used = true;
-        //        break;
-        //    case 156:
-        //        Fur->fuelTime = 15;
-        //        used = true;
-        //        break;
-        //    case 214:
-        //        Fur->fuelTime = 800;
-        //        used = true;
-        //        break;
-        //    case 250:
-        //        Fur->fuelTime = 10;
-        //        used = true;
-        //        break;
-        //    case 255:
-        //        Fur->fuelTime = 10;
-        //        used = true;
-        //        break;
-        //    case 260:
-        //        Fur->fuelTime = 10;
-        //        used = true;
-        //        break;
-        //    case 265:
-        //        Fur->fuelTime = 10;
-        //        used = true;
-        //        break;
-        //    case 270:
-        //        Fur->fuelTime = 10;
-        //        used = true;
-        //        break;
-        //}
+        //TODO: BLOCKS, remove when reworking blocks
+        switch (Fur->furnaceSlotId[1]) {
+            case 8:
+                Fur->fuelTime = 15;
+                used = true;
+                break;
+            case 31:
+                Fur->fuelTime = 15;
+                used = true;
+                break;
+            case 34:
+                Fur->fuelTime = 15;
+                used = true;
+                break;
+            case 59:
+                Fur->fuelTime = 15;
+                used = true;
+                break;
+            case 71:
+                Fur->fuelTime = 15;
+                used = true;
+                break;
+            case 72:
+                Fur->fuelTime = 15;
+                used = true;
+                break;
+            case 100:
+                Fur->fuelTime = 15;
+                used = true;
+                break;
+            case 105:
+                Fur->fuelTime = 15;
+                used = true;
+                break;
+            case 125:
+                Fur->fuelTime = 15;
+                used = true;
+                break;
+            case 155:
+                Fur->fuelTime = 15;
+                used = true;
+                break;
+            case 156:
+                Fur->fuelTime = 15;
+                used = true;
+                break;
+            case 214:
+                Fur->fuelTime = 800;
+                used = true;
+                break;
+        }
 
         if (used == true) {
             Fur->furnaceSlotAm[1] -= 1;
@@ -865,6 +829,11 @@ void StatePlay::CheckForFurnWorking(Furnace *Fur) {
     }
 
     if (Fur->furnaceSlotId[0] >= 250) {
+        Item* smeltingItem = mWorld->itemTypes[Fur->furnaceSlotId[0]];
+        if (smeltingItem->hasFeature(FeatureType::smeltable)) {
+            SmeltableFeature* smeltableFeature = static_cast<SmeltableFeature*>(smeltingItem->getFeature(FeatureType::smeltable));
+            furnItem = mWorld->stringIdMap[smeltableFeature->getResultItemName()];
+        }
         //furnItem = mWorld->itemTypes[Fur->furnaceSlotId[0] - 250].furnItem;
     }
 
@@ -901,7 +870,11 @@ void StatePlay::ReadyFurnSmelting(Furnace *Fur) {
     }
 
     if (Fur->furnaceSlotId[0] >= 250) {
-        //furnItem = mWorld->itemTypes[Fur->furnaceSlotId[0] - 250].furnItem;
+        Item* smeltingItem = mWorld->itemTypes[Fur->furnaceSlotId[0]];
+        if (smeltingItem->hasFeature(FeatureType::smeltable)) {
+            SmeltableFeature* smeltableFeature = static_cast<SmeltableFeature*>(smeltingItem->getFeature(FeatureType::smeltable));
+            furnItem = mWorld->stringIdMap[smeltableFeature->getResultItemName()];
+        }
     }
 
     if (furnItem != -1) {
@@ -1994,7 +1967,7 @@ void StatePlay::CraftItem3x3() {
     itemsIDs.clear();
 
     if (enableMainCraftBody) {
-        switch (result) {
+        switch (res7ult) {
             case 321://bone to bone meals
                 if (craftSlotId3[0] == 321 || craftSlotId3[1] == 321 || craftSlotId3[2] == 321 ||
                     craftSlotId3[3] == 321 || craftSlotId3[4] == 321 || craftSlotId3[5] == 321 ||

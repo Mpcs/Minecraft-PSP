@@ -70,3 +70,15 @@ int ArmorFeature::getArmorPoints() {
     return armorPoints;
 }
 
+SmeltableFeature::SmeltableFeature(std::string resultItemName) : Feature() {
+    this->resultItemName = resultItemName;
+}
+feature_type SmeltableFeature::getType() const {
+    return FeatureType::smeltable;
+}
+std::string SmeltableFeature::getResultItemName() {
+    return resultItemName;
+}
+
+
+

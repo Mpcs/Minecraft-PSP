@@ -1,6 +1,8 @@
 #ifndef FEATURES_H
 #define FEATURES_H
 
+#include <string>
+
 class FeatureType {
     public:
         enum type {
@@ -8,7 +10,8 @@ class FeatureType {
             tool,
             fuel,
             weapon,
-            armor
+            armor,
+            smeltable
         };
 };
 
@@ -114,6 +117,16 @@ class ArmorFeature : public Feature {
     private:
         armor_slot slot;
         int armorPoints;
+};
+
+class SmeltableFeature : public Feature {
+    public:
+        SmeltableFeature(std::string resultItemName);
+        feature_type getType() const;
+        std::string getResultItemName();
+
+    private:
+        std::string resultItemName;
 };
 
 #endif

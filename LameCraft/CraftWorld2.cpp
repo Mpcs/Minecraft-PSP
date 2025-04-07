@@ -251,6 +251,7 @@ CraftWorld::CraftWorld() {
     PutInInventory(FurnaceOff::getID(),10, 1);
     PutInInventory(Coal::getID(),10,1);
     PutInInventory(IronOre::getID(),10,1);
+    PutInInventory(283, 10, 1);
     PutInInventory(8,10,1);
 
     /*PutInInventory(Scissors::getID(),60,0);
@@ -567,6 +568,7 @@ void CraftWorld::InitItemVector() {
         .setNotStackable()
         .addFeature(new DurabilityFeature(60))
         .addFeature(new ToolFeature(ToolType::pickaxe, MiningLevel::wood, -1))
+        .addFeature(new FuelFeature(10))
     );
 
     insertItem(
@@ -607,6 +609,7 @@ void CraftWorld::InitItemVector() {
         .setNotStackable()
         .addFeature(new DurabilityFeature(60))
         .addFeature(new WeaponFeature(-1))
+        .addFeature(new FuelFeature(10))
     );
 
     insertItem(
@@ -647,6 +650,7 @@ void CraftWorld::InitItemVector() {
         .setNotStackable()
         .addFeature(new DurabilityFeature(60))
         .addFeature(new ToolFeature(ToolType::shovel, MiningLevel::wood, -1))
+        .addFeature(new FuelFeature(10))
     );
 
     insertItem(
@@ -687,6 +691,7 @@ void CraftWorld::InitItemVector() {
         .setNotStackable()
         .addFeature(new DurabilityFeature(60))
         .addFeature(new ToolFeature(ToolType::axe, MiningLevel::wood, -1))
+        .addFeature(new FuelFeature(10))
     );
 
     insertItem(
@@ -727,6 +732,7 @@ void CraftWorld::InitItemVector() {
         .setNotStackable()
         .addFeature(new DurabilityFeature(60))
         .addFeature(new ToolFeature(ToolType::hoe, MiningLevel::wood, -1))
+        .addFeature(new FuelFeature(10))
     );
 
     insertItem(
@@ -751,7 +757,7 @@ void CraftWorld::InitItemVector() {
         .setNotStackable()
         .addFeature(new DurabilityFeature(1562))
         .addFeature(new ToolFeature(ToolType::hoe, MiningLevel::diamond, -1))
-    );
+    ); 
 
     insertItem(
         Item("gold_hoe", 274)
@@ -771,11 +777,13 @@ void CraftWorld::InitItemVector() {
     insertItem(
         Item("stick", 276)
         .setTexture(12, 5)
+        .addFeature(new FuelFeature(5))
     );
 
     insertItem(
         Item("coal", 277)
         .setTexture(15, 7)
+        .addFeature(new FuelFeature(80))
     );
 
     insertItem(
@@ -811,6 +819,7 @@ void CraftWorld::InitItemVector() {
     insertItem(
         Item("clay", 283)
         .setTexture(12, 9)
+        .addFeature(new SmeltableFeature("brick"))
     );
 
     insertItem(
@@ -859,6 +868,7 @@ void CraftWorld::InitItemVector() {
         Item("lava_bucket", 292)
         .setTexture(11, 12)
         .setNotStackable()
+        .addFeature(new FuelFeature(1000))
     );
 
     insertItem(
@@ -879,6 +889,7 @@ void CraftWorld::InitItemVector() {
     insertItem(
         Item("oak_sapling", 296)
         .setTerrainTexture(15, 15)
+        .addFeature(new FuelFeature(5))
     );
 
     insertItem(
@@ -920,6 +931,7 @@ void CraftWorld::InitItemVector() {
         Item("door_item", 306)
         .setTexture(11, 11)
         .setNotStackable()
+        .addFeature(new FuelFeature(30))
     );
 
     insertItem(
@@ -975,6 +987,7 @@ void CraftWorld::InitItemVector() {
     insertItem(
         Item("raw_beef", 316)
         .setTexture(9, 9)
+        .addFeature(new SmeltableFeature("steak"));
     );
 
     insertItem(
@@ -1367,6 +1380,7 @@ void CraftWorld::InitItemVector() {
     insertItem(
         Item("potato", 379)
         .setTexture(8, 7)
+        .addFeature(new SmeltableFeature("baked_potato"));
     );
 
     insertItem(
