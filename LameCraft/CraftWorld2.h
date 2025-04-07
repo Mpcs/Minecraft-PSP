@@ -14,6 +14,9 @@
 #include <Aurora/Graphics/Effects/WeatherSystem.h>
 
 #include "blocks/Blocks.h"
+#include "items/ItemTypes.h"
+#include "items/Item.h"
+#include "items/Features.h"
 #include "items/Items.h"
 #include "SimpleMeshChunk2.h"
 #include "mobs/Zombie2.h"
@@ -36,8 +39,6 @@
 
 #include <fstream>
 #include <ostream>
-#include "items/Item.h"
-#include "items/Features.h"
 #include <map>
 
 class Cow;
@@ -156,9 +157,6 @@ public:
     void UpdateBlocksAndItemsName();
 
     void InitBlockVector();
-    void insertItem(Item& item);
-
-    void InitItemVector();
 
     block_t _GetBlock(const int x, const int y, const int z);
 
@@ -247,7 +245,7 @@ public:
 
     void GetNormalBlockVerts(int i, BaseBlock *blockType);
 
-    void GetItemVerts(int i, Item *itemType);
+    void GetItemVerts(Item *itemType);
 
     void GetCloudsVerts(BaseBlock *blockType);
 
@@ -546,10 +544,6 @@ public:
     int lastCompassFrame;
     bool haveCompass;
 
-    int GetBlockTypesCount();
-
-    int GetItemTypesCount();
-
     void UpdateChunkBlocks(int id);
 
     void UpdateChunkGrowingBlocks(int id, int vectorId);
@@ -573,9 +567,6 @@ public:
     float playerCollisionSize;
 
     std::vector<BaseBlock> blockTypes;
-    //std::vector<BaseItem> itemTypes;
-    std::map<std::string, int> stringIdMap;
-    std::map<item_id, Item*> itemTypes;
 
     float brightFactor;         // ��������� ����
     float starsFactor;         // ��������� ����

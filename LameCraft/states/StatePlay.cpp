@@ -732,11 +732,11 @@ void StatePlay::CheckForFurnFuel(Furnace *Fur) {
     }
 
     if (Fur->furnaceSlotId[0] >= 250) {
-        Item* smeltingItem = mWorld->itemTypes[Fur->furnaceSlotId[0]];
+        Item* smeltingItem = ItemTypes::getItem(Fur->furnaceSlotId[0]);
         if (smeltingItem->hasFeature(FeatureType::smeltable)) {
 
             SmeltableFeature* smeltableFeature = static_cast<SmeltableFeature*>(smeltingItem->getFeature(FeatureType::smeltable));
-            furnItem = mWorld->stringIdMap[smeltableFeature->getResultItemName()];
+            furnItem = ItemTypes::getItemID(smeltableFeature->getResultItemName());
         }
     }
 
@@ -745,7 +745,7 @@ void StatePlay::CheckForFurnFuel(Furnace *Fur) {
             return;
 
         bool used = false;
-        Item* fuelItem = mWorld->itemTypes[Fur->furnaceSlotId[1]];
+        Item* fuelItem = ItemTypes::getItem(Fur->furnaceSlotId[1]);
         if (fuelItem != NULL) {
             if (fuelItem->hasFeature(FeatureType::fuel)) {
                 FuelFeature* fuelFeature = static_cast<FuelFeature*>(fuelItem->getFeature(FeatureType::fuel));
@@ -829,12 +829,11 @@ void StatePlay::CheckForFurnWorking(Furnace *Fur) {
     }
 
     if (Fur->furnaceSlotId[0] >= 250) {
-        Item* smeltingItem = mWorld->itemTypes[Fur->furnaceSlotId[0]];
+        Item* smeltingItem = ItemTypes::getItem(Fur->furnaceSlotId[0]);
         if (smeltingItem->hasFeature(FeatureType::smeltable)) {
             SmeltableFeature* smeltableFeature = static_cast<SmeltableFeature*>(smeltingItem->getFeature(FeatureType::smeltable));
-            furnItem = mWorld->stringIdMap[smeltableFeature->getResultItemName()];
+            furnItem = ItemTypes::getItemID(smeltableFeature->getResultItemName());
         }
-        //furnItem = mWorld->itemTypes[Fur->furnaceSlotId[0] - 250].furnItem;
     }
 
     if (furnItem != -1) {
@@ -870,10 +869,10 @@ void StatePlay::ReadyFurnSmelting(Furnace *Fur) {
     }
 
     if (Fur->furnaceSlotId[0] >= 250) {
-        Item* smeltingItem = mWorld->itemTypes[Fur->furnaceSlotId[0]];
+        Item* smeltingItem = ItemTypes::getItem(Fur->furnaceSlotId[0]);
         if (smeltingItem->hasFeature(FeatureType::smeltable)) {
             SmeltableFeature* smeltableFeature = static_cast<SmeltableFeature*>(smeltingItem->getFeature(FeatureType::smeltable));
-            furnItem = mWorld->stringIdMap[smeltableFeature->getResultItemName()];
+            furnItem = ItemTypes::getItemID(smeltableFeature->getResultItemName());
         }
     }
 
@@ -1967,7 +1966,7 @@ void StatePlay::CraftItem3x3() {
     itemsIDs.clear();
 
     if (enableMainCraftBody) {
-        switch (res7ult) {
+        switch (result) {
             case 321://bone to bone meals
                 if (craftSlotId3[0] == 321 || craftSlotId3[1] == 321 || craftSlotId3[2] == 321 ||
                     craftSlotId3[3] == 321 || craftSlotId3[4] == 321 || craftSlotId3[5] == 321 ||

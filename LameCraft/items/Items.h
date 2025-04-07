@@ -3,6 +3,10 @@
 
 #include "items/BaseItem.h"
 
+/*
+/   DEPRECATED. To be removed when references to all the classes are reduced. Mostly a new crafting system
+*/
+
 class WoodenPickaxe : public BaseItem {
 public:
 

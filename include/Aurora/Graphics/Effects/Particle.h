@@ -9,6 +9,7 @@
 #include <math.h>
 #include <psptypes.h>
 #include <string>
+#include <LameCraft/items/ItemTypes.h>
 
 namespace Aurora {
     namespace Graphics {

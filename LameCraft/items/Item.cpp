@@ -4,7 +4,7 @@
 
 using namespace Aurora;
 
-Item::Item(const std::string internalName, int id) {
+Item::Item(const std::string internalName, item_id id) {
     this->internalName = internalName;
     this->id = id;
 

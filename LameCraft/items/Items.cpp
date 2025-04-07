@@ -1,5 +1,9 @@
 #include "Items.h"
 
+/*
+/   DEPRECATED. To be removed when references to all the classes are reduced. Mostly a new crafting system
+*/
+
 //items' id begin from 250
 
 WoodenPickaxe::WoodenPickaxe() : BaseItem() {

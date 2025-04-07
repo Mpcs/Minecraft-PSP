@@ -395,9 +395,9 @@ namespace Aurora {
             float percent = (float) 1.0f / 16.0f;
 
             if (varf1 == -1.0f) {
-                varf1 = (1.0f) - (crtf->itemTypes[itemId]->textureRow * percent + percent) +
+                varf1 = (1.0f) - (ItemTypes::getItem(itemId)->textureRow * percent + percent) +
                         ((rand() % 12) * texturePixel + texturePixel * 0.5f);
-                varf2 = crtf->itemTypes[itemId]->plane * percent + (rand() % 12) * texturePixel + texturePixel * 0.5f;
+                varf2 = ItemTypes::getItem(itemId)->plane * percent + (rand() % 12) * texturePixel + texturePixel * 0.5f;
             }
             float texCordY = varf1;
             float texScaleY = texturePixel * 4 + texturePixel * 0.5f;

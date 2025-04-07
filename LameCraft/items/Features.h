@@ -74,12 +74,9 @@ class DurabilityFeature : public Feature {
         feature_type getType() const;
 
         int getMaxDurability();
-        int getCurrentDurability();
-        int decreateDurability(int amount);
 
     private:
         int maxDurability;
-        int currentDurability;
 };
 
 class ToolFeature : public Feature {

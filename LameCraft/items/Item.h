@@ -5,7 +5,6 @@
 #include <stdlib.h>
 #include <string>
 #include <vector>
-#include "ItemType.h"
 #include "Features.h"
 
 using namespace Aurora::Graphics;
@@ -28,7 +27,7 @@ public:
     TexturesPSPVertex *add2Vertices;
     TexturesPSPVertex *dropVertices;
 
-    Item(std::string internalName, int id);
+    Item(std::string internalName, item_id id);
     Item& setTexture(short textureRow, short plane);
     Item& setTerrainTexture(short textureRow, short plane);
     Item& setNotStackable();

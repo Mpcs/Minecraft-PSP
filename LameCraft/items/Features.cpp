@@ -12,23 +12,12 @@ int FuelFeature::getBurnTime() {
 
 DurabilityFeature::DurabilityFeature(int maxDurability) : Feature() {
     this->maxDurability = maxDurability;
-    this->currentDurability = maxDurability;
 }
 feature_type DurabilityFeature::getType() const {
     return FeatureType::durable;
 }
 int DurabilityFeature::getMaxDurability() {
     return maxDurability;
-}
-int DurabilityFeature::getCurrentDurability() {
-    return currentDurability;
-}
-int DurabilityFeature::decreateDurability(int amount) {
-    currentDurability -= amount;
-    if (currentDurability < 0) {
-        currentDurability = 0;
-    }
-    return currentDurability;
 }
 
 ToolFeature::ToolFeature(tool_type toolType, mining_level miningLevel, float speed) : Feature() {
