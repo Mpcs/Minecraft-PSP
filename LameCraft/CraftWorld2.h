@@ -16,7 +16,7 @@
 #include "blocks/Blocks.h"
 #include "items/ItemTypes.h"
 #include "items/Item.h"
-#include "items/Features.h"
+#include "items/ItemFeatures.h"
 #include "items/Items.h"
 #include "SimpleMeshChunk2.h"
 #include "mobs/Zombie2.h"
