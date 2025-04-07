@@ -47,7 +47,7 @@ Item& Item::setNotStackable() {
     return *this;
 }
 
-Item& Item::addFeature(Feature* feature) {
+Item& Item::addFeature(ItemFeature* feature) {
     itemFeatures.push_back(feature);
     return *this;
 }
@@ -61,7 +61,7 @@ bool Item::hasFeature(feature_type type) {
     return false;
 }
 
-Feature* Item::getFeature(feature_type type) {
+ItemFeature* Item::getFeature(feature_type type) {
     for (int i = 0; i < itemFeatures.size(); i++) {
         if (itemFeatures[i]->getType() == type) {
             return itemFeatures[i];

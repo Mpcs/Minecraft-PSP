@@ -1,6 +1,6 @@
-#include "Features.h"
+#include "ItemFeatures.h"
 
-FuelFeature::FuelFeature(int burnTime) : Feature() {
+FuelFeature::FuelFeature(int burnTime) : ItemFeature() {
     this->burnTime = burnTime;
 }
 feature_type FuelFeature::getType() const {
@@ -10,7 +10,7 @@ int FuelFeature::getBurnTime() {
     return burnTime;
 }
 
-DurabilityFeature::DurabilityFeature(int maxDurability) : Feature() {
+DurabilityFeature::DurabilityFeature(int maxDurability) : ItemFeature() {
     this->maxDurability = maxDurability;
 }
 feature_type DurabilityFeature::getType() const {
@@ -20,7 +20,7 @@ int DurabilityFeature::getMaxDurability() {
     return maxDurability;
 }
 
-ToolFeature::ToolFeature(tool_type toolType, mining_level miningLevel, float speed) : Feature() {
+ToolFeature::ToolFeature(tool_type toolType, mining_level miningLevel, float speed) : ItemFeature() {
     this->toolType = toolType;
     this->miningLevel = miningLevel;
     this->speed = speed;
@@ -35,7 +35,7 @@ float ToolFeature::getSpeed() {
     return speed;
 }
 
-WeaponFeature::WeaponFeature(float baseDamage) : Feature() {
+WeaponFeature::WeaponFeature(float baseDamage) : ItemFeature() {
     this->baseDamage = baseDamage;
 }
 feature_type WeaponFeature::getType() const {
@@ -45,7 +45,7 @@ int WeaponFeature::getBaseDamage() {
     return baseDamage;
 }
 
-ArmorFeature::ArmorFeature(armor_slot slot, int armorPoints) : Feature() {
+ArmorFeature::ArmorFeature(armor_slot slot, int armorPoints) : ItemFeature() {
     this->slot = slot;
     this->armorPoints = slot;
 }
@@ -59,7 +59,7 @@ int ArmorFeature::getArmorPoints() {
     return armorPoints;
 }
 
-SmeltableFeature::SmeltableFeature(std::string resultItemName) : Feature() {
+SmeltableFeature::SmeltableFeature(std::string resultItemName) : ItemFeature() {
     this->resultItemName = resultItemName;
 }
 feature_type SmeltableFeature::getType() const {

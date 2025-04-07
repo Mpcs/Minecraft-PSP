@@ -5,7 +5,7 @@
 #include <stdlib.h>
 #include <string>
 #include <vector>
-#include "Features.h"
+#include "ItemFeatures.h"
 
 using namespace Aurora::Graphics;
 
@@ -32,12 +32,12 @@ public:
     Item& setTerrainTexture(short textureRow, short plane);
     Item& setNotStackable();
     
-    Item& addFeature(Feature* feature);
-    Feature* getFeature(feature_type type);
+    Item& addFeature(ItemFeature* feature);
+    ItemFeature* getFeature(feature_type type);
 
     bool hasFeature(feature_type type);
 
-    std::vector<Feature*> itemFeatures;
+    std::vector<ItemFeature*> itemFeatures;
 
     virtual ~Item();
 

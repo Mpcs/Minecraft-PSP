@@ -53,12 +53,12 @@ typedef ArmorSlot::type armor_slot;
 
 
 
-class Feature {
+class ItemFeature {
     public:
         virtual feature_type getType() const = 0;
 };
 
-class FuelFeature : public Feature {
+class FuelFeature : public ItemFeature {
     public:
         FuelFeature(int burnTime);
         feature_type getType() const;
@@ -68,7 +68,7 @@ class FuelFeature : public Feature {
         int burnTime;
 };
 
-class DurabilityFeature : public Feature {
+class DurabilityFeature : public ItemFeature {
     public:
         DurabilityFeature(int maxDurability);
         feature_type getType() const;
@@ -79,7 +79,7 @@ class DurabilityFeature : public Feature {
         int maxDurability;
 };
 
-class ToolFeature : public Feature {
+class ToolFeature : public ItemFeature {
     public:
         ToolFeature(tool_type toolType, mining_level miningLevel, float speed);
         feature_type getType() const;
@@ -94,7 +94,7 @@ class ToolFeature : public Feature {
         float speed;
 };
 
-class WeaponFeature : public Feature {
+class WeaponFeature : public ItemFeature {
     public:
         WeaponFeature(float baseDamage);
         feature_type getType() const;
@@ -104,7 +104,7 @@ class WeaponFeature : public Feature {
         float baseDamage;
 };
 
-class ArmorFeature : public Feature {
+class ArmorFeature : public ItemFeature {
     public:
         ArmorFeature(armor_slot slot, int armorPoints);
         feature_type getType() const;
@@ -116,7 +116,7 @@ class ArmorFeature : public Feature {
         int armorPoints;
 };
 
-class SmeltableFeature : public Feature {
+class SmeltableFeature : public ItemFeature {
     public:
         SmeltableFeature(std::string resultItemName);
         feature_type getType() const;
