@@ -13,6 +13,10 @@
 #include <pspdisplay.h>
 #include <pspkernel.h>
 
+#include <Aurora/Math/Vector3.h>
+
+using Aurora::Math::Vector3;
+
 inline float ATAN2(float dx, float dz) {
     if (dx == 0 && dz == 0) {
         return 0.0f;
