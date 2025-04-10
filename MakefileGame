@@ -30,8 +30,8 @@ source/Aurora/System/SystemManager.o \
 source/Aurora/System/NetworkManager.o \
 LameCraft/Blocks/BaseBlock.o \
 LameCraft/Blocks/Blocks.o \
-LameCraft/Items/BaseItem.o \
-LameCraft/Items/Items.o \
+LameCraft/Items/Deprecated/BaseItem.o \
+LameCraft/Items/Deprecated/Items.o \
 LameCraft/Items/Item.o \
 LameCraft/Items/ItemFeatures.o \
 LameCraft/Items/ItemTypes.o \
