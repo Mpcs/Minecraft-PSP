@@ -8,38 +8,11 @@ Item::Item(const std::string internalName, item_id id) {
     this->internalName = internalName;
     this->id = id;
 
-    textureRow = 0;
-    plane = 0;
-
-    points = 0;
-    addPoints = 0;
-    vertices = NULL;
-    addVertices = NULL;
-
     stackable = true;
-}
+    std::string textureName = "Assets/Textures/Default/items/" + this->internalName + ".png";
+    int textureID = TextureManager::Instance()->GetTextureNumber(textureName);
 
-Item::~Item() {
-    if (vertices != NULL) {
-        free(vertices);
-        free(addVertices);
-        free(add2Vertices);
-        free(dropVertices);
-    }
-}
-
-Item& Item::setTexture(short textureRow, short plane) {
-    terrainTexture = false;
-    this->textureRow = textureRow;
-    this->plane = plane;
-    return *this;
-}
-
-Item& Item::setTerrainTexture(short textureRow, short plane) {
-    terrainTexture = true;
-    this->textureRow = textureRow;
-    this->plane = plane;
-    return *this;
+    itemModel = new ItemModel(textureID);
 }
 
 Item& Item::setNotStackable() {
@@ -68,6 +41,10 @@ ItemFeature* Item::getFeature(feature_type type) {
         }
     }
     return NULL;
+}
+
+ItemModel* Item::getModel() {
+    return itemModel;
 }
 
 item_id Item::getBaseID() { return id; }

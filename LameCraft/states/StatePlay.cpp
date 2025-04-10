@@ -10446,7 +10446,8 @@ void StatePlay::Draw(StateManager *sManager) {
                 //draw item
                 sceGuDisable(GU_DEPTH_TEST);
                 sceGuDepthMask(1);
-                mWorld->drawHandItems(mWorld->invId[27 + barPosition], cubeLight);
+                Item* item = ItemTypes::getItem(mWorld->invId[27 + barPosition]);
+                item->getModel()->drawInHand(cubeLight);
                 sceGuEnable(GU_DEPTH_TEST);
                 sceGuDepthMask(0);
 
@@ -10804,9 +10805,8 @@ void StatePlay::Draw(StateManager *sManager) {
         (makeScreen == true && mWorld->mainOptions.guiDrawing == 1)) {
         for (int k = 0; k <= 8; k++) {
             if (mWorld->invId[27 + k] != -1) {
-                MatrixPush();
-
                 if (mWorld->invId[27 + k] < 250) {
+                    MatrixPush();
                     MatrixTranslation(Vector3(80 + k * 40, 250, 0));
                     TextureManager::Instance()->SetTextureModeulate(texture);
 
@@ -10833,32 +10833,13 @@ void StatePlay::Draw(StateManager *sManager) {
 
                     DrawSetDepthMask(false);
                     sceGuEnable(GU_DEPTH_TEST);
+                    MatrixPop();
                 }
-                //COMEBACKHERE
+                //Draw Item
                 if (mWorld->invId[27 + k] >= 250) {
-                    MatrixTranslation(Vector3(80 + k * 40, 250, 0));
-                    mWorld->ItemHaveTerrainTexture(mWorld->invId[27 + k])
-                    ? TextureManager::Instance()->SetTextureModeulate(texture)
-                    : TextureManager::Instance()->SetTextureModeulate(barItems);
-
-                    MatrixAngle(Vector3(0, 0, 0));
-                    if (k == slotForChangeScale) {
-                        MatrixScale(Vector3(32 - changeScale * 5, 32 + changeScale * 10, 32 - changeScale * 5));
-
-                        changeScale -= dt * 3.4f;
-                        if (changeScale < 0.0f) {
-                            changeScale = 0.0f;
-                            slotForChangeScale = -1;
-                        }
-                    } else {
-                        MatrixScale(Vector3(32, 32, 32));
-                    }
-
-                    DrawSetCulling(true);
-                    mWorld->drawItems(mWorld->invId[27 + k]);
-                    DrawSetCulling(false);
+                    Item* item = ItemTypes::getItem(mWorld->invId[27 + k]);
+                    item->getModel()->draw2D(80 + k * 40, 250);
                 }
-                MatrixPop();
             }
         }
     }
@@ -10869,79 +10850,64 @@ void StatePlay::Draw(StateManager *sManager) {
         for (int i = 0; i <= 1; i++) {
             for (int j = 0; j <= 1; j++) {
                 if (craftSlotId[i * 2 + j] != -1) {
-                    MatrixPush();
-
-                    MatrixTranslation(Vector3(276 + j * 36, 46 + i * 36, 0.0f));
-
                     if (craftSlotId[i * 2 + j] < 250) {
+                        MatrixPush();
+                        MatrixTranslation(Vector3(276 + j * 36, 46 + i * 36, 0.0f));
+
                         TextureManager::Instance()->SetTextureModeulate(texture);
 
                         mWorld->drawHudCubes(craftSlotId[i * 2 + j]);
+                        MatrixPop();
                     }
 
                     if (craftSlotId[i * 2 + j] >= 250) {
-                        mWorld->ItemHaveTerrainTexture(craftSlotId[i * 2 + j])
-                        ? TextureManager::Instance()->SetTextureModeulate(texture)
-                        : TextureManager::Instance()->SetTextureModeulate(barItems);
-
-                        mWorld->drawHudItems(craftSlotId[i * 2 + j]);
+                        Item* item = ItemTypes::getItem(craftSlotId[i * 2 + j]);
+                        item->getModel()->draw2D(276 + j * 36, 46 + i * 36);
                     }
-                    MatrixPop();
                 }
             }
         }
-        Utils::Logger::Instance()->LogMessage("Inventory Craft Menu 2\n");
         for (int i = 0; i <= 1; i++) {
             for (int j = 0; j <= 1; j++) {
-                if (mWorld->armorId[i * 2 + j] != -1) {
-                    MatrixPush();
-                    Utils::Logger::Instance()->LogMessage("if armor\n");
-                    MatrixTranslation(Vector3(96 + j * 108, 26 + i * 72, 0.0f));
-
-                    if (mWorld->armorId[i * 2 + j] < 250) {
+                int id = mWorld->armorId[i * 2 + j];
+                if (id != -1) {
+                    int posx = 96 + j * 108;
+                    int posy = 26 + i * 72;
+                    if (id < 250) {
+                        MatrixPush();
+                        MatrixTranslation(Vector3(posx, posy, 0.0f));
                         TextureManager::Instance()->SetTextureModeulate(texture);
 
-                        mWorld->drawHudCubes(mWorld->armorId[i * 2 + j]);
+                        mWorld->drawHudCubes(id);
+                        MatrixPop();
                     }
 
-                    Utils::Logger::Instance()->LogMessage("post blocks\n");
-
-                    if (mWorld->armorId[i * 2 + j] >= 250) {
-                        Utils::Logger::Instance()->LogMessage("post blocks if\n");
-                        mWorld->ItemHaveTerrainTexture(mWorld->armorId[i * 2 + j])
-                        ? TextureManager::Instance()->SetTextureModeulate(texture)
-                        : TextureManager::Instance()->SetTextureModeulate(barItems);
-                        Utils::Logger::Instance()->LogMessage("post blocks draw hud\n");
-                        mWorld->drawHudItems(mWorld->armorId[i * 2 + j]);
+                    if (id >= 250) {
+                        Item* item = ItemTypes::getItem(id);
+                        item->getModel()->draw2D(posx, posy);
                     }
-                    MatrixPop();
-                    Utils::Logger::Instance()->LogMessage("Post Items\n");
                 }
             }
         }
-        Utils::Logger::Instance()->LogMessage("Inventory Craft Menu3\n");
-
         //End
 
         //Item which we are crafting
         if (craftItemId != -1) {
-            MatrixPush();
-
-            MatrixTranslation(Vector3(384, 66, 0.0f));
-
             if (craftItemId < 250) {
+                MatrixPush();
+
+                MatrixTranslation(Vector3(384, 66, 0.0f));
                 TextureManager::Instance()->SetTextureModeulate(texture);
 
                 mWorld->drawHudCubes(craftItemId);
+                MatrixPop();
             }
 
             if (craftItemId >= 250) {
-                mWorld->ItemHaveTerrainTexture(craftItemId) ? TextureManager::Instance()->SetTextureModeulate(texture)
-                                                            : TextureManager::Instance()->SetTextureModeulate(barItems);
-
-                mWorld->drawHudItems(craftItemId);
+                Item* item = ItemTypes::getItem(craftItemId);
+                item->getModel()->draw2D(384, 66);
             }
-            MatrixPop();
+            
         }
         Utils::Logger::Instance()->LogMessage("Inventory Craft Menu4\n");
 
@@ -10979,25 +10945,25 @@ void StatePlay::Draw(StateManager *sManager) {
     if (craft3xEn == true) {
         for (int i = 0; i <= 2; i++) {
             for (int j = 0; j <= 2; j++) {
-                if (craftSlotId3[i * 3 + j] != -1) {
-                    MatrixPush();
+                int id = craftSlotId3[i * 3 + j];
+                if (id != -1) {
+                    int posx = 204 + j * 36;
+                    int posy = 26 + i * 36;
 
-                    MatrixTranslation(Vector3(204 + j * 36, 26 + i * 36, 0.0f));
+                    if (id < 250) {
+                        MatrixPush();
 
-                    if (craftSlotId3[i * 3 + j] < 250) {
+                        MatrixTranslation(Vector3(posx, posy, 0.0f));
                         TextureManager::Instance()->SetTextureModeulate(texture);
 
-                        mWorld->drawHudCubes(craftSlotId3[i * 3 + j]);
+                        mWorld->drawHudCubes(id);
+                        MatrixPop();
                     }
 
-                    if (craftSlotId3[i * 3 + j] >= 250) {
-                        mWorld->ItemHaveTerrainTexture(craftSlotId3[i * 3 + j])
-                        ? TextureManager::Instance()->SetTextureModeulate(texture)
-                        : TextureManager::Instance()->SetTextureModeulate(barItems);
-
-                        mWorld->drawHudItems(craftSlotId3[i * 3 + j]);
+                    if (id >= 250) {
+                        Item* item = ItemTypes::getItem(id);
+                        item->getModel()->draw2D(posx, posy);
                     }
-                    MatrixPop();
                 }
             }
         }
@@ -11005,24 +10971,20 @@ void StatePlay::Draw(StateManager *sManager) {
 
         //Item which we are crafting 3x
         if (craftItemId3 != -1) {
-            MatrixPush();
-
-            MatrixTranslation(Vector3(348, 62, 0.0f));
-
+            
             if (craftItemId3 < 250) {
+                MatrixPush();
+                MatrixTranslation(Vector3(348, 62, 0.0f));
                 TextureManager::Instance()->SetTextureModeulate(texture);
 
                 mWorld->drawHudCubes(craftItemId3);
+                MatrixPop();
             }
 
             if (craftItemId3 >= 250) {
-                mWorld->ItemHaveTerrainTexture(craftItemId3) ? TextureManager::Instance()->SetTextureModeulate(texture)
-                                                             : TextureManager::Instance()->SetTextureModeulate(
-                        barItems);
-
-                mWorld->drawHudItems(craftItemId3);
+                Item* item = ItemTypes::getItem(craftItemId3);
+                item->getModel()->draw2D(348, 62);
             }
-            MatrixPop();
         }
     }
 
@@ -11030,25 +10992,22 @@ void StatePlay::Draw(StateManager *sManager) {
     if (chestEn == true) {
         for (int i = 0; i <= 2; i++) {
             for (int j = 0; j <= 8; j++) {
-                if (UseChest->chestSlotId[i * 9 + j] != -1) {
-                    MatrixPush();
-
-                    MatrixTranslation(Vector3(96 + j * 36, 26 + i * 36, 0.0f));
-
-                    if (UseChest->chestSlotId[i * 9 + j] < 250) {
+                int id = UseChest->chestSlotId[i * 9 + j];
+                int posx = 96 + j * 36;
+                int posy = 26 + i * 36;
+                if (id != -1) {
+                    if (id < 250) {
+                        MatrixPush();
+                        MatrixTranslation(Vector3(posx, posy, 0.0f));
                         TextureManager::Instance()->SetTextureModeulate(texture);
-
-                        mWorld->drawHudCubes(UseChest->chestSlotId[i * 9 + j]);
+                        mWorld->drawHudCubes(id);
+                        MatrixPop();
                     }
 
-                    if (UseChest->chestSlotId[i * 9 + j] >= 250) {
-                        mWorld->ItemHaveTerrainTexture(UseChest->chestSlotId[i * 9 + j])
-                        ? TextureManager::Instance()->SetTextureModeulate(texture)
-                        : TextureManager::Instance()->SetTextureModeulate(barItems);
-
-                        mWorld->drawHudItems(UseChest->chestSlotId[i * 9 + j]);
+                    if (id >= 250) {
+                        Item* item = ItemTypes::getItem(id);
+                        item->getModel()->draw2D(posx, posy);
                     }
-                    MatrixPop();
                 }
             }
         }
@@ -11057,66 +11016,52 @@ void StatePlay::Draw(StateManager *sManager) {
     ///FURNACE
     if (furnaceEn == true) {
         if (UseFurnace->furnaceSlotId[0] != -1) {
-            sceGumPushMatrix();
-            ScePspFVector3 loc = {204, 26, 0.0f};
-            sceGumTranslate(&loc);
-
             if (UseFurnace->furnaceSlotId[0] < 250) {
+                sceGumPushMatrix();
+                ScePspFVector3 loc = {204, 26, 0.0f};
+                sceGumTranslate(&loc);
                 TextureManager::Instance()->SetTextureModeulate(texture);
 
                 mWorld->drawHudCubes(UseFurnace->furnaceSlotId[0]);
+                sceGumPopMatrix();
             }
 
             if (UseFurnace->furnaceSlotId[0] >= 250) {
-                mWorld->ItemHaveTerrainTexture(UseFurnace->furnaceSlotId[0])
-                ? TextureManager::Instance()->SetTextureModeulate(texture)
-                : TextureManager::Instance()->SetTextureModeulate(barItems);
-
-                mWorld->drawHudItems(UseFurnace->furnaceSlotId[0]);
+                Item* item = ItemTypes::getItem(UseFurnace->furnaceSlotId[0]);
+                item->getModel()->draw2D(204, 26);
             }
-            sceGumPopMatrix();
         }
 
         if (UseFurnace->furnaceSlotId[1] != -1) {
-            sceGumPushMatrix();
-            ScePspFVector3 loc = {204, 98, 0.0f};
-            sceGumTranslate(&loc);
-
             if (UseFurnace->furnaceSlotId[1] < 250) {
+                sceGumPushMatrix();
+                ScePspFVector3 loc = {204, 98, 0.0f};
+                sceGumTranslate(&loc);
                 TextureManager::Instance()->SetTextureModeulate(texture);
-
                 mWorld->drawHudCubes(UseFurnace->furnaceSlotId[1]);
+                sceGumPopMatrix();
             }
 
             if (UseFurnace->furnaceSlotId[1] >= 250) {
-                mWorld->ItemHaveTerrainTexture(UseFurnace->furnaceSlotId[1])
-                ? TextureManager::Instance()->SetTextureModeulate(texture)
-                : TextureManager::Instance()->SetTextureModeulate(barItems);
-
-                mWorld->drawHudItems(UseFurnace->furnaceSlotId[1]);
+                Item* item = ItemTypes::getItem(UseFurnace->furnaceSlotId[1]);
+                item->getModel()->draw2D(204, 98);
             }
-            sceGumPopMatrix();
         }
 
         if (UseFurnace->furnaceSlotId[2] != -1) {
-            sceGumPushMatrix();
-            ScePspFVector3 loc = {312, 62, 0.0f};
-            sceGumTranslate(&loc);
-
             if (UseFurnace->furnaceSlotId[2] < 250) {
+                sceGumPushMatrix();
+                ScePspFVector3 loc = {312, 62, 0.0f};
+                sceGumTranslate(&loc);
                 TextureManager::Instance()->SetTextureModeulate(texture);
-
                 mWorld->drawHudCubes(UseFurnace->furnaceSlotId[2]);
+                sceGumPopMatrix();
             }
 
             if (UseFurnace->furnaceSlotId[2] >= 250) {
-                mWorld->ItemHaveTerrainTexture(UseFurnace->furnaceSlotId[2])
-                ? TextureManager::Instance()->SetTextureModeulate(texture)
-                : TextureManager::Instance()->SetTextureModeulate(barItems);
-
-                mWorld->drawHudItems(UseFurnace->furnaceSlotId[2]);
+                Item* item = ItemTypes::getItem(UseFurnace->furnaceSlotId[2]);
+                item->getModel()->draw2D(312, 62);
             }
-            sceGumPopMatrix();
         }
     }
 
@@ -11124,23 +11069,23 @@ void StatePlay::Draw(StateManager *sManager) {
         for (int i = 0; i <= 3; i++) {
             for (int j = 0; j <= 8; j++) {
                 if (mWorld->invId[i * 9 + j] != -1) {
-                    MatrixPush();
-                    MatrixTranslation(Vector3(96 + j * 36, 138 + i * 36, 0.0f));
+                    int id = mWorld->invId[i * 9 + j];
+                    int posx = 96 + j * 36;
+                    int posy = 138 + i * 36;
+                    if (id < 250) {
+                        MatrixPush();
+                        MatrixTranslation(Vector3(posx, posy, 0.0f));
 
-                    if (mWorld->invId[i * 9 + j] < 250) {
                         TextureManager::Instance()->SetTextureModeulate(texture);
 
-                        mWorld->drawHudCubes(mWorld->invId[i * 9 + j]);
+                        mWorld->drawHudCubes(id);
+                        MatrixPop();
                     }
 
-                    if (mWorld->invId[i * 9 + j] >= 250) {
-                        mWorld->ItemHaveTerrainTexture(mWorld->invId[i * 9 + j])
-                        ? TextureManager::Instance()->SetTextureModeulate(texture)
-                        : TextureManager::Instance()->SetTextureModeulate(barItems);
-
-                        mWorld->drawHudItems(mWorld->invId[i * 9 + j]);
+                    if (id >= 250) {
+                        Item* item = ItemTypes::getItem(id);
+                        item->getModel()->draw2D(posx, posy);
                     }
-                    MatrixPop();
                 }
             }
         }
@@ -11181,10 +11126,8 @@ void StatePlay::Draw(StateManager *sManager) {
             }
 
             if (mWorld->mId >= 250) {
-                mWorld->ItemHaveTerrainTexture(mWorld->mId) ? TextureManager::Instance()->SetTextureModeulate(texture)
-                                                            : TextureManager::Instance()->SetTextureModeulate(barItems);
-
-                mWorld->drawHudItems(mWorld->mId);
+                Item* item = ItemTypes::getItem(mWorld->mId);
+                item->getModel()->draw2D(0, 0);
             }
             MatrixPop();
         }

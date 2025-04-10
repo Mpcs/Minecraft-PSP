@@ -357,7 +357,7 @@ private:
     float shift_y;
     float changeY;
     float changeScale;
-    int slotForChangeScale;
+    int slotForChangeScale; // TODO: Deprecated? Not assigned anywhere other than -1
 
     float animDest;
     float animSpeed;

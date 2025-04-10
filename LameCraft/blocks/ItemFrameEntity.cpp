@@ -47,10 +47,7 @@ void ItemFrameEntity::Render(CraftWorld *mWorld, Frustum &camFrustum, float dt) 
     if (camFrustum.BoxInFrustum(bBox) == Frustum::Intersects &&
         (((GetZ() - mWorld->playerPos.z) <= 19) && ((GetY() - mWorld->playerPos.y) <= 12) &&
          ((GetX() - mWorld->playerPos.x) <= 19))) {
-        sceGumPushMatrix();
-        sceGuEnable(GU_DEPTH_TEST);
-        sceGuEnable(GU_ALPHA_TEST);
-
+    
         float x_offset = 0.0f;
         float z_offset = 0.0f;
         float rotate_y_offset = 0.0f;
@@ -63,6 +60,9 @@ void ItemFrameEntity::Render(CraftWorld *mWorld, Frustum &camFrustum, float dt) 
 
         if (GetItem() < 250) // block
         {
+            sceGumPushMatrix();
+            sceGuEnable(GU_DEPTH_TEST);
+            sceGuEnable(GU_ALPHA_TEST);
             TextureManager::Instance()->SetTextureModeulate(mWorld->textureTerrainId);
 
             switch (GetFacing()) {
@@ -100,15 +100,10 @@ void ItemFrameEntity::Render(CraftWorld *mWorld, Frustum &camFrustum, float dt) 
             sceGumScale(&scale);
 
             mWorld->drawCubes(GetItem(), light); // should optimize final light params in future
-        } else // item
-        {
-            if (mWorld->ItemHaveTerrainTexture(GetItem())) {
-                TextureManager::Instance()->SetTextureModeulate(mWorld->textureTerrainId);
-            } else {
-                TextureManager::Instance()->SetTextureModeulate(mWorld->textureItemsId);
-            }
-
-
+            sceGuDisable(GU_ALPHA_TEST);
+            sceGuDisable(GU_DEPTH_TEST);
+            sceGumPopMatrix();
+        } else { // item 
             switch (GetFacing()) {
                 case 1:
                     x_offset = -PIXEL * 6.9f;
@@ -130,23 +125,10 @@ void ItemFrameEntity::Render(CraftWorld *mWorld, Frustum &camFrustum, float dt) 
             rotate_y_offset -= PI / 2.0f;
 
             sceGuColor(GU_COLOR(light, light, light, 1.0f));
-
-            ScePspFVector3 loc = {GetX() + 0.5f + x_offset, GetY() + 0.5f, GetZ() + 0.5f + z_offset};
-            sceGumTranslate(&loc);
-
-            sceGumRotateX(0.0f);
-            sceGumRotateY(rotate_y_offset);
-            sceGumRotateZ(0.0f);
-
-            ScePspFVector3 scale = {1.0f, 1.0f, 1.0f};
-            sceGumScale(&scale);
-
-            mWorld->drawDropItems(GetItem());
+            
+            Item* item = ItemTypes::getItem(GetItem());
+            item->getModel()->drawDropped(GetX() + 0.5f + x_offset, GetY() + 0.5f, GetZ() + 0.5f + z_offset, rotate_y_offset);
         }
-
-        sceGuDisable(GU_ALPHA_TEST);
-        sceGuDisable(GU_DEPTH_TEST);
-        sceGumPopMatrix();
     }
 }
 

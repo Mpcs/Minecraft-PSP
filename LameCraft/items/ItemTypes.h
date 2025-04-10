@@ -21,7 +21,7 @@ class ItemTypes {
         static void clear();
 
     private:   
-        static void insertItem(Item& item);
+        static void insertItem(Item item);
         static ItemTypes* instance;
 
         std::map<std::string, item_id> nameToID;

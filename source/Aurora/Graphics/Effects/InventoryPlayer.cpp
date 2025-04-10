@@ -106,7 +106,8 @@ namespace Aurora {
                     ScePspFVector3 scale = {0.53, 0.53, 0.53};
                     sceGumScale(&scale);
 
-                    world->drawFull3DItem(handItemId, 1.0f);
+                    Item* item = ItemTypes::getItem(handItemId);
+                    item->getModel()->drawFull3D(1.0f);
                 } else {
                     TextureManager::Instance()->SetTextureModeulate(world->textureTerrainId);
 

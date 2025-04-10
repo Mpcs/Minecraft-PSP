@@ -1,5 +1,9 @@
 #include "TextureHelper.h"
 #include <Aurora/Graphics/RenderManager.h>
+#include <dirent.h>
+
+#include <Aurora/Utils/Logger.h>
+#include <string>
 
 TextureHelper::TextureHelper() {
     defaulPatch = "Assets/Textures/";
@@ -75,6 +79,23 @@ void TextureHelper::Init() {
     FastLoadTexture("entity/sheep.png");
     FastLoadTexture("entity/sheep_fur.png");
     FastLoadTexture("title/background.png");
+    std::string endName = defaulPatch + "missing_texture.png";
+    TextureManager::Instance()->LoadTexture(endName);
+
+    DIR *dir = opendir((texturePatch + "/items").c_str());
+    struct dirent *entry;
+
+    while ((entry = readdir(dir)) != NULL) {
+        std::string plik = "";
+        plik += entry->d_name;
+        for (int i = 0; i < plik.length(); i++)
+            plik[i] = tolower(plik[i]);
+
+        FastLoadTexture("items/" + plik);
+    }
+
+    closedir(dir);
+
 }
 
 int TextureHelper::GetTexture(Textures texture) {

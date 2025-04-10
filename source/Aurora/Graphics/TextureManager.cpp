@@ -31,7 +31,7 @@ namespace Aurora {
                     return i;
                 }
             }
-            return -1;
+            return GetTextureNumber("Assets/Textures/missing_texture.png"); //TODO: fix Infinite recursion if this file does not exist
         }
 
         int TextureManager::GetConstTextureNumber(std::string name) {

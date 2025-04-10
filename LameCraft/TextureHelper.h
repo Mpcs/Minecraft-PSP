@@ -80,7 +80,7 @@ public:
     };
     std::string texturePatch;
     std::string defaultFolder;
-
+    
     static TextureHelper m_TextureHelper;
 
     static TextureHelper *Instance();

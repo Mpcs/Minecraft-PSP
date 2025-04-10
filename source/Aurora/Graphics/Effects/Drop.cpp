@@ -236,32 +236,11 @@ void Drop::Render(Frustum &camFrustum, Vector3 playerPos, float camAngle) {
 
                 sceGumPopMatrix();
             } else {
-                sceGumPushMatrix();
-
-                ScePspFVector3 loc = {position.x, position.y + sinf(levit) * 0.09f, position.z};
-                sceGumTranslate(&loc);
-
-                sceGumRotateX(0.0f);
-                sceGumRotateY(angle);
-                sceGumRotateZ(0.0f);
-
-                myCrft->drawDropItems(id);
-
-                sceGumPopMatrix();
+                Item* item = ItemTypes::getItem(id);
+                item->getModel()->drawDropped(position.x, position.y + sinf(levit) * 0.09f, position.z, angle);
 
                 if (amount >= 4 && stackable == true) {
-                    sceGumPushMatrix();
-
-                    ScePspFVector3 loc3 = {position.x + 0.09f, position.y + sinf(levit) * 0.09f + 0.09f, position.z};
-                    sceGumTranslate(&loc3);
-
-                    sceGumRotateX(0.0f);
-                    sceGumRotateY(angle);
-                    sceGumRotateZ(0.0f);
-
-                    myCrft->drawDropItems(id);
-
-                    sceGumPopMatrix();
+                    item->getModel()->drawDropped(position.x + 0.09f, position.y + sinf(levit) * 0.09f + 0.09f, position.z, angle);
                 }
             }
 

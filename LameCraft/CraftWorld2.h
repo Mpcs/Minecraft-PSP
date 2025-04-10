@@ -18,6 +18,7 @@
 #include "items/Item.h"
 #include "items/ItemFeatures.h"
 #include "items/Items.h"
+#include "items/ItemModel.h"
 #include "SimpleMeshChunk2.h"
 #include "mobs/Zombie2.h"
 #include "mobs/Cow2.h"
@@ -245,8 +246,6 @@ public:
 
     void GetNormalBlockVerts(int i, BaseBlock *blockType);
 
-    void GetItemVerts(Item *itemType);
-
     void GetCloudsVerts(BaseBlock *blockType);
 
     void buildblocksVerts();
@@ -333,16 +332,6 @@ public:
     void drawHand();
 
     void drawClouds();
-
-    void drawDropItems(int i);
-
-    void drawItems(int i);
-
-    void drawHudItems(int i);
-
-    void drawFull3DItem(int i, float light);
-
-    void drawHandItems(int i, float light);
 
     void drawArmor(int i, float light);
 

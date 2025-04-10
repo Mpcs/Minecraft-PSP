@@ -9099,7 +9099,7 @@ void StatePlayCreative::Draw(StateManager *sManager) {
             //draw item
             sceGuDisable(GU_DEPTH_TEST);
             sceGuDepthMask(1);
-            mWorld->drawHandItems(mWorld->invId[27 + barPosition], cubeLight);
+            //mWorld->drawHandItems(mWorld->invId[27 + barPosition], cubeLight);
             sceGuEnable(GU_DEPTH_TEST);
             sceGuDepthMask(0);
 
@@ -9294,7 +9294,7 @@ void StatePlayCreative::Draw(StateManager *sManager) {
                     ? TextureManager::Instance()->SetTextureModeulate(texture)
                     : TextureManager::Instance()->SetTextureModeulate(barItems);
 
-                    mWorld->drawHudItems(mWorld->invId[27 + k]);
+                    //mWorld->drawHudItems(mWorld->invId[27 + k]);
                 }
                 MatrixPop();
             }
@@ -9323,7 +9323,7 @@ void StatePlayCreative::Draw(StateManager *sManager) {
                             ? TextureManager::Instance()->SetTextureModeulate(texture)
                             : TextureManager::Instance()->SetTextureModeulate(barItems);
 
-                            mWorld->drawHudItems(inventoryItems[creativePage * 27 + i * 9 + j]);
+                            //mWorld->drawHudItems(inventoryItems[creativePage * 27 + i * 9 + j]);
                         }
                         sceGumPopMatrix();
                     }
@@ -9353,7 +9353,7 @@ void StatePlayCreative::Draw(StateManager *sManager) {
                         ? TextureManager::Instance()->SetTextureModeulate(texture)
                         : TextureManager::Instance()->SetTextureModeulate(barItems);
 
-                        mWorld->drawHudItems(craftSlotId3[i * 3 + j]);
+                        //mWorld->drawHudItems(craftSlotId3[i * 3 + j]);
                     }
                     MatrixPop();
                 }
@@ -9376,7 +9376,7 @@ void StatePlayCreative::Draw(StateManager *sManager) {
             if (craftItemId3 >= 250) {
                 TextureManager::Instance()->SetTextureModeulate(barItems);
 
-                mWorld->drawHudItems(craftItemId3);
+                //mWorld->drawHudItems(craftItemId3);
             }
             MatrixPop();
         }
@@ -9402,7 +9402,7 @@ void StatePlayCreative::Draw(StateManager *sManager) {
                         ? TextureManager::Instance()->SetTextureModeulate(texture)
                         : TextureManager::Instance()->SetTextureModeulate(barItems);
 
-                        mWorld->drawHudItems(UseChest->chestSlotId[i * 9 + j]);
+                        //mWorld->drawHudItems(UseChest->chestSlotId[i * 9 + j]);
                     }
                     MatrixPop();
                 }
@@ -9429,7 +9429,7 @@ void StatePlayCreative::Draw(StateManager *sManager) {
                 ? TextureManager::Instance()->SetTextureModeulate(texture)
                 : TextureManager::Instance()->SetTextureModeulate(barItems);
 
-                mWorld->drawHudItems(UseFurnace->furnaceSlotId[0]);
+                //mWorld->drawHudItems(UseFurnace->furnaceSlotId[0]);
             }
             sceGumPopMatrix();
         }
@@ -9450,7 +9450,7 @@ void StatePlayCreative::Draw(StateManager *sManager) {
                 ? TextureManager::Instance()->SetTextureModeulate(texture)
                 : TextureManager::Instance()->SetTextureModeulate(barItems);
 
-                mWorld->drawHudItems(UseFurnace->furnaceSlotId[1]);
+                //mWorld->drawHudItems(UseFurnace->furnaceSlotId[1]);
             }
             sceGumPopMatrix();
         }
@@ -9471,7 +9471,7 @@ void StatePlayCreative::Draw(StateManager *sManager) {
                 ? TextureManager::Instance()->SetTextureModeulate(texture)
                 : TextureManager::Instance()->SetTextureModeulate(barItems);
 
-                mWorld->drawHudItems(UseFurnace->furnaceSlotId[2]);
+                //mWorld->drawHudItems(UseFurnace->furnaceSlotId[2]);
             }
             sceGumPopMatrix();
         }
@@ -9503,7 +9503,7 @@ void StatePlayCreative::Draw(StateManager *sManager) {
                     ? TextureManager::Instance()->SetTextureModeulate(texture)
                     : TextureManager::Instance()->SetTextureModeulate(barItems);
 
-                    mWorld->drawHudItems(mWorld->invId[27 + k]);
+                    //mWorld->drawHudItems(mWorld->invId[27 + k]);
                 }
 
                 sceGumPopMatrix();
@@ -9530,7 +9530,7 @@ void StatePlayCreative::Draw(StateManager *sManager) {
                             ? TextureManager::Instance()->SetTextureModeulate(texture)
                             : TextureManager::Instance()->SetTextureModeulate(barItems);
 
-                            mWorld->drawHudItems(mWorld->invId[i * 9 + j]);
+                            //mWorld->drawHudItems(mWorld->invId[i * 9 + j]);
                         }
                         sceGumPopMatrix();
                     }
@@ -9586,7 +9586,7 @@ void StatePlayCreative::Draw(StateManager *sManager) {
                 mWorld->ItemHaveTerrainTexture(mWorld->mId) ? TextureManager::Instance()->SetTextureModeulate(texture)
                                                             : TextureManager::Instance()->SetTextureModeulate(barItems);
 
-                mWorld->drawHudItems(mWorld->mId);
+                //mWorld->drawHudItems(mWorld->mId);
             }
             sceGumPopMatrix();
         }
