@@ -1,7 +1,7 @@
 #ifndef ITEMS_H
 #define ITEMS_H
 
-#include "items/BaseItem.h"
+#include "items/deprecated/BaseItem.h"
 
 /*
 /   DEPRECATED. To be removed when references to all the classes are reduced. Mostly a new crafting system
