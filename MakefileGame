@@ -28,8 +28,8 @@ source/Aurora/Utils/pge.o \
 source/Aurora/Utils/pgeDir.o \
 source/Aurora/System/SystemManager.o \
 source/Aurora/System/NetworkManager.o \
-LameCraft/Blocks/BaseBlock.o \
-LameCraft/Blocks/Blocks.o \
+LameCraft/Blocks/Deprecated/BaseBlock.o \
+LameCraft/Blocks/Deprecated/Blocks.o \
 LameCraft/Items/Deprecated/BaseItem.o \
 LameCraft/Items/Deprecated/Items.o \
 LameCraft/Items/Item.o \

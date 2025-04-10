@@ -13,7 +13,7 @@
 #include <Aurora/Graphics/Effects/TNT.h>
 #include <Aurora/Graphics/Effects/WeatherSystem.h>
 
-#include "blocks/Blocks.h"
+#include "blocks/deprecated/Blocks.h"
 #include "items/ItemTypes.h"
 #include "items/Item.h"
 #include "items/ItemFeatures.h"

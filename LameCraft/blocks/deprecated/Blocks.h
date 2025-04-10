@@ -1,7 +1,7 @@
 #ifndef BLOCKS_H
 #define BLOCKS_H
 
-#include "blocks/BaseBlock.h"
+#include "blocks/deprecated/BaseBlock.h"
 
 class GrassBlock : public BaseBlock {
 public:
