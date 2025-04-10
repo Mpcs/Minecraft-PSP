@@ -72,7 +72,7 @@ void ItemTypes::initialize() {
     );
 
     insertItem(
-        Item("gold_pickaxe", 254)
+        Item("golden_pickaxe", 254)
         .setNotStackable()
         .addFeature(new DurabilityFeature(33))
         .addFeature(new ToolFeature(ToolType::pickaxe, MiningLevel::gold, -1))
@@ -108,7 +108,7 @@ void ItemTypes::initialize() {
     );
 
     insertItem(
-        Item("gold_sword", 259)
+        Item("golden_sword", 259)
         .setNotStackable()
         .addFeature(new DurabilityFeature(33))
         .addFeature(new WeaponFeature(-1))
@@ -144,7 +144,7 @@ void ItemTypes::initialize() {
     );
 
     insertItem(
-        Item("gold_shovel", 264)
+        Item("golden_shovel", 264)
         .setNotStackable()
         .addFeature(new DurabilityFeature(33))
         .addFeature(new ToolFeature(ToolType::shovel, MiningLevel::gold, -1))
@@ -180,7 +180,7 @@ void ItemTypes::initialize() {
     );
 
     insertItem(
-        Item("gold_axe", 269)
+        Item("golden_axe", 269)
         .setNotStackable()
         .addFeature(new DurabilityFeature(33))
         .addFeature(new ToolFeature(ToolType::axe, MiningLevel::gold, -1))
@@ -216,7 +216,7 @@ void ItemTypes::initialize() {
     ); 
 
     insertItem(
-        Item("gold_hoe", 274)
+        Item("golden_hoe", 274)
         .setNotStackable()
         .addFeature(new DurabilityFeature(33))
         .addFeature(new ToolFeature(ToolType::hoe, MiningLevel::gold, -1))
@@ -259,7 +259,7 @@ void ItemTypes::initialize() {
     );
 
     insertItem(
-        Item("clay", 283)
+        Item("clay_ball", 283)
         .addFeature(new SmeltableFeature("brick"))
     );
 
@@ -272,7 +272,7 @@ void ItemTypes::initialize() {
     );
 
     insertItem(
-        Item("seeds", 286)
+        Item("wheat_seeds", 286)
     );
 
     insertItem(
@@ -304,22 +304,22 @@ void ItemTypes::initialize() {
     );
 
     insertItem(
-        Item("sugar_cane_item", 293)
+        Item("sugar_cane", 293)
         //.setTerrainTexture(14, 11)
     );
     
     insertItem(
-        Item("flower_1_item", 294)
+        Item("flower_1_item", 294) // TODO: BLOCK TEXTURE
         //.setTerrainTexture(15, 12)
     );
 
     insertItem(
-        Item("flower_2_item", 295)
+        Item("flower_2_item", 295) // TODO: BLOCK TEXTURE
         //.setTerrainTexture(15, 13)
     );
 
     insertItem(
-        Item("oak_sapling", 296)
+        Item("oak_sapling", 296) // TODO: BLOCK TEXTURE
         //.setTerrainTexture(15, 15)
         .addFeature(new FuelFeature(5))
     );
@@ -337,12 +337,12 @@ void ItemTypes::initialize() {
     );
 
     insertItem(
-        Item("mushroom_1_item", 300)
+        Item("mushroom_1_item", 300) // TODO: BLOCK TEXTURE
         //.setTerrainTexture(14, 12)
     );
 
     insertItem(
-        Item("mushroom_2_item", 301)
+        Item("mushroom_2_item", 301) // TODO: BLOCK TEXTURE
         //.setTerrainTexture(14, 13)
     );
 
@@ -355,33 +355,33 @@ void ItemTypes::initialize() {
     );
 
     insertItem(
-        Item("door_item", 306)
+        Item("oak_door", 306)
         .setNotStackable()
         .addFeature(new FuelFeature(30))
     );
 
     insertItem(
-        Item("ladder_item", 307)
+        Item("ladder_item", 307) // TODO: BLOCK TEXTURE
         //.setTerrainTexture(10, 3)
     );
 
     insertItem(
-        Item("torch_item", 308)
+        Item("torch_item", 308) // TODO: BLOCK TEXTURE
         //.setTerrainTexture(11, 8)
     );
 
     insertItem(
-        Item("spruce_sapling_item", 309)
+        Item("spruce_sapling_item", 309) // TODO: BLOCK TEXTURE
         //.setTerrainTexture(15, 14)
     );
 
     insertItem(
-        Item("birch_sapling_item", 310)
+        Item("birch_sapling_item", 310) // TODO: BLOCK TEXTURE
         //.setTerrainTexture(14, 14)
     );
 
     insertItem(
-        Item("melon_item", 311)
+        Item("melon_slice", 311)
     );
 
     insertItem(
@@ -401,12 +401,12 @@ void ItemTypes::initialize() {
     );
 
     insertItem(
-        Item("raw_beef", 316)
+        Item("beef", 316)
         .addFeature(new SmeltableFeature("steak"))
     );
 
     insertItem(
-        Item("steak", 317)
+        Item("cooked_beef", 317)
     );
 
     insertItem(
@@ -419,7 +419,7 @@ void ItemTypes::initialize() {
     );
 
     insertItem(
-        Item("cake_item", 320)
+        Item("cake", 320)
         .setNotStackable()
     );
 
@@ -568,28 +568,28 @@ void ItemTypes::initialize() {
     );
 
     insertItem(
-        Item("gold_helmet", 344)
+        Item("golden_helmet", 344)
         .setNotStackable()
         .addFeature(new DurabilityFeature(77))
         .addFeature(new ArmorFeature(ArmorSlot::helmet, -1))
     );
 
     insertItem(
-        Item("gold_chestplate", 345)
+        Item("golden_chestplate", 345)
         .setNotStackable()
         .addFeature(new DurabilityFeature(112))
         .addFeature(new ArmorFeature(ArmorSlot::chestplate, -1))
     );
 
     insertItem(
-        Item("gold_leggings", 346)
+        Item("golden_leggings", 346)
         .setNotStackable()
         .addFeature(new DurabilityFeature(105))
         .addFeature(new ArmorFeature(ArmorSlot::leggings, -1))
     );
 
     insertItem(
-        Item("gold_boots", 347)
+        Item("golden_boots", 347)
         .setNotStackable()
         .addFeature(new DurabilityFeature(91))
         .addFeature(new ArmorFeature(ArmorSlot::boots, -1))
@@ -601,12 +601,12 @@ void ItemTypes::initialize() {
     );
 
     insertItem(
-        Item("glass_panel_item", 349)
+        Item("glass_panel_item", 349) // TODO: BLOCK TEXTURE
         //.setTerrainTexture(12, 1)
     );
 
     insertItem(
-        Item("iron_bars_item", 350)
+        Item("iron_bars_item", 350) // TODO: BLOCK TEXTURE
         //.setTerrainTexture(10, 5)
     );
 
@@ -623,12 +623,12 @@ void ItemTypes::initialize() {
     );
 
     insertItem(
-        Item("clock", 354)
+        Item("clock", 354) // TODO: Animated texture
         .setNotStackable()
     );
 
     insertItem(
-        Item("compass", 355)
+        Item("compass", 355) // TODO: Animated Texture
         .setNotStackable()
     );
 
@@ -638,26 +638,28 @@ void ItemTypes::initialize() {
     );
 
     insertItem(
-        Item("sign", 357)
+        Item("oak_sign", 357)
         .setNotStackable()
     );
 
     insertItem(
-        Item("item_frame_item", 358)
+        Item("item_frame", 358)
     );
 
     insertItem(
-        Item("flower_pot_item", 359)
+        Item("flower_pot", 359)
     );
 
     insertItem(
-        Item("painting_item", 360)
+        Item("painting", 360)
     );
 
     insertItem(
-        Item("bed_item", 361)
+        Item("bed_item", 361) // TODO: Missing texture?
         .setNotStackable()
     );
+
+    // TODO: Dyes and music disks have to be reworked. No textures now
 
     insertItem(
         Item("music_disk_1", 362)
@@ -742,7 +744,7 @@ void ItemTypes::initialize() {
     );
 
     insertItem(
-        Item("poisoned_potato", 381)
+        Item("poisonous_potato", 381)
     );
 
     insertItem(
