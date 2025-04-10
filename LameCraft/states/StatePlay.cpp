@@ -189,7 +189,6 @@ void StatePlay::InitCamera() {
 }
 
 void StatePlay::Init() {
-    Utils::Logger::Instance()->LogMessage("State Play Init\n");
     //set render manager instance
     mRender = RenderManager::InstancePtr();
     mSystemMgr = SystemManager::Instance();
@@ -231,55 +230,43 @@ void StatePlay::Init() {
     walkSoundAccu = 0.0f;
     isWalking = false;
     loadReady = false;
-    Utils::Logger::Instance()->LogMessage("StatePlay init end\n");
 }
 
 void StatePlay::InitParametric(bool makeTrees, bool makeWater, bool makeCaves, unsigned int seed_1, int worldType,
                                char gameMode) {
-                                Utils::Logger::Instance()->LogMessage("StatePlay init parametric\n");
     //set render manager instance
     mRender = RenderManager::InstancePtr();
     mSystemMgr = SystemManager::Instance();
     mSoundMgr = SoundManager::Instance();
     mIhelper = InputHelper::Instance();
 
-    Utils::Logger::Instance()->LogMessage("Helpers end\n");
-
     //then create our perfect world
     mWorld = new CraftWorld();
     mWorld->initWorld(WORLD_SIZE, WORLD_HEIGHT, CHUNK_SIZE);
     mWorld->gameModeWorld = gameMode;
 
-    Utils::Logger::Instance()->LogMessage("mworld init end\n");
-
     WorldGenerator *mGen = new WorldGenerator();
     mGen->initRandompMap(WORLD_SIZE, WORLD_HEIGHT, CHUNK_SIZE, mWorld, makeTrees, makeWater, makeCaves, seed_1,
                          worldType);
-
-                         Utils::Logger::Instance()->LogMessage("initrandomMap end\n");
     delete mGen;
     //mWorld->initRandompMap(128,16,terrainType,makeFlat,makeTrees,makeWater,makeCaves);
     mWorld->setTextureSize(256, 16, 64, 16, 256, 16);
     mWorld->SetWolrdTime(10);
     mWorld->UpdatePlayerZoneBB(playerPosition);
     mWorld->buildMap();
-    Utils::Logger::Instance()->LogMessage("mworldBuildMapEnd\n");
 
     playerPosition = newPlayerPos = oldPlayerPos = mWorld->playerSpawnPointPosition;
 
     int curchunkTarget = mWorld->getChunkId(playerPosition);
 
     dt = mTimer.GetDeltaTime();
-    Utils::Logger::Instance()->LogMessage("mtimer end\n");
 
     LoadTextures();
-    Utils::Logger::Instance()->LogMessage("loadtextures end\n");
 
     mWorld->GetTexturesIds();
     mWorld->buildblocksVerts();
     mWorld->buildcloudsVerts();
     mWorld->buildmobVerts();
-    Utils::Logger::Instance()->LogMessage("buildVerts end\n");
 
     menuOptions = false;
     optionsMenuPos = 0;
@@ -293,11 +280,7 @@ void StatePlay::InitParametric(bool makeTrees, bool makeWater, bool makeCaves, u
     bobCycle = PI / 2.0f;
     loadReady = true;
 
-    Utils::Logger::Instance()->LogMessage("LoadEnd\n");
-
     mWorld->haveCompass = mWorld->HaveItemInBarSlots(Compass::getID());
-    Utils::Logger::Instance()->LogMessage("StatePlay parametric init end\n");
-
 }
 
 void StatePlay::SetWorldAndSaveName(std::string worldName, std::string fileName) {
@@ -308,7 +291,6 @@ void StatePlay::SetWorldAndSaveName(std::string worldName, std::string fileName)
 }
 
 void StatePlay::LoadMap(std::string fileName, bool compressed) {
-    Utils::Logger::Instance()->LogMessage("loadMap\n");
     //enter loading screen
     LoadingScreen *loading = new LoadingScreen();
 
@@ -381,7 +363,6 @@ void StatePlay::LoadMap(std::string fileName, bool compressed) {
     // cancel loading screen
     loading->KillLoadingScreen();
     delete loading;
-    Utils::Logger::Instance()->LogMessage("Load Map End\n");
 }
 
 void StatePlay::LoadTextures() {
@@ -10846,7 +10827,6 @@ void StatePlay::Draw(StateManager *sManager) {
 
     /// INVENTORY CRAFT MENU
     if (invEn == true) {
-        Utils::Logger::Instance()->LogMessage("Inventory Craft Menu\n");
         for (int i = 0; i <= 1; i++) {
             for (int j = 0; j <= 1; j++) {
                 if (craftSlotId[i * 2 + j] != -1) {
@@ -10909,7 +10889,6 @@ void StatePlay::Draw(StateManager *sManager) {
             }
             
         }
-        Utils::Logger::Instance()->LogMessage("Inventory Craft Menu4\n");
 
         if (upEn == false) {
             if (invSteveAngle < invXPosition / 8.0f * 48) {
@@ -10937,7 +10916,6 @@ void StatePlay::Draw(StateManager *sManager) {
         DrawSetDepthMask(true);
 
         MatrixPop();
-        Utils::Logger::Instance()->LogMessage("Inventory Craft Menu5\n");
     }
 
 
