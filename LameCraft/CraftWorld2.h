@@ -17,7 +17,7 @@
 #include "items/ItemTypes.h"
 #include "items/Item.h"
 #include "items/ItemFeatures.h"
-#include "items/Items.h"
+#include "items/deprecated/Items.h"
 #include "items/ItemModel.h"
 #include "SimpleMeshChunk2.h"
 #include "mobs/Zombie2.h"
