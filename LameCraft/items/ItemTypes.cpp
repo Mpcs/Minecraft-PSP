@@ -2,8 +2,8 @@
 ItemTypes* ItemTypes::instance = 0;
 
 void ItemTypes::insertItem(Item item) {
-    instance->nameToID.insert(std::map<std::string,item_id>::value_type (item.internalName, item.getBaseID()));
-    instance->itemTypes[item.getBaseID()] = new Item(item);
+    instance->nameToID.insert(std::map<std::string,item_id>::value_type (item.getInternalName(), item.getID()));
+    instance->itemTypes[item.getID()] = new Item(item);
 }
 
 Item* ItemTypes::getItem(item_id id) {

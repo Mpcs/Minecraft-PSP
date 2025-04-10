@@ -240,7 +240,6 @@ CraftWorld::CraftWorld() {
 
     InitBlockVector();
     ItemTypes::initialize();
-    UpdateBlocksAndItemsName();
 
     // FetchNearestChunks();
 
@@ -547,23 +546,6 @@ void CraftWorld::InitBlockVector() {
     blockTypes.push_back(HayBale());
     blockTypes.push_back(CoalBlock());
     blockTypes.push_back(RedstoneBlock());
-}
-
-void CraftWorld::UpdateBlocksAndItemsName() {
-    Translation* translation = Translation::GetInstance();
-    //map<string, string> blockNames = translation->getTranslationsOfType("BLOCK");
-    //for (int i = 0; i < blockTypes.size(); i++) {
-    //    int id = blockTypes[i].getBaseID();
-    //    char stringid[3];
-    //    sprintf(stringid, "%d", id);
-    //    blockTypes[i].name = blockNames[stringid];
-    //}
-//
-    map<string, string> itemNames = translation->getTranslationsOfType("ITEM");
-    vector<Item*> items = ItemTypes::getAllItems();
-    for (int i = 0; i < items.size(); i++) {
-        items[i]->displayName = itemNames[items[i]->internalName];
-    }
 }
 
 CraftWorld::~CraftWorld() {
@@ -3672,7 +3654,7 @@ string CraftWorld::NameBlock(int id) {
             return blockTypes[id].name;
         }
     } else {
-        return ItemTypes::getItem(id)->displayName;
+        return ItemTypes::getItem(id)->getDisplayName();
     }
     return "null";
 }
@@ -3711,7 +3693,7 @@ int CraftWorld::DurabilityPointsItem(int id) {
 bool CraftWorld::StackableItem(int id) {
     if (id < 0)
         return false;
-    return ItemTypes::getItem(id)->stackable;
+    return ItemTypes::getItem(id)->isStackable();
 }
 
 

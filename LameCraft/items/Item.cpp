@@ -6,6 +6,7 @@ using namespace Aurora;
 
 Item::Item(const std::string internalName, item_id id) {
     this->internalName = internalName;
+    this->displayName = Translation::GetInstance()->getValue("ITEM", internalName);
     this->id = id;
 
     stackable = true;
@@ -47,4 +48,10 @@ ItemModel* Item::getModel() {
     return itemModel;
 }
 
-item_id Item::getBaseID() { return id; }
+item_id Item::getID() { return id; }
+std::string Item::getInternalName() { return internalName; }
+std::string Item::getDisplayName() { return displayName; }
+
+bool Item::isStackable() { return stackable; }
+
+

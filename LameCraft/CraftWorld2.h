@@ -155,8 +155,6 @@ public:
     char gameModeWorld;
     bool gameLocked;
 
-    void UpdateBlocksAndItemsName();
-
     void InitBlockVector();
 
     block_t _GetBlock(const int x, const int y, const int z);
