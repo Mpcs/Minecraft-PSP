@@ -320,7 +320,3 @@ void ItemModel::drawFull3D(float light) {
     DrawSetBlend(false);
     DrawPlaceTexture(false);
 }
-
-int ItemModel::getTextureID() {
-    return textureID;
-}

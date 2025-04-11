@@ -16,8 +16,6 @@ public:
     void drawInHand(float light);// TODO: come back to this
     void drawFull3D(float light);// TODO: come back to this
 
-    int getTextureID();
-
     static TexturesPSPVertex itemVertices[6];
     static TexturesPSPVertex dropVertices[6];
     
