@@ -2,7 +2,7 @@
 #include "InputHelper.h"
 #include "TextureHelper.h"
 #include "lang/Translation.h"
-#include "states/StateMainMenu.h"
+#include "states/menu/StateMainMenu.h"
 #include <vector>
 #include <string>
 

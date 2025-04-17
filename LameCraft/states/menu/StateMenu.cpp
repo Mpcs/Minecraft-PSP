@@ -1,6 +1,6 @@
 #include "StateMenu.h"
-#include "states/StateOptions.h"
-#include "states/StatePlay.h"
+#include "states/menu/StateOptions.h"
+#include "states/menu/StatePlay.h"
 #include "StatePlayCreative.h"
 #include "screens/LoadingScreen.h"
 #include "lang/Translation.h"

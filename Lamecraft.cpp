@@ -8,7 +8,7 @@
 #include <Aurora/Graphics/Camera.h>
 #include <Aurora/Utils/StateManager.h>
 
-#include "states/StateLanguageSelect.h"
+#include "states/menu/StateLanguageSelect.h"
 #include "screens/SplashScreen.h"
 #include "LameCraft/SoundManager.h"
 #include "LameCraft/TextureHelper.h"
