@@ -2,7 +2,7 @@
 #include "InputHelper.h"
 #include "TextureHelper.h"
 #include "lang/Translation.h"
-#include "states/StateMenu.h"
+#include "states/StateMainMenu.h"
 #include <vector>
 #include <string>
 
@@ -108,9 +108,9 @@ void StateLanguageSelect::HandleEvents(StateManager *sManager) {
         Translation* translation = Translation::GetInstance();
         translation->loadLanguage(languageNames[selectPos], languageFileNames[selectPos]); 
         
-        StateMenu *stateMenu = new StateMenu();
-        stateMenu->Init();
-        sManager->PushState(stateMenu);
+        StateMainMenu *stateMainMenu = new StateMainMenu();
+        stateMainMenu->Init();
+        sManager->PushState(stateMainMenu);
     }
 }
 
