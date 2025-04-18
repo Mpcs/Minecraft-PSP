@@ -6,10 +6,6 @@
 #include <vector>
 #include <string>
 
-// font vars
-#define default_size 0.5
-#define default_big_size 0.687
-
 using std::string;
 
 StateLanguageSelect::StateLanguageSelect() {
@@ -24,18 +20,7 @@ void StateLanguageSelect::Init() {
     mRender = RenderManager::InstancePtr();
     mSystemMgr = SystemManager::Instance();
     mSoundMgr = SoundManager::Instance();
-
-    buttonSprite = new Sprite(TextureHelper::Instance()->GetTexture(TextureHelper::Buttons), 0, 0, 95, 12);
-    buttonSprite->SetPosition(240, 150);
-    buttonSprite->Scale(2, 2);
-
-    sbuttonSprite = new Sprite(TextureHelper::Instance()->GetTexture(TextureHelper::Buttons), 0, 12, 95,
-                               12);
-    sbuttonSprite->SetPosition(240, 150);
-    sbuttonSprite->Scale(2, 2);
-
-    backSprite = new Sprite(TextureHelper::Instance()->GetTexture(TextureHelper::Dirt), 0, 0, 32, 32);
-    backSprite->Scale(2, 2);
+    menuHelper = MenuHelper::Instance();
 
     selectPos = 0;
 
@@ -64,15 +49,9 @@ void StateLanguageSelect::Enter() {
     selectPos = 0;
 }
 
-void StateLanguageSelect::CleanUp() {
-    delete buttonSprite;
-    delete sbuttonSprite;
-    delete backSprite;
-}
+void StateLanguageSelect::CleanUp() {}
 
-void StateLanguageSelect::Pause() {
-
-}
+void StateLanguageSelect::Pause() {}
 
 void StateLanguageSelect::Resume() {
     mRender->SetOrtho(0, 0, 0, 0, 0, 0);
@@ -119,29 +98,12 @@ void StateLanguageSelect::Update(StateManager *sManager) {}
 void StateLanguageSelect::Draw(StateManager *sManager) {
     mRender->StartFrame(1, 1, 1);
 
-    sceGuDisable(GU_DEPTH_TEST);
-    sceGuEnable(GU_BLEND);
-    sceGuColor(GU_COLOR(1, 1, 1, 1.0f));
-
-    for (int x = 0; x < 8; x++) {
-        for (int y = 0; y < 5; y++) {
-            backSprite->SetPosition(x * 64, y * 64);
-            backSprite->Draw();
-        }
-    }
+    menuHelper->drawDirtBackground();
 
     for (int i = 0; i < languageNames.size(); i++) {
-        if (i == selectPos) {
-            sbuttonSprite->SetPosition(240, (40 * (i - selectPos)) + 120);
-            sbuttonSprite->Draw();
-        } else {
-            buttonSprite->SetPosition(240, (40 * (i - selectPos)) + 120);
-            buttonSprite->Draw();
-        }
+        bool selected = (i == selectPos);
+        menuHelper->drawButton(240, (40 * (i - selectPos)) + 120, selected);
     }
-
-    sceGuDisable(GU_BLEND);
-    sceGuEnable(GU_DEPTH_TEST);
 
     for (int i = 0; i < languageNames.size(); i++) {
         float lightness = 0.25;
@@ -149,15 +111,10 @@ void StateLanguageSelect::Draw(StateManager *sManager) {
             lightness = 1;
         }
 
-        DrawText(240, 129 + 40 * (i - selectPos), GU_COLOR(1, 1, lightness, 1), default_size, languageNames[i].c_str());
+        menuHelper->drawText(240, 129 + 40 * (i - selectPos), GU_COLOR(1, 1, lightness, 1), default_size, languageNames[i].c_str());
     }
 
-    DrawText(240, 24, GU_COLOR(1, 1, 1, 1), default_size, "Choose your language");
+    menuHelper->drawText(240, 24, GU_COLOR(1, 1, 1, 1), default_size, "Choose your language");
 
     mRender->EndFrame();
-}
-
-void StateLanguageSelect::DrawText(int x, int y, unsigned int color, float size, const char *message, ...) {
-    mRender->SetFontStyle(size, color, 0, 0x00000200 | 0x00000000);
-    mRender->DebugPrint(x, y, message);
 }
