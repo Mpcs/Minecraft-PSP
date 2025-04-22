@@ -111,7 +111,7 @@ void StateLanguageSelect::Draw(StateManager *sManager) {
             lightness = 1;
         }
 
-        menuHelper->drawText(240, 129 + 40 * (i - selectPos), GU_COLOR(1, 1, lightness, 1), default_size, 0, languageNames[i].c_str());
+        menuHelper->drawText(240, 129 + 40 * (i - selectPos), GU_COLOR(1, 1, lightness, 1), default_size, INTRAFONT_ALIGN_CENTER, languageNames[i].c_str());
     }
 
     menuHelper->drawText(240, 24, GU_COLOR(1, 1, 1, 1), default_size, 0, "Choose your language");
