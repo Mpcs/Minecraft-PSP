@@ -16,6 +16,7 @@
 #include <Aurora/Graphics/Sprite.h>
 
 #include "SoundManager.h"
+#include "MenuHelper.h"
 
 using namespace Aurora::Graphics;
 using namespace Aurora::Utils;
@@ -49,15 +50,15 @@ public:
     void DrawText(int x, int y, unsigned int color, float size, const char *message, ...);
 
 private:
-    Sprite *buttonSprite;
-    Sprite *sbuttonSprite;
-    Sprite *backSprite;
     Sprite *lamecraftSprite;
     Sprite *backgroundSprite;
+    vector<string> splashTexts;
+    vector<string> menuOptionNames;
 
     RenderManager *mRender;
     SystemManager *mSystemMgr;
     SoundManager *mSoundMgr;
+    MenuHelper *menuHelper;
 
     int SplashNumber;
     float splashSize;

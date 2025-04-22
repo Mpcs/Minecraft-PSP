@@ -23,8 +23,8 @@ MenuHelper::~MenuHelper() {
 void MenuHelper::drawDirtBackground() {
     for (int x = 0; x < 8; x++) {
         for (int y = 0; y < 5; y++) {
-            backSprite->SetPosition(x * 64, y * 64);
-            backSprite->Draw();
+            backgroundSprite->SetPosition(x * 64, y * 64);
+            backgroundSprite->Draw();
         }
     }
 }

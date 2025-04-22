@@ -24,15 +24,13 @@ void StateMainMenu::Init() {
     mRender = RenderManager::InstancePtr();
     mSystemMgr = SystemManager::Instance();
     mSoundMgr = SoundManager::Instance();
+    menuHelper = MenuHelper::Instance();
+    Translation* translation = Translation::GetInstance();
 
-    buttonSprite = new Sprite(TextureHelper::Instance()->GetTexture(TextureHelper::Buttons), 0, 0, 95, 12);
-    buttonSprite->SetPosition(240, 150);
-    buttonSprite->Scale(2, 2);
+    splashTexts = translation->getValuesOfType("SPLASH");
+    menuOptionNames = translation->getValuesOfType("MAIN_MENU");
 
-    sbuttonSprite = new Sprite(TextureHelper::Instance()->GetTexture(TextureHelper::Buttons), 0, 12, 95,
-                               12);
-    sbuttonSprite->SetPosition(240, 150);
-    sbuttonSprite->Scale(2, 2);
+    SplashNumber = rand() % splashTexts.size();
 
     lamecraftSprite = new Sprite(TextureHelper::Instance()->GetTexture(TextureHelper::lameCraft), 0, 0, 320, 90);
     lamecraftSprite->SetPosition(240, 50);
@@ -41,11 +39,6 @@ void StateMainMenu::Init() {
     backgroundSprite = new Sprite(TextureHelper::Instance()->GetTexture(TextureHelper::background));
     backgroundSprite->Scale(2, 2);
     backgroundSprite->SetPosition(240, 136);
-
-    backSprite = new Sprite(TextureHelper::Instance()->GetTexture(TextureHelper::Dirt), 0, 0, 32, 32);
-    backSprite->Scale(2, 2);
-
-    SplashNumber = rand() % 6;
 
     selectPos = 0;
 
@@ -61,9 +54,6 @@ void StateMainMenu::Enter() {
 }
 
 void StateMainMenu::CleanUp() {
-    delete buttonSprite;
-    delete sbuttonSprite;
-    delete backSprite;
 }
 
 void StateMainMenu::Pause() {
@@ -166,15 +156,6 @@ void StateMainMenu::Draw(StateManager *sManager) {
     sceGuEnable(GU_BLEND);
     sceGuColor(GU_COLOR(1, 1, 1, 1.0f));
 
-            /*for(int x = 0; x < 8; x++)
-        {
-            for(int y = 0; y < 5; y++)
-            {
-                backSprite->SetPosition(x*64,y*64);
-                backSprite->Draw();
-            }
-        }*/
-
     if (bx >= 360) {
         directionx = false;
     }
@@ -208,24 +189,16 @@ void StateMainMenu::Draw(StateManager *sManager) {
     lamecraftSprite->Draw();
 
     //singlePlayer
-    buttonSprite->SetPosition(240, 120);
-    buttonSprite->Draw();
+    menuHelper->drawButton(240, 120, selectPos == 0);
 
     //options
-    buttonSprite->SetPosition(240, 160);
-    buttonSprite->Draw();
-
+    menuHelper->drawButton(240, 160, selectPos == 1);
+    
     //about
-    buttonSprite->SetPosition(240, 200);
-    buttonSprite->Draw();
+    menuHelper->drawButton(240, 200, selectPos == 2);
 
     //texture pack
-    buttonSprite->SetPosition(240, 240);
-    buttonSprite->Draw();
-
-    //selected button
-    sbuttonSprite->SetPosition(240, (selectPos * 40) + 120);
-    sbuttonSprite->Draw();
+    menuHelper->drawButton(240, 240, selectPos == 3);
 
     sceGuDisable(GU_BLEND);
     sceGuEnable(GU_DEPTH_TEST);
@@ -235,27 +208,15 @@ void StateMainMenu::Draw(StateManager *sManager) {
         splashSize = 0.0f;
     }
 
-    Translation* translation = Translation::GetInstance();
-    vector<string> splashTexts = translation->getValuesOfType("SPLASH");
-    vector<string> menuOptionNames = translation->getValuesOfType("MAIN_MENU");
-
-    int optionVerticalPosition = 129;
     for (int i = 0; i < 4; i++) {
         float lightness = 0.25;
         if (selectPos == i) {
             lightness = 1;
         }
 
-        DrawText(240, optionVerticalPosition, GU_COLOR(1, 1, lightness, 1), default_size, menuOptionNames[i].c_str());
-
-        optionVerticalPosition += 40;
+        menuHelper->drawText(240, 129 + (i * 40), GU_COLOR(1, 1, lightness, 1), default_size, menuOptionNames[i].c_str());
     }
 
-    DrawText(328, 86, GU_COLOR(1, 1, 0, 1), 0.6 + sinf(splashSize) * 0.04f, splashTexts[SplashNumber].c_str());
+    menuHelper->drawText(328, 86, GU_COLOR(1, 1, 0, 1), 0.6 + sinf(splashSize) * 0.04f, splashTexts[SplashNumber].c_str());
     mRender->EndFrame();
-}
-
-void StateMainMenu::DrawText(int x, int y, unsigned int color, float size, const char *message, ...) {
-    mRender->SetFontStyle(size, color, 0, 0x00000200 | 0x00000000);
-    mRender->DebugPrint(x, y, message);
 }
