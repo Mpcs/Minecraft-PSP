@@ -31,7 +31,7 @@ void MenuHelper::drawDirtBackground() {
 
 void MenuHelper::drawButton(float x, float y, bool selected) {
     sceGuDisable(GU_DEPTH_TEST);
-    sceGuEnable(GU_BLEND);
+    sceGuEnable(GU_BLEND);  
     sceGuColor(GU_COLOR(1, 1, 1, 1.0f));
     if (selected) {
         sbuttonSprite->SetPosition(x, y);
@@ -44,8 +44,8 @@ void MenuHelper::drawButton(float x, float y, bool selected) {
     sceGuEnable(GU_DEPTH_TEST);
 }
 
-void MenuHelper::drawText(int x, int y, unsigned int color, float size, const char *message, ...) {
-    RenderManager::InstancePtr()->SetFontStyle(size, color, 0, 0x00000200 | 0x00000000);
+void MenuHelper::drawText(int x, int y, unsigned int color, float size, unsigned int flags, const char *message, ...) {
+    RenderManager::InstancePtr()->SetFontStyle(size, color, 0, flags);
     RenderManager::InstancePtr()->DebugPrint(x, y, message);
 }
 

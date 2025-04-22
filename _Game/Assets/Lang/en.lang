@@ -6,6 +6,15 @@ SPLASH.4=there is no grass
 SPLASH.5=Not approved by Mojang
 SPLASH.6=Test Splash!
 
+ABOUT.title=About
+ABOUT.author_label=Author:
+ABOUT.modder_label=Modder:
+ABOUT.website_label=Website:
+ABOUT.version_label=Version:
+ABOUT.dev_stage_label=Development stage:
+ABOUT.converter_button=Converter
+ABOUT.cancel=Cancel
+
 MAIN_MENU.0=Singleplayer
 MAIN_MENU.1=Options
 MAIN_MENU.2=About & Converter

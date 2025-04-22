@@ -13,7 +13,7 @@ class MenuHelper {
 public:
     static MenuHelper *Instance();
     void drawButton(float x, float y, bool selected);
-    void drawText(int x, int y, unsigned int color, float size, const char *message, ...);
+    void drawText(int x, int y, unsigned int color, float size, unsigned int flags, const char *message, ...);
     void drawDirtBackground();
     
 private:

@@ -3,6 +3,7 @@
 #include "TextureHelper.h"
 #include "lang/Translation.h"
 #include "states/menu/StateOptions.h"
+#include "states/menu/StateAbout.h"
 #include <vector>
 #include <string>
 
@@ -123,6 +124,10 @@ void StateMainMenu::HandleEvents(StateManager *sManager) {
             sManager->PushState(stateOptions);
         }
         if (selectPos == 2) {
+
+            StateAbout *stateAbout = new StateAbout();
+            stateAbout->Init();
+            sManager->PushState(stateAbout);
             //about
             //TODO: Open About state
             //menuState = 3;
@@ -214,9 +219,9 @@ void StateMainMenu::Draw(StateManager *sManager) {
             lightness = 1;
         }
 
-        menuHelper->drawText(240, 129 + (i * 40), GU_COLOR(1, 1, lightness, 1), default_size, menuOptionNames[i].c_str());
+        menuHelper->drawText(240, 129 + (i * 40), GU_COLOR(1, 1, lightness, 1), default_size, 0, menuOptionNames[i].c_str());
     }
 
-    menuHelper->drawText(328, 86, GU_COLOR(1, 1, 0, 1), 0.6 + sinf(splashSize) * 0.04f, splashTexts[SplashNumber].c_str());
+    menuHelper->drawText(328, 86, GU_COLOR(1, 1, 0, 1), 0.6 + sinf(splashSize) * 0.04f, 0, splashTexts[SplashNumber].c_str());
     mRender->EndFrame();
 }
