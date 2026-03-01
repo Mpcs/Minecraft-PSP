@@ -22,6 +22,11 @@ void StateOptions::Init() {
     mRender = RenderManager::InstancePtr();
     mSystemMgr = SystemManager::Instance();
     mSoundMgr = SoundManager::Instance();
+    menuHelper = MenuHelper::Instance();
+
+    Translation* translation = Translation::GetInstance();
+    menuOptionsTexts = translation->getValuesOfType("OPTIONS_MENU");
+    optionsAnalogTexts = translation->getValuesOfType("OPTIONS_ANALOG");
 
     buttonSprite = new Sprite(TextureHelper::Instance()->GetTexture(TextureHelper::Buttons), 0, 0, 95, 12);
     buttonSprite->SetPosition(240, 150);
@@ -151,6 +156,7 @@ void StateOptions::HandleEvents(StateManager *sManager) {
         case 1: {
             if (chooseKeyState)//here we set new key for action
             {
+                currentKey = -1;
                 //check each button
                 if (mSystemMgr->KeyPressed(PSP_CTRL_UP))
                     currentKey = 0;//cross
@@ -201,7 +207,6 @@ void StateOptions::HandleEvents(StateManager *sManager) {
 
                     mSoundMgr->PlayMenuSound();
                 }
-
             } else {
                 if (mSystemMgr->KeyPressed(PSP_CTRL_UP)) {
                     controlPos--;
@@ -257,8 +262,8 @@ void StateOptions::HandleEvents(StateManager *sManager) {
                     if (controlPos == 16)//back button - exit from this menu
                     {
                         //save if any key changed
-                        //if(configChanged)
-                        //	InputHelper::Instance()->Save();
+                        if(configChanged)
+                        	InputHelper::Instance()->Save();
 
                         menuState = 0;
                     } else//start key choosing
@@ -373,83 +378,33 @@ void StateOptions::Draw(StateManager *sManager) {
             sceGuEnable(GU_BLEND);
             sceGuColor(GU_COLOR(1, 1, 1, 1.0f));
 
-            for (int x = 0; x < 8; x++) {
-                for (int y = 0; y < 5; y++) {
-                    backSprite->SetPosition(x * 64, y * 64);
-                    backSprite->Draw();
-                }
-            }
-
+            menuHelper->drawDirtBackground();
 
             //Controls
-            buttonSprite->SetPosition(240, 120);
-            buttonSprite->Draw();
+            menuHelper->drawButton(240, 120, selectPos == 0);
 
-            //sensity - analog stick
-            buttonSprite->SetPosition(240, 160);
-            buttonSprite->Draw();
+            //sensitivity - analog stick
+            menuHelper->drawButton(240, 160, selectPos == 1);
 
             //back
-            buttonSprite->SetPosition(240, 200);
-            buttonSprite->Draw();
-
-
-            //selected button
-            sbuttonSprite->SetPosition(240, (selectPos * 40) + 120);
-            sbuttonSprite->Draw();
+            menuHelper->drawButton(240, 200, selectPos == 2);
 
             sceGuDisable(GU_BLEND);
             sceGuEnable(GU_DEPTH_TEST);
 
-            //draw subtitles on buttons
-            if (mRender->GetFontLanguage() == ENGLISH) {
-                selectPos == 0 ? DrawText(240, 129, GU_COLOR(1, 1, 0, 1), default_size, "Controls") : DrawText(240, 129,
-                                                                                                               GU_COLOR(
-                                                                                                                       1,
-                                                                                                                       1,
-                                                                                                                       1,
-                                                                                                                       1),
-                                                                                                               default_size,
-                                                                                                               "Controls");
-                selectPos == 1 ? DrawText(240, 169, GU_COLOR(1, 1, 0, 1), default_size, "Analog stick") : DrawText(240,
-                                                                                                                   169,
-                                                                                                                   GU_COLOR(
-                                                                                                                           1,
-                                                                                                                           1,
-                                                                                                                           1,
-                                                                                                                           1),
-                                                                                                                   default_size,
-                                                                                                                   "Analog stick");
-                selectPos == 2 ? DrawText(240, 209, GU_COLOR(1, 1, 0, 1), default_size, "Cancel") : DrawText(240, 209,
-                                                                                                             GU_COLOR(1,
-                                                                                                                      1,
-                                                                                                                      1,
-                                                                                                                      1),
-                                                                                                             default_size,
-                                                                                                             "Cancel");
+            for (int i = 0; i < 3; i++) {
+                float lightness = 0.25;
+                if (selectPos == i) {
+                    lightness = 1;
+                }
 
-                DrawText(240, 29, GU_COLOR(1, 1, 1, 1), default_size, "Options");
-            }
-            if (mRender->GetFontLanguage() == RUSSIAN) {
-                selectPos == 0 ? DrawText(240, 129, GU_COLOR(1, 1, 0, 1), default_size, "Naznayenie knopok") : DrawText(
-                        240, 129, GU_COLOR(1, 1, 1, 1), default_size, "Naznayenie knopok");
-                selectPos == 1 ? DrawText(240, 169, GU_COLOR(1, 1, 0, 1), default_size, "Nastro~ki stika") : DrawText(
-                        240, 169, GU_COLOR(1, 1, 1, 1), default_size, "Nastro~ki stika");
-                selectPos == 2 ? DrawText(240, 209, GU_COLOR(1, 1, 0, 1), default_size, "Otmena") : DrawText(240, 209,
-                                                                                                             GU_COLOR(1,
-                                                                                                                      1,
-                                                                                                                      1,
-                                                                                                                      1),
-                                                                                                             default_size,
-                                                                                                             "Otmena");
-
-                DrawText(240, 29, GU_COLOR(1, 1, 1, 1), default_size, "Nastro~ki");
+                menuHelper->drawText(240, 129 + (i * 40), GU_COLOR(1, 1, lightness, 1), default_size, INTRAFONT_ALIGN_CENTER, menuOptionsTexts[i].c_str());
             }
         }
             break;
         case 1://controls
         {
-            mRender->SetFont(ENGLISH);
+           // mRender->SetFont(ENGLISH);
             sceGuDisable(GU_DEPTH_TEST);
             sceGuEnable(GU_BLEND);
             sceGuColor(GU_COLOR(1, 1, 1, 1.0f));
@@ -483,33 +438,33 @@ void StateOptions::Draw(StateManager *sManager) {
                 buttonSprite->Draw();
             }
 
-            sceGuDisable(GU_BLEND);
-            sceGuEnable(GU_DEPTH_TEST);
+            //sceGuDisable(GU_BLEND);
+            //sceGuEnable(GU_DEPTH_TEST);
 
             //write action names
             starty = 67;
-            mRender->SetFontStyle(default_size, 0xFFFFFFFF, 0, 0x00000000);
+            //mRender->SetFontStyle(default_size, 0xFFFFFFFF, 0, 0x00000000);
             for (int i = controlStart; i < controlEnd; i++) {
-                //action
-                controlPos == i ? mRender->SetFontStyle(default_size, GU_COLOR(1, 1, 0.25f, 1), 0, 0x00000000)
-                                : mRender->SetFontStyle(default_size, GU_COLOR(1, 1, 1, 1), 0, 0x00000000);
-                mRender->DebugPrint(250, starty + (i * 30) - (controlStart * 30) + 4,
-                                    InputHelper::Instance()->getActionName(i).c_str());
+                float lightness = 0.25;
+                if (controlPos == i) {
+                    lightness = 1;
+                }
+
+                std::string actionName = InputHelper::Instance()->getActionName(i);
+                std::string assignedKey = InputHelper::Instance()->getButtonName(InputHelper::Instance()->getConnection(i).button);
+
+                if (controlPos == i && chooseKeyState == true) {
+                    assignedKey = "...";
+                }
+
+                menuHelper->drawText(250, starty + (i * 30) - (controlStart * 30) + 4, GU_COLOR(1, 1, lightness, 1),
+                    default_size, 0, actionName.c_str());
+
+                menuHelper->drawText(160, starty + (i * 30) - (controlStart * 30) + 4, GU_COLOR(1, 1, lightness, 1),
+                    default_size, INTRAFONT_ALIGN_CENTER, assignedKey.c_str());
             }
 
-            mRender->SetFontStyle(default_big_size, 0xFFFFFFFF, 0, 0x00000200);
-            starty = 65;
-            for (int i = controlStart; i < controlEnd; i++) {
-                //button assigned to this action
-                controlPos == i ? mRender->SetFontStyle(default_size, GU_COLOR(1, 1, 0.25f, 1), 0, 0x00000200)
-                                : mRender->SetFontStyle(default_size, GU_COLOR(1, 1, 1, 1), 0, 0x00000200);
-                if (controlPos == i && chooseKeyState == true)
-                    mRender->DebugPrint(160, starty + (i * 30) - (controlStart * 30) + 4, "...");
-                else
-                    mRender->DebugPrint(160, starty + (i * 30) - (controlStart * 30) + 4,
-                                        InputHelper::Instance()->getButtonName(
-                                                InputHelper::Instance()->getConnection(i).button).c_str());
-            }
+
             mRender->SetDefaultFont();
 
             if (mRender->GetFontLanguage() == ENGLISH) {
@@ -589,7 +544,14 @@ void StateOptions::Draw(StateManager *sManager) {
             sceGuDisable(GU_BLEND);
             sceGuEnable(GU_DEPTH_TEST);
 
-            mRender->SetFontStyle(default_size, 0xFFFFFFFF, 0, 0x00000200);
+
+            float lightness = 0.25;
+            if (controlPos == 1) {
+                lightness = 1;
+            }
+
+            // menuHelper->drawText(240, 109, GU_COLOR(1, 1, lightness, 1), default_size, 0, optionsAnalogTexts[1].c_str(), (int) (fabs(InputHelper::Instance()->analogYup) * 100.0f));
+
             if (mRender->GetFontLanguage() == ENGLISH) {
                 currentAnalogPos == 0 ? mRender->SetFontStyle(default_size, GU_COLOR(1, 1, 0.25f, 1), 0, 0x00000200)
                                       : mRender->SetFontStyle(default_size, GU_COLOR(1, 1, 1, 1), 0, 0x00000200);

@@ -14,7 +14,9 @@
 #include <Aurora/Graphics/Camera.h>
 #include <Aurora/Graphics/Sprite.h>
 
+#include "MenuHelper.h"
 #include "SoundManager.h"
+#include "lang/Translation.h"
 
 using namespace Aurora::Graphics;
 using namespace Aurora::Utils;
@@ -55,9 +57,13 @@ private:
     Sprite *smoverSprite;
     Sprite *backSprite;
 
+    vector<string> menuOptionsTexts;
+    vector<string> optionsAnalogTexts;
+
     RenderManager *mRender;
     SystemManager *mSystemMgr;
     SoundManager *mSoundMgr;
+    MenuHelper *menuHelper;
 
     int selectPos;
     int menuState;//0 main,1 load,2 options

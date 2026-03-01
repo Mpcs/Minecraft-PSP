@@ -4,6 +4,7 @@
 #include "lang/Translation.h"
 #include "states/menu/StateOptions.h"
 #include "states/menu/StateAbout.h"
+#include "MenuHelper.h"
 #include <vector>
 #include <string>
 
@@ -26,6 +27,10 @@ void StateMainMenu::Init() {
     mSystemMgr = SystemManager::Instance();
     mSoundMgr = SoundManager::Instance();
     menuHelper = MenuHelper::Instance();
+
+    InputHelper::Instance()->Init();
+    InputHelper::Instance()->Load();
+
     Translation* translation = Translation::GetInstance();
 
     splashTexts = translation->getValuesOfType("SPLASH");
@@ -198,7 +203,7 @@ void StateMainMenu::Draw(StateManager *sManager) {
 
     //options
     menuHelper->drawButton(240, 160, selectPos == 1);
-    
+
     //about
     menuHelper->drawButton(240, 200, selectPos == 2);
 

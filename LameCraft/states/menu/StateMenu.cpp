@@ -555,11 +555,6 @@ void StateMenu::HandleEvents(StateManager *sManager) {
             }
         }
             break;
-        case 3://about
-        {
-            
-        }
-            break;
         case 5://parametric terrain
         {
 
@@ -1663,7 +1658,7 @@ void StateMenu::Draw(StateManager *sManager) {
     switch (menuState) {
         case 0://main menu
         {
-            
+
         }
             break;
         case 1://select world
@@ -1948,7 +1943,7 @@ void StateMenu::Draw(StateManager *sManager) {
         {
 
 
-            
+
         }
             break;
         case 5://paramateric view
@@ -2099,124 +2094,6 @@ void StateMenu::Draw(StateManager *sManager) {
                 mRender->DebugPrint(159, 119, "%s", newWorldSeed.c_str());
             }
             mRender->SetDefaultFont();
-        }
-            break;
-        case 6://about
-        {
-
-
-            sceGuDisable(GU_DEPTH_TEST);
-            sceGuEnable(GU_BLEND);
-            sceGuColor(GU_COLOR(1, 1, 1, 1.0f));
-
-            for (int x = 0; x < 8; x++) {
-                for (int y = 0; y < 5; y++) {
-                    backSprite->SetPosition(x * 64, y * 64);
-                    backSprite->Draw();
-                }
-            }
-
-            //check for update
-            buttonSprite->SetPosition(240, 165);
-            buttonSprite->Draw();
-
-            buttonSprite->SetPosition(240, 200);
-            buttonSprite->Draw();
-
-            buttonSprite->SetPosition(240, 245);
-            buttonSprite->Draw();
-
-            //back
-            int y_pos = 165;
-            if (converterPos == 1) {
-                y_pos = 200;
-            }
-            if (converterPos == 2) {
-                y_pos = 245;
-            }
-            sbuttonSprite->SetPosition(240, y_pos);
-            sbuttonSprite->Draw();
-
-            sceGuDisable(GU_BLEND);
-            sceGuEnable(GU_DEPTH_TEST);
-
-            if (mRender->GetFontLanguage() == ENGLISH) {
-                if (schematicExists) {
-                    DrawText(240, 80, GU_COLOR(0.1, 0.9, 0.1, 1), default_big_size, "world.schematic exists!");
-                } else {
-                    DrawText(240, 80, GU_COLOR(0.9, 0.1, 0.1, 1), default_big_size, "world.schematic doesn't exist!");
-                }
-                if (errorType == 1) {
-                    DrawText(240, 100, GU_COLOR(0.9, 0.1, 0.1, 1), default_big_size, "invalid schematic size");
-                } else {
-                    DrawText(240, 100, GU_COLOR(0.9, 0.1, 0.1, 1), default_size,
-                             "process of conversion can take about 1 minute");
-                }
-
-                if (newW_gameMode == SURVIVAL) {
-                    converterPos == 0 ? DrawText(240, 174, GU_COLOR(1, 1, 0.25, 1), default_size, "Game Mode: Survival")
-                                      : DrawText(240, 174, GU_COLOR(1, 1, 1, 1), default_size, "Game Mode: Survival");
-                }
-                if (newW_gameMode == CREATIVE) {
-                    converterPos == 0 ? DrawText(240, 174, GU_COLOR(1, 1, 0.25, 1), default_size, "Game Mode: Creative")
-                                      : DrawText(240, 174, GU_COLOR(1, 1, 1, 1), default_size, "Game Mode: Creative");
-                }
-                converterPos == 1 ? DrawText(240, 209, GU_COLOR(1, 1, 0.25, 1), default_size, "Try to convert")
-                                  : DrawText(240, 209, GU_COLOR(1, 1, 1, 1), default_size, "Try to convert");
-                converterPos == 2 ? DrawText(240, 254, GU_COLOR(1, 1, 0.25, 1), default_size, "Cancel") : DrawText(240,
-                                                                                                                   254,
-                                                                                                                   GU_COLOR(
-                                                                                                                           1,
-                                                                                                                           1,
-                                                                                                                           1,
-                                                                                                                           1),
-                                                                                                                   default_size,
-                                                                                                                   "Cancel");
-
-                DrawText(240, 29, GU_COLOR(1, 1, 1, 1), default_size, "Converter");
-            }
-            if (mRender->GetFontLanguage() == RUSSIAN) {
-                mRender->SetFont(ENGLISH);
-                if (schematicExists) {
-                    DrawText(240, 80, GU_COLOR(0.1, 0.9, 0.1, 1), default_big_size, "world.schematic exists!");
-                } else {
-                    DrawText(240, 80, GU_COLOR(0.9, 0.1, 0.1, 1), default_big_size, "world.schematic doesn't exist!");
-                }
-                if (errorType == 1) {
-                    DrawText(240, 100, GU_COLOR(0.9, 0.1, 0.1, 1), default_big_size, "invalid schematic size");
-                } else {
-                    DrawText(240, 100, GU_COLOR(0.9, 0.1, 0.1, 1), default_size,
-                             "process of conversion can take about 1 minute");
-                }
-                mRender->SetDefaultFont();
-
-                if (newW_gameMode == SURVIVAL) {
-                    converterPos == 0 ? DrawText(240, 174, GU_COLOR(1, 1, 0.25, 1), default_size,
-                                                 "Igrovo~ rejim : V@jivanie") : DrawText(240, 174, GU_COLOR(1, 1, 1, 1),
-                                                                                         default_size,
-                                                                                         "Igrovo~ rejim : V@jivanie");
-                }
-                if (newW_gameMode == CREATIVE) {
-                    converterPos == 0 ? DrawText(240, 174, GU_COLOR(1, 1, 0.25, 1), default_size,
-                                                 "Igrovo~ rejim : Tvoryeski~") : DrawText(240, 174,
-                                                                                          GU_COLOR(1, 1, 1, 1),
-                                                                                          default_size,
-                                                                                          "Igrovo~ rejim : Tvoryeski~");
-                }
-                converterPos == 1 ? DrawText(240, 209, GU_COLOR(1, 1, 0.25, 1), default_size, "Konvertirovat$")
-                                  : DrawText(240, 209, GU_COLOR(1, 1, 1, 1), default_size, "Konvertirovat$");
-                converterPos == 2 ? DrawText(240, 254, GU_COLOR(1, 1, 0.25, 1), default_size, "Otmena") : DrawText(240,
-                                                                                                                   254,
-                                                                                                                   GU_COLOR(
-                                                                                                                           1,
-                                                                                                                           1,
-                                                                                                                           1,
-                                                                                                                           1),
-                                                                                                                   default_size,
-                                                                                                                   "Otmena");
-
-                DrawText(240, 29, GU_COLOR(1, 1, 1, 1), default_size, "Konverter");
-            }
         }
             break;
         case 10://New or load map
