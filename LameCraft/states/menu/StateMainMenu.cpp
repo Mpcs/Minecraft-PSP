@@ -1,11 +1,13 @@
 #include "StateMainMenu.h"
 #include "InputHelper.h"
+#include "StateTexturepacks.h"
 #include "TextureHelper.h"
 #include "lang/Translation.h"
 #include "states/menu/StateOptions.h"
 #include "states/menu/StateAbout.h"
 #include "states/menu/StateWorldSelect.h"
 #include "states/menu/StateNewWorld.h"
+#include "states/menu/StateTexturepacks.h"
 #include "MenuHelper.h"
 #include <vector>
 #include <string>
@@ -141,20 +143,9 @@ void StateMainMenu::HandleEvents(StateManager *sManager) {
             sManager->PushState(stateAbout);
         } else
         if (selectPos == 3) {
-            //textures
-            //TODO: Open Texture Packs state
-            //tpCurrent = 0;
-            //tpMax = 0;
-            //tpEnd = 0;
-            //tpStart = 0;
-            //tpPos = 0;
-            //tpSelectPos = 0;
-//
-            //menuState = 11;
-            //tpSelectPos = 0;
-            //tpEnd = texturePackList.size();
-            //tpMax = 3;
-            //ScanTexturePacks("Assets/Textures/");
+            StateTexturepacks *stateTexturepacks = new StateTexturepacks();
+            stateTexturepacks->Init();
+            sManager->PushState(stateTexturepacks);
         }
     }
 }
