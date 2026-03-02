@@ -68,7 +68,6 @@ Lamecraft/Mobs/Models/CreeperModel.o \
 Lamecraft/Mobs/Models/HumanoidModel.o \
 Lamecraft/Mobs/Models/SheepModel.o \
 LameCraft/States/menu/MenuHelper.o \
-LameCraft/States/menu/StateMenu.o \
 LameCraft/States/menu/StateOptions.o \
 LameCraft/States/StatePlayCreative.o \
 LameCraft/States/StatePlay.o \
