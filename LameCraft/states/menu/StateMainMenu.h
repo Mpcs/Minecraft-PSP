@@ -1,31 +1,28 @@
 #ifndef STATEMAINMENU_H_
 #define STATEMAINMENU_H_
 
-#include <stdlib.h>
 #include <string>
-
-#include <Aurora/Utils/StateManager.h>
+#include <vector>
 #include <Aurora/Utils/GameState.h>
 
-#include <Aurora/Graphics/RenderManager.h>
-#include <Aurora/Utils/Logger.h>
-#include <Aurora/Utils/Timer.h>
-#include <Aurora/System/SystemManager.h>
-#include <Aurora/Graphics/Models/ObjModel.h>
-#include <Aurora/Graphics/Camera.h>
-#include <Aurora/Graphics/Sprite.h>
+namespace Aurora {
+    namespace Graphics {
+        class RenderManager;
+        class Sprite;
+    }
+    namespace System {
+        class SystemManager;
+    }
+    namespace Utils {
+        class StateManager;
+        class CGameState;
+    }
+}
 
-#include "SoundManager.h"
-#include "MenuHelper.h"
+class MenuHelper;
+class SoundManager;
 
-using namespace Aurora::Graphics;
-using namespace Aurora::Utils;
-using namespace Aurora::System;
-using namespace Aurora;
-using std::vector;
-using std::string;
-
-class StateMainMenu : public CGameState {
+class StateMainMenu : public Aurora::Utils::CGameState {
 public:
     StateMainMenu();
 
@@ -41,33 +38,33 @@ public:
 
     void Resume();
 
-    void HandleEvents(StateManager *sManager);
+    void HandleEvents(Aurora::Utils::StateManager *sManager);
 
-    void Update(StateManager *sManager);
+    void Update(Aurora::Utils::StateManager *sManager);
 
-    void Draw(StateManager *sManager);
+    void Draw(Aurora::Utils::StateManager *sManager);
 
-    void DrawText(int x, int y, unsigned int color, float size, const char *message, ...);
+    std::string getRandomSplashText();
 
 private:
-    Sprite *lamecraftSprite;
-    Sprite *backgroundSprite;
-    vector<string> splashTexts;
-    vector<string> menuOptionNames;
-
-    RenderManager *mRender;
-    SystemManager *mSystemMgr;
+    Aurora::Graphics::RenderManager *mRender;
+    Aurora::System::SystemManager *mSystemMgr;
     SoundManager *mSoundMgr;
     MenuHelper *menuHelper;
 
-    int SplashNumber;
+    Aurora::Graphics::Sprite *lamecraftSprite;
+    Aurora::Graphics::Sprite *backgroundSprite;
+
+    std::vector<std::string> menuOptionNames;
+
+    std::string splashText;
     float splashSize;
 
-    float bx, by;
-    bool directionx;
-    bool directiony;
-    int selectPos;
+    float backgroundPosX, backgroundPosY;
+    bool backgroundDirectionX;
+    bool backgroundDirectionY;
 
+    int selectedPosition;
 };
 
 #endif
