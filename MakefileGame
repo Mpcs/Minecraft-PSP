@@ -97,8 +97,8 @@ Lamecraft.o
 
 INCDIR = $(PSPPATH)/include
 INCDIR += ./include ./source ./libs ./LameCraft
-CFLAGS = -w -O3 -G0 -mpreferred-stack-boundary=4 #-enable-newlib-hw-fp -ffast-math
-CXXFLAGS = $(CFLAGS) -fno-exceptions -fno-rtti
+CFLAGS = -O3 -G0 -mpreferred-stack-boundary=4 #-enable-newlib-hw-fp -ffast-math
+CXXFLAGS = $(CFLAGS) -fno-exceptions -fno-rtti -Wall -Wextra
 ASFLAGS = $(CFLAGS)
 
 BUILD_PRX = 1
