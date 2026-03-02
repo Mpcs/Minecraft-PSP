@@ -75,6 +75,8 @@ LameCraft/States/StatePlay.o \
 LameCraft/States/menu/StateLanguageSelect.o \
 LameCraft/States/menu/StateMainMenu.o \
 LameCraft/States/menu/StateAbout.o \
+LameCraft/States/menu/StateWorldSelect.o \
+LameCraft/States/menu/StateNewWorld.o \
 LameCraft/Screens/LoadingScreen.o \
 LameCraft/Screens/SplashScreen.o \
 LameCraft/Lang/Translation.o \

@@ -4,6 +4,8 @@
 #include "lang/Translation.h"
 #include "states/menu/StateOptions.h"
 #include "states/menu/StateAbout.h"
+#include "states/menu/StateWorldSelect.h"
+#include "states/menu/StateNewWorld.h"
 #include "MenuHelper.h"
 #include <vector>
 #include <string>
@@ -121,23 +123,23 @@ void StateMainMenu::HandleEvents(StateManager *sManager) {
             //} else {
             //    loadSelectPos = 3;
             //}
-        }
+
+            StateWorldSelect *stateWorldSelect = new StateWorldSelect();
+            stateWorldSelect->Init();
+            sManager->PushState(stateWorldSelect);
+        } else
         if (selectPos == 1) {
             //options
             StateOptions *stateOptions = new StateOptions();
             stateOptions->Init();
             sManager->PushState(stateOptions);
-        }
+        } else
         if (selectPos == 2) {
 
             StateAbout *stateAbout = new StateAbout();
             stateAbout->Init();
             sManager->PushState(stateAbout);
-            //about
-            //TODO: Open About state
-            //menuState = 3;
-            //aboutPos = 1;
-        }
+        } else
         if (selectPos == 3) {
             //textures
             //TODO: Open Texture Packs state
