@@ -1,33 +1,26 @@
 #ifndef STATEABOUT_H_
 #define STATEABOUT_H_
 
-#include <stdlib.h>
 #include <string>
 #include <map>
-
-#include <Aurora/Utils/StateManager.h>
 #include <Aurora/Utils/GameState.h>
 
-#include <Aurora/Graphics/RenderManager.h>
-#include <Aurora/Utils/Logger.h>
-#include <Aurora/Utils/Timer.h>
-#include <Aurora/System/SystemManager.h>
-#include <Aurora/Graphics/Models/ObjModel.h>
-#include <Aurora/Graphics/Camera.h>
-#include <Aurora/Graphics/Sprite.h>
+namespace Aurora {
+    namespace Graphics {
+        class RenderManager;
+        class Sprite;
+    }
+    namespace System {
+        class SystemManager;
+    }
+    namespace Utils {
+        class StateManager;
+    }
+}
 
-#include "SoundManager.h"
-#include "MenuHelper.h"
+class MenuHelper;
 
-using namespace Aurora::Graphics;
-using namespace Aurora::Utils;
-using namespace Aurora::System;
-using namespace Aurora;
-using std::vector;
-using std::string;
-using std::map;
-
-class StateAbout : public CGameState {
+class StateAbout : public Aurora::Utils::CGameState {
 public:
     StateAbout();
 
@@ -43,23 +36,18 @@ public:
 
     void Resume();
 
-    void HandleEvents(StateManager *sManager);
+    void HandleEvents(Aurora::Utils::StateManager *sManager);
 
-    void Update(StateManager *sManager);
+    void Update(Aurora::Utils::StateManager *sManager);
 
-    void Draw(StateManager *sManager);
-
-    void DrawText(int x, int y, unsigned int color, float size, const char *message, ...);
+    void Draw(Aurora::Utils::StateManager *sManager);
 
 private:
-    RenderManager *mRender;
-    SystemManager *mSystemMgr;
-    SoundManager *mSoundMgr;
+    Aurora::Graphics::RenderManager *mRender;
+    Aurora::System::SystemManager *mSystemMgr;
     MenuHelper *menuHelper;
 
-    map<string, string> texts;
-    int selectPos;
-
+    std::map<std::string, std::string> texts;
 };
 
 #endif
