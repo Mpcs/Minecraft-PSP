@@ -15,7 +15,6 @@ namespace Aurora {
     }
     namespace Utils {
         class StateManager;
-        class CGameState;
     }
 }
 

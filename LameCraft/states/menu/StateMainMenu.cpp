@@ -1,15 +1,11 @@
 #include <stdlib.h>
 
 #include "StateMainMenu.h"
-#include "InputHelper.h"
-#include "StateTexturepacks.h"
-#include "StateWorldSelect.h"
 #include "TextureHelper.h"
 #include "lang/Translation.h"
 #include "states/menu/StateOptions.h"
 #include "states/menu/StateAbout.h"
 #include "states/menu/StateWorldSelect.h"
-#include "states/menu/StateNewWorld.h"
 #include "states/menu/StateTexturepacks.h"
 #include "SoundManager.h"
 #include "MenuHelper.h"
