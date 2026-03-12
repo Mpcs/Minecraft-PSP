@@ -6,10 +6,29 @@ SPLASH.4=there is no grass
 SPLASH.5=Not approved by Mojang
 SPLASH.6=Test Splash!
 
+ABOUT.title=About
+ABOUT.author_label=Author:
+ABOUT.modder_label=Modder:
+ABOUT.website_label=Website:
+ABOUT.version_label=Version:
+ABOUT.dev_stage_label=Development stage:
+ABOUT.converter_button=Converter
+ABOUT.cancel=Cancel
+
 MAIN_MENU.0=Singleplayer
 MAIN_MENU.1=Options
 MAIN_MENU.2=About & Converter
 MAIN_MENU.3=Texture Packs
+
+OPTIONS_MENU.0=Controls
+OPTIONS_MENU.1=Analog Stick
+OPTIONS_MENU.2=Cancel
+OPTIONS_MENU.3=Options
+
+OPTIONS_ANALOG.0=Analog up : %d%%
+OPTIONS_ANALOG.1=Analog down : %d%%
+OPTIONS_ANALOG.2=Analog left : %d%%
+OPTIONS_ANALOG.3=Analog right : %d%%
 
 LOADING.loading=Loading level
 LOADING.generating=Generating level

@@ -8,10 +8,12 @@
 #include <Aurora/Graphics/Camera.h>
 #include <Aurora/Utils/StateManager.h>
 
-#include "states/StateLanguageSelect.h"
+#include "states/menu/StateLanguageSelect.h"
 #include "screens/SplashScreen.h"
 #include "LameCraft/SoundManager.h"
 #include "LameCraft/TextureHelper.h"
+#include "LameCraft/InputHelper.h"
+
 
 using namespace Aurora::Graphics;
 using namespace Aurora::Utils;
@@ -39,6 +41,9 @@ int main() {
     //init and load sounds
     TextureHelper::Instance()->Init();
     SoundManager::Instance()->Init();
+
+    InputHelper::Instance()->Init();
+    InputHelper::Instance()->Load();
 
     srand(time(NULL));
 

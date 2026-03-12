@@ -1,8 +1,7 @@
-#ifndef STATELANGUAGE_H_
-#define STATELANGUAGE_H_
+#ifndef STATEOPTIONS_H_
+#define STATEOPTIONS_H_
 
 #include <stdlib.h>
-#include <string>
 
 #include <Aurora/Utils/StateManager.h>
 #include <Aurora/Utils/GameState.h>
@@ -15,20 +14,20 @@
 #include <Aurora/Graphics/Camera.h>
 #include <Aurora/Graphics/Sprite.h>
 
+#include "MenuHelper.h"
 #include "SoundManager.h"
+#include "lang/Translation.h"
 
 using namespace Aurora::Graphics;
 using namespace Aurora::Utils;
 using namespace Aurora::System;
 using namespace Aurora;
-using std::vector;
-using std::string;
 
-class StateLanguageSelect : public CGameState {
+class StateOptions : public CGameState {
 public:
-    StateLanguageSelect();
+    StateOptions();
 
-    virtual ~StateLanguageSelect();
+    virtual ~StateOptions();
 
     void Init();
 
@@ -51,16 +50,37 @@ public:
 private:
     Sprite *buttonSprite;
     Sprite *sbuttonSprite;
+    Sprite *nbuttonSprite;
+    Sprite *halfbuttonSprite;
+    Sprite *halfsbuttonSprite;
+    Sprite *moverSprite;
+    Sprite *smoverSprite;
     Sprite *backSprite;
+
+    vector<string> menuOptionsTexts;
+    vector<string> optionsAnalogTexts;
 
     RenderManager *mRender;
     SystemManager *mSystemMgr;
     SoundManager *mSoundMgr;
-
-    vector<string> languageNames;
-    vector<string> languageFileNames;
+    MenuHelper *menuHelper;
 
     int selectPos;
+    int menuState;//0 main,1 load,2 options
+
+    //controls
+    int controlPos;
+    int controlStart;
+    int controlEnd;
+
+    //choosing key
+    bool chooseKeyState;
+    bool configChanged;
+    int currentKey;
+    int newKey;
+
+    //analog stick
+    int currentAnalogPos;
 
 };
 

@@ -1,7 +1,23 @@
-#ifndef STATEMENU_H_
-#define STATEMENU_H_
+#ifndef StateNewWorld_H_
+#define StateNewWorld_H_
 
 #include <stdlib.h>
+#include <string>
+#include <map>
+
+#include <Aurora/Utils/StateManager.h>
+#include <Aurora/Utils/GameState.h>
+
+#include <Aurora/Graphics/RenderManager.h>
+#include <Aurora/Utils/Logger.h>
+#include <Aurora/Utils/Timer.h>
+#include <Aurora/System/SystemManager.h>
+#include <Aurora/Graphics/Models/ObjModel.h>
+#include <Aurora/Graphics/Camera.h>
+#include <Aurora/Graphics/Sprite.h>
+
+#include "SoundManager.h"
+#include "MenuHelper.h"
 
 #include <Aurora/Utils/StateManager.h>
 #include <Aurora/Utils/GameState.h>
@@ -41,6 +57,12 @@ using namespace Aurora::Graphics;
 using namespace Aurora::Utils;
 using namespace Aurora::System;
 using namespace Aurora;
+using std::vector;
+using std::string;
+using std::map;
+
+#ifndef SAVEFILE_H
+#define SAVEFILE_H
 
 class SaveFile {
 public:
@@ -55,18 +77,13 @@ public:
     int saveSize;
 };
 
-class TP {
-public:
-    Sprite *packSprite;
-    std::string name;
-    std::string description;
-};
+#endif
 
-class StateMenu : public CGameState {
+class StateNewWorld : public CGameState {
 public:
-    StateMenu();
+    StateNewWorld();
 
-    virtual ~StateMenu();
+    virtual ~StateNewWorld();
 
     void Init();
 
@@ -84,95 +101,22 @@ public:
 
     void Draw(StateManager *sManager);
 
-private:
-
-    void ScanSaveFiles(const char *dirName);
-
-    void ScanTexturePacks(const char *dirName);
-
     void DrawText(int x, int y, unsigned int color, float size, const char *message, ...);
 
-    inline bool fileExists(const std::string &name);
+    void ScanSaveFiles(const char *dirName);
 
     int fileSize(const std::string &name);
 
     unsigned int hash(const char *s, unsigned int seed);
 
 private:
-
-    typedef struct Statistics {
-        unsigned short blockPlaced;
-        unsigned short blockDestroyed;
-        unsigned short daysInGame;
-        unsigned short minutesPlayed;
-        unsigned short itemsCrafted;
-        unsigned short itemsSmelted;
-        unsigned short jumps;
-        unsigned short dies;
-        unsigned short foodEaten;
-        unsigned short badlyFalls;
-        unsigned short blocksWalked;
-        unsigned short treesGrowned;
-        unsigned short cropsGrowned;
-        unsigned short soilPlowed;
-        unsigned short timeInWater;
-        unsigned short timeInAir;
-        unsigned short damageRecieved;
-    } st;
-
-    typedef struct Options {
-        bool useMipsTexturing;
-        bool detailedSky;
-        bool fastRendering;
-        bool mipMapTexturing;
-        bool freezeDayTime;
-        bool sounds;
-        bool music;
-        bool autoJump;
-        bool worldBlockAnimation;
-        bool fogRendering;
-        bool smoothLighting;
-        bool particles;
-        bool guiDrawing;
-
-        float fov;
-        char horizontalViewDistance;
-        char verticalViewDistance;
-        int difficult;
-    } opt;
-
-    st mainStatistics;
-    opt mainOptions;
-
-    Sprite *backgroundSprite;
-    float bx, by;
-    bool directionx;
-    bool directiony;
-
-    Sprite *buttonSmallSprite;
-    Sprite *sbuttonSmallSprite;
-    Sprite *nbuttonSmallSprite;
-
-    Sprite *buttonSprite;
-    Sprite *sbuttonSprite;
-
-    Sprite *nbuttonSprite;
-
-    Sprite *mbuttonSprite;
-    Sprite *smbuttonSprite;
-
-    Sprite *backSprite;
-    Sprite *logoSprite;
-    Sprite *lamecraftSprite;
-
-    Sprite *rectFilledSprite;
-    Sprite *rectEmptySprite;
-
-    Sprite *blackBackground;
-
     RenderManager *mRender;
     SystemManager *mSystemMgr;
     SoundManager *mSoundMgr;
+    MenuHelper *menuHelper;
+
+    map<string, string> texts;
+    int selectPos;
 
     // converter vars
     bool schematicExists;
@@ -195,7 +139,6 @@ private:
     float splashSize;
 
     unsigned int seed_1;
-    int selectPos;
     int loadSelectPos;
     int loadSavePos;
     int aboutPos;
@@ -222,7 +165,6 @@ private:
     std::string nextSaveFileName;
 
     std::vector<SaveFile> saveFilesList;
-    std::vector<TP> texturePackList;
     std::string newWorldName;
     std::string newWorldSeed;
     std::string newWorldNamestr;
@@ -239,12 +181,27 @@ private:
     //game version
     short currentVersion;
 
-    int tpCurrent;
-    int tpMax;
-    int tpEnd;
-    int tpStart;
-    int tpPos;
-    int tpSelectPos;
+    Sprite *buttonSmallSprite;
+    Sprite *sbuttonSmallSprite;
+    Sprite *nbuttonSmallSprite;
+
+    Sprite *buttonSprite;
+    Sprite *sbuttonSprite;
+
+    Sprite *nbuttonSprite;
+
+    Sprite *mbuttonSprite;
+    Sprite *smbuttonSprite;
+
+    Sprite *backSprite;
+    Sprite *logoSprite;
+    Sprite *lamecraftSprite;
+
+    Sprite *rectFilledSprite;
+    Sprite *rectEmptySprite;
+
+    Sprite *blackBackground;
+
 };
 
 #endif
