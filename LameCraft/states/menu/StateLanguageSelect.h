@@ -1,32 +1,27 @@
 #ifndef STATELANGUAGE_H_
 #define STATELANGUAGE_H_
 
-#include <stdlib.h>
 #include <string>
-
-#include <Aurora/Utils/StateManager.h>
+#include <vector>
 #include <Aurora/Utils/GameState.h>
 
-#include <Aurora/Graphics/RenderManager.h>
-#include <Aurora/Utils/Logger.h>
-#include <Aurora/Utils/Timer.h>
-#include <Aurora/System/SystemManager.h>
-#include <Aurora/Graphics/Models/ObjModel.h>
-#include <Aurora/Graphics/Camera.h>
-#include <Aurora/Graphics/Sprite.h>
+namespace Aurora {
+    namespace Graphics {
+        class RenderManager;
+        class Sprite;
+    }
+    namespace System {
+        class SystemManager;
+    }
+    namespace Utils {
+        class StateManager;
+    }
+}
 
-#include "SoundManager.h"
-#include "MenuHelper.h"
+class MenuHelper;
+class SoundManager;
 
-
-using namespace Aurora::Graphics;
-using namespace Aurora::Utils;
-using namespace Aurora::System;
-using namespace Aurora;
-using std::vector;
-using std::string;
-
-class StateLanguageSelect : public CGameState {
+class StateLanguageSelect : public Aurora::Utils::CGameState {
 public:
     StateLanguageSelect();
 
@@ -42,23 +37,22 @@ public:
 
     void Resume();
 
-    void HandleEvents(StateManager *sManager);
+    void HandleEvents(Aurora::Utils::StateManager *sManager);
 
-    void Update(StateManager *sManager);
+    void Update(Aurora::Utils::StateManager *sManager);
 
-    void Draw(StateManager *sManager);
+    void Draw(Aurora::Utils::StateManager *sManager);
 
 private:
-    RenderManager *mRender;
-    SystemManager *mSystemMgr;
+    Aurora::Graphics::RenderManager *mRender;
+    Aurora::System::SystemManager *mSystemMgr;
     SoundManager *mSoundMgr;
     MenuHelper *menuHelper;
 
-    vector<string> languageNames;
-    vector<string> languageFileNames;
+    std::vector<std::string> languageNames;
+    std::vector<std::string> languageFileNames;
 
-    int selectPos;
-
+    unsigned int selectedPosition;
 };
 
 #endif
