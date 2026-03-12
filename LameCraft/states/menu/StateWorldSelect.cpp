@@ -23,14 +23,6 @@ using std::string;
 #define HARDCORE 2
 
 StateWorldSelect::StateWorldSelect() {
-
-}
-
-StateWorldSelect::~StateWorldSelect() {
-
-}
-
-void StateWorldSelect::Init() {
     mRender = RenderManager::InstancePtr();
     mSystemMgr = SystemManager::Instance();
     mSoundMgr = SoundManager::Instance();
@@ -152,6 +144,14 @@ void StateWorldSelect::Init() {
     } else {
        loadSelectPos = 3;
     }
+}
+
+StateWorldSelect::~StateWorldSelect() {
+
+}
+
+void StateWorldSelect::Init() {
+
 }
 
 void StateWorldSelect::Enter() {

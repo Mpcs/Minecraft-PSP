@@ -10,14 +10,6 @@
 #define RUSSIAN 2
 
 StateOptions::StateOptions() {
-
-}
-
-StateOptions::~StateOptions() {
-
-}
-
-void StateOptions::Init() {
     //set render manager instance
     mRender = RenderManager::InstancePtr();
     mSystemMgr = SystemManager::Instance();
@@ -71,6 +63,14 @@ void StateOptions::Init() {
     newKey = -1;
 
     currentAnalogPos = 0;
+}
+
+StateOptions::~StateOptions() {
+
+}
+
+void StateOptions::Init() {
+
 }
 
 void StateOptions::Enter() {

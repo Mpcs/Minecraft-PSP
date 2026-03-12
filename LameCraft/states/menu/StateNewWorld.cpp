@@ -22,14 +22,6 @@ using std::string;
 #define HARDCORE 2
 
 StateNewWorld::StateNewWorld() {
-
-}
-
-StateNewWorld::~StateNewWorld() {
-
-}
-
-void StateNewWorld::Init() {
     mRender = RenderManager::InstancePtr();
     mSystemMgr = SystemManager::Instance();
     mSoundMgr = SoundManager::Instance();
@@ -163,6 +155,14 @@ void StateNewWorld::Init() {
 
     newWorldName = "New World";
     newWorldSeed = "";
+}
+
+StateNewWorld::~StateNewWorld() {
+
+}
+
+void StateNewWorld::Init() {
+
 }
 
 void StateNewWorld::Enter() {

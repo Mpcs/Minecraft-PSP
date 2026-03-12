@@ -23,14 +23,6 @@ using std::string;
 #define HARDCORE 2
 
 StateTexturepacks::StateTexturepacks() {
-
-}
-
-StateTexturepacks::~StateTexturepacks() {
-
-}
-
-void StateTexturepacks::Init() {
     mRender = RenderManager::InstancePtr();
     mSystemMgr = SystemManager::Instance();
     mSoundMgr = SoundManager::Instance();
@@ -174,6 +166,14 @@ void StateTexturepacks::Init() {
     tpSelectPos = 0;
     tpEnd = texturePackList.size();
     tpMax = 3;
+}
+
+StateTexturepacks::~StateTexturepacks() {
+
+}
+
+void StateTexturepacks::Init() {
+
 }
 
 void StateTexturepacks::Enter() {
